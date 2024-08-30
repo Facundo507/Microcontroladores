@@ -1,0 +1,98 @@
+gavrasm Gerd's AVR assembler version 5.4 (C)2022 by DG4FAC
+----------------------------------------------------------
+
+Path:        C:\Users\Facundo\Desktop\MICRO\MATRIZ\corazon\
+Source file: matriz 3.asm
+Hex file:    matriz 3.hex
+Eeprom file: matriz 3.eep
+Compiled:    26.08.2024, 18:05:50
+Pass:        2
+
+     1: .include "m328pdef.inc" ; Define device ATmega328P
+ -> Warning 009: Include defs not necessary, using internal values!
+   File: C:\Users\Facundo\Desktop\MICRO\MATRIZ\corazon\matriz 3.asm, Line: 1
+   Source line: .include "m328pdef.inc" ; Define device ATmega328P
+     2: 
+     3: .cseg
+     4: .org 0x00
+     5: 
+     6: 000000   EF0F  ldi r16, 0xFF
+     7: 000001   B90A  out DDRD, r16
+     8: 000002   B904  out DDRB, r16
+     9: 
+    10: loop:
+    11: 000003   E007  ldi r16, 0x07
+    12: 000004   B905  out PORTB, r16
+    13: 000005   EF0F  ldi r16, 0xFF
+    14: 000006   B90B  out PORTD, r16
+    15: 000007   D024  rcall delay
+    16: 
+    17: 000008   E006  ldi r16, 0x06
+    18: 000009   B905  out PORTB, r16
+    19: 00000A   E909  ldi r16, 0x99
+    20: 00000B   B90B  out PORTD, r16
+    21: 00000C   D01F  rcall delay
+    22: 
+    23: 00000D   E005  ldi r16, 0x05
+    24: 00000E   B905  out PORTB, r16
+    25: 00000F   E000  ldi r16, 0x00
+    26: 000010   B90B  out PORTD, r16
+    27: 000011   D01A  rcall delay
+    28: 
+    29: 000012   E004  ldi r16, 0x04
+    30: 000013   B905  out PORTB, r16
+    31: 000014   E000  ldi r16, 0x00
+    32: 000015   B90B  out PORTD, r16
+    33: 000016   D015  rcall delay
+    34: 
+    35: 000017   E003  ldi r16, 0x03
+    36: 000018   B905  out PORTB, r16
+    37: 000019   E801  ldi r16, 0x81
+    38: 00001A   B90B  out PORTD, r16
+    39: 00001B   D010  rcall delay
+    40: 
+    41: 00001C   E002  ldi r16, 0x02
+    42: 00001D   B905  out PORTB, r16
+    43: 00001E   EC03  ldi r16, 0xC3
+    44: 00001F   B90B  out PORTD, r16
+    45: 000020   D00B  rcall delay
+    46: 
+    47: 000021   E001  ldi r16, 0x01
+    48: 000022   B905  out PORTB, r16
+    49: 000023   EE07  ldi r16, 0xE7
+    50: 000024   B90B  out PORTD, r16
+    51: 000025   D006  rcall delay
+    52: 
+    53: 000026   E000  ldi r16, 0x00
+    54: 000027   B905  out PORTB, r16
+    55: 000028   EF0F  ldi r16, 0xFF
+    56: 000029   B90B  out PORTD, r16
+    57: 00002A   D001  rcall delay
+    58: 00002B   CFD7  rjmp loop
+    59: 
+    60: delay:
+    61: 00002C   EF4F  ldi r20, 0xFF
+    62:       delay_2:
+    63: 00002D   954A  dec r20
+    64: 00002E   F7F1  brne delay_2
+    65: 00002F   9508  ret
+
+List of symbols:
+Type nDef nUsed             Decimalval           Hexval Name
+  T     1     1                    171               AB ATMEGA328P
+  L     1     2                      3               03 LOOP
+  L     1    16                     44               2C DELAY
+  L     1     2                     45               2D DELAY_2
+  C     1     0                     24               18 NOW_Y
+  C     1     0                      8               08 NOW_M
+  C     1     0                     26               1A NOW_D
+  C     1     0                  45530             B1DA NOW_I
+   No macros.
+
+Program             :       48 words.
+Constants           :        0 words.
+Total program memory:       48 words.
+Eeprom space        :        0 bytes.
+Data segment        :        0 bytes.
+Compilation completed, no errors.
+Compilation ended 26.08.2024, 18:05:50

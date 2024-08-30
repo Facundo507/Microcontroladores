@@ -1,0 +1,98 @@
+gavrasm Gerd's AVR assembler version 5.4 (C)2022 by DG4FAC
+----------------------------------------------------------
+
+Path:        C:\Users\Facundo\Desktop\MICRO\PARTE 3\
+Source file: PARTE 3.asm
+Hex file:    PARTE 3.hex
+Eeprom file: PARTE 3.eep
+Compiled:    26.08.2024, 17:00:59
+Pass:        2
+
+     1: .include "m328pdef.inc"
+ -> Warning 009: Include defs not necessary, using internal values!
+   File: C:\Users\Facundo\Desktop\MICRO\PARTE 3\PARTE 3.asm, Line: 1
+   Source line: .include "m328pdef.inc"
+     2: 
+     3: .cseg
+     4: .org 0x00
+     5: 
+     6: .equ DDRD_ADDR = 0x0A   ; Dirección del DDRD
+     7: .equ PORTD_ADDR = 0x0B  ; Dirección del PORTD
+     8: 
+     9: 
+    10: 000000   EF0F  ldi r16, 0xFF
+    11: 000001   B90A  out DDRD_ADDR, r16
+    12: 
+    13: loop:
+    14: 000002   EF0F  ldi r16, 0xFF        ;0xFF (11111111)
+    15: 000003   B90B  out PORTD_ADDR, r16
+    16: 000004   D016  rcall delay
+    17: 
+    18: 000005   E70E  ldi r16, 0x7E        ;0x7E (01111110)
+    19: 000006   B90B  out PORTD_ADDR, r16
+    20: 000007   D013  rcall delay
+    21: 
+    22: 000008   EB0D  ldi r16, 0xBD        ;0xBD (10111101)
+    23: 000009   B90B  out PORTD_ADDR, r16
+    24: 00000A   D010  rcall delay
+    25: 
+    26: 00000B   ED0B  ldi r16, 0xDB        ;0xDB (11011011)
+    27: 00000C   B90B  out PORTD_ADDR, r16
+    28: 00000D   D00D  rcall delay
+    29: 
+    30: 00000E   EE07  ldi r16, 0xE7        ;0xE7 (11100111)
+    31: 00000F   B90B  out PORTD_ADDR, r16
+    32: 000010   D00A  rcall delay
+    33: 
+    34: 000011   ED0B  ldi r16, 0xDB        ;0xDB (11011011)
+    35: 000012   B90B  out PORTD_ADDR, r16
+    36: 000013   D007  rcall delay
+    37: 
+    38: 000014   EB0D  ldi r16, 0xBD        ;0xBD (10111101)
+    39: 000015   B90B  out PORTD_ADDR, r16
+    40: 000016   D004  rcall delay
+    41: 
+    42: 000017   E70E  ldi r16, 0x7E        ;0xFD (01111110)
+    43: 000018   B90B  out PORTD_ADDR, r16
+    44: 000019   D001  rcall delay
+    45: 
+    46: 00001A   CFE7  rjmp loop
+    47: 
+    48: delay:
+    49: 00001B   E22F  ldi r18, 0x2F
+    50: delay_2:
+    51: 00001C   EF1F  ldi r17, 0xFF
+    52: delay_3:
+    53: 00001D   EF4F  ldi r20, 0xFF
+    54: delay_4:
+    55: 00001E   954A  dec r20
+    56: 00001F   F7F1  brne delay_4
+    57: 000020   951A  dec r17
+    58: 000021   F7D9  brne delay_3
+    59: 000022   952A  dec r18
+    60: 000023   F7C1  brne delay_2
+    61: 000024   9508  ret
+
+List of symbols:
+Type nDef nUsed             Decimalval           Hexval Name
+  T     1     1                    171               AB ATMEGA328P
+  L     1     2                      2               02 LOOP
+  L     1    16                     27               1B DELAY
+  L     1     2                     28               1C DELAY_2
+  L     1     2                     29               1D DELAY_3
+  L     1     2                     30               1E DELAY_4
+  C     1     0                     24               18 NOW_Y
+  C     1     0                      8               08 NOW_M
+  C     1     0                     26               1A NOW_D
+  C     1     0                  45530             B1DA NOW_I
+  C     1     1                     10               0A DDRD_ADDR
+  C     1     8                     11               0B PORTD_ADDR
+   No macros.
+
+Program             :       37 words.
+Constants           :        0 words.
+Total program memory:       37 words.
+Eeprom space        :        0 bytes.
+Data segment        :        0 bytes.
+Compilation completed, no errors.
+Compilation ended 26.08.2024, 17:00:59

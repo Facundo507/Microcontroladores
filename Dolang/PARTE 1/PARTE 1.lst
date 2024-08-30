@@ -1,0 +1,72 @@
+gavrasm Gerd's AVR assembler version 5.4 (C)2022 by DG4FAC
+----------------------------------------------------------
+
+Path:        C:\Users\Facundo\Desktop\MICRO\PARTE 1\
+Source file: PARTE 1.asm
+Hex file:    PARTE 1.hex
+Eeprom file: PARTE 1.eep
+Compiled:    29.08.2024, 19:18:27
+Pass:        2
+
+     1: .include "m328pdef.inc"
+ -> Warning 009: Include defs not necessary, using internal values!
+   File: C:\Users\Facundo\Desktop\MICRO\PARTE 1\PARTE 1.asm, Line: 1
+   Source line: .include "m328pdef.inc"
+     2: 
+     3: .cseg
+     4: .org 0x00
+     5: 
+     6: 000000   EF0F  ldi r16, 0xFF
+     7: 000001   B90A  out DDRD, r16
+     8: 
+     9: loop:
+    10: 000002   B90B  out portD, r16
+    11: 000003   D004  rcall delay
+    12: 
+    13: 000004   1F00  rol r16
+    14: 000005   F7E1  brne loop
+    15: 
+    16: 000006   EF0F  ldi r16, 0xFF
+    17: 000007   CFFA  rjmp loop
+    18: 
+    19: 
+    20: delay:
+    21: 000008   E22F  ldi r18, 0x2F
+    22: delay_2:
+    23: 000009   EF3F  ldi r19, 0xFF
+    24: delay_3:
+    25: 00000A   EF4F  ldi r20, 0xFF
+    26: delay_4:
+    27: 00000B   954A  dec r20
+    28: 00000C   F7F1  brne delay_4
+    29: 
+    30: 00000D   953A  dec r19
+    31: 00000E   F7D9  brne delay_3
+    32: 
+    33: 00000F   952A  dec r18
+    34: 000010   F7C1  brne delay_2
+    35: 
+    36: 000011   9508  ret
+    37: 
+
+List of symbols:
+Type nDef nUsed             Decimalval           Hexval Name
+  T     1     1                    171               AB ATMEGA328P
+  L     1     4                      2               02 LOOP
+  L     1     2                      8               08 DELAY
+  L     1     2                      9               09 DELAY_2
+  L     1     2                     10               0A DELAY_3
+  L     1     2                     11               0B DELAY_4
+  C     1     0                     24               18 NOW_Y
+  C     1     0                      8               08 NOW_M
+  C     1     0                     29               1D NOW_D
+  C     1     0                  45533             B1DD NOW_I
+   No macros.
+
+Program             :       18 words.
+Constants           :        0 words.
+Total program memory:       18 words.
+Eeprom space        :        0 bytes.
+Data segment        :        0 bytes.
+Compilation completed, no errors.
+Compilation ended 29.08.2024, 19:18:27
