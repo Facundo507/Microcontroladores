@@ -39,11 +39,11 @@ Wait:
 
 RSI_0:
        RJMP Incremento
-       RETI
+       RET
 
 RSI_1:
        RJMP Decremento
-       RETI
+       RET
 
 Incremento:
 
