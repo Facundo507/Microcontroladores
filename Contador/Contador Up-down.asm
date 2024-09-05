@@ -39,15 +39,20 @@ Wait:
 
 RSI_0:
        RJMP Incremento
-       RET
+       RETI
 
 RSI_1:
        RJMP Decremento
-       RET
+       RETI
 
 Incremento:
 
+       RET
+
 Decremento:
+
+       RET
+
 
 Mseg:
        ldi  r21, 21
