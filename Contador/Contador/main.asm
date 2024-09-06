@@ -1,3 +1,11 @@
+;
+; Contador.asm
+;
+; Created: 6/9/2024 1:03:39
+; Author : Facundo
+;
+
+
 .include "m328pdef.inc" ; Define device ATmega328P
 .ORG	 0X0000
 RJMP     Inicio
@@ -18,13 +26,17 @@ Inicio:
        LDI      r16, 0xFF
        OUT      DDRC, r16
        OUT      DDRB, r16
+	   LDI		r17, 0b01000000
+	   OUT		PORTC, r17
 
-       CALL		Cargar_valores
-       LDI      r17, 0b0010010
 	   LDI		r18, 0x01
        MOV      YH, r18
        LDI      r18, 0x00
        MOV      YL, r18
+
+	   CLR		r18
+
+	   CALL		Cargar_valores
 
        ;activamos los pull-up en los pines de INT0 e INT1
        SBI      PORTD, 2
@@ -38,9 +50,6 @@ Inicio:
        STS      EICRA, r16       ; configura flancos de subida
 
 Wait:
-       MOV      YL, r18
-       LD		r20, Y
-       MOV		r17, r20
        OUT		PORTC, r17
        SBI		PORTB, 0
        CALL		Mseg
@@ -49,11 +58,11 @@ Wait:
        RJMP		Wait
 
 RSI_0:
-       inc		r18
+	   LD		r17, Y+
        RETI
 
 RSI_1:
-       dec		r18
+       LD		r17, -Y
        RETI
 
 
@@ -75,7 +84,7 @@ Cargar_valores:
 	   LDI		r28, 0x00
 	   LDI		r29, 0x01
 	   LDI		r20, 0b01000000
-	   ST		Y+, r20
+	   ST		Y, r20
 	   LDI		r20, 0b01111001
 	   ST		Y+, r20
 	   LDI		r20, 0b00100100
@@ -94,7 +103,10 @@ Cargar_valores:
 	   ST		Y+, r20
 	   LDI		r20, 0b00011000
 	   ST		Y+, r20
+	   LDI		r28, 0x00
+	   LDI		r29, 0x01
 	   RET
+
 
 
 
