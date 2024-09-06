@@ -5,8 +5,6 @@
 ; Author : Facundo
 ;
 
-
-.include "m328pdef.inc" ; Define device ATmega328P
 .ORG	 0X0000
 RJMP     Inicio
 .ORG     0x0002
@@ -24,15 +22,18 @@ Inicio:
        OUT		SPL, r16
 
        LDI      r16, 0xFF
-       OUT      DDRC, r16
        OUT      DDRB, r16
-	   LDI		r17, 0b01000000
-	   OUT		PORTC, r17
+	   LDI		r16, 0x0F
+	   OUT      DDRC, r16
 
 	   LDI		r18, 0x01
        MOV      YH, r18
        LDI      r18, 0x00
        MOV      YL, r18
+	   LDI		r18, 0x01
+       MOV      ZH, r18
+       LDI      r18, 0x21
+       MOV      ZL, r18
 
 	   CLR		r18
 
@@ -50,24 +51,30 @@ Inicio:
        STS      EICRA, r16       ; configura flancos de subida
 
 Wait:
-       OUT		PORTC, r17
-       SBI		PORTB, 0
+	   LD		r17, Y
+	   LD		r18, Z	
+	   OUT		PORTB, r17
+	   OUT		PORTC, r18
+       SBI		PORTB, 4
        CALL		Mseg
-       CBI		PORTB, 0
+       CBI		PORTB, 4
        CALL		Mseg
        RJMP		Wait
 
 RSI_0:
 	   LD		r17, Y+
+	   LD		r18, Z+
+
        RETI
 
 RSI_1:
        LD		r17, -Y
+	   LD		r18, -Z
        RETI
 
 
 Mseg:
-       ldi		r21, 21
+       ldi		r21, 30
        ldi		r22, 75
        ldi		r23, 189
 L1:
@@ -83,28 +90,53 @@ L1:
 Cargar_valores:
 	   LDI		r28, 0x00
 	   LDI		r29, 0x01
-	   LDI		r20, 0b01000000
-	   ST		Y, r20
-	   LDI		r20, 0b01111001
+	   LDI		r20, 0b00000100
 	   ST		Y+, r20
-	   LDI		r20, 0b00100100
-	   ST		Y+, r20
-	   LDI		r20, 0b00110000
-	   ST		Y+, r20
-	   LDI		r20, 0b00011001
-	   ST		Y+, r20
-	   LDI		r20, 0b00010010
+	   LDI		r20, 0b00000111
 	   ST		Y+, r20
 	   LDI		r20, 0b00000010
 	   ST		Y+, r20
-	   LDI		r20, 0b01111000
+	   LDI		r20, 0b00000011
+	   ST		Y+, r20
+	   LDI		r20, 0b00000001
+	   ST		Y+, r20
+	   LDI		r20, 0b00000001
 	   ST		Y+, r20
 	   LDI		r20, 0b00000000
 	   ST		Y+, r20
-	   LDI		r20, 0b00011000
+	   LDI		r20, 0b00000111
+	   ST		Y+, r20
+	   LDI		r20, 0b00000000
+	   ST		Y+, r20
+	   LDI		r20, 0b00000001
 	   ST		Y+, r20
 	   LDI		r28, 0x00
 	   LDI		r29, 0x01
+
+	   LDI		r30, 0x21
+	   LDI		r31, 0x01
+	   LDI		r20, 0b00000000
+	   ST		Z+, r20
+	   LDI		r20, 0b00001001
+	   ST		Z+, r20
+	   LDI		r20, 0b00000100
+	   ST		Z+, r20
+	   LDI		r20, 0b00000000
+	   ST		Z+, r20
+	   LDI		r20, 0b00001001
+	   ST		Z+, r20
+	   LDI		r20, 0b00000010
+	   ST		Z+, r20
+	   LDI		r20, 0b00000010
+	   ST		Z+, r20
+	   LDI		r20, 0b00001000
+	   ST		Z+, r20
+	   LDI		r20, 0b00000000
+	   ST		Z+, r20
+	   LDI		r20, 0b00001000
+	   ST		Z+, r20
+	   LDI		r30, 0x21
+	   LDI		r31, 0x01
 	   RET
 
 

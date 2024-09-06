@@ -10,7 +10,6 @@
  <SOURCE_FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc</FILE>
-  <FILE>D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
   <FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\Debug\Contador.obj</FILE>
@@ -23,12 +22,12 @@
   <FILE>Contador.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <Inicio><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>17</LINE></Inicio>
-  <RSI_0><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>60</LINE></RSI_0>
-  <RSI_1><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>64</LINE></RSI_1>
-  <Cargar_valores><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>83</LINE></Cargar_valores>
-  <Wait><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>52</LINE></Wait>
-  <Mseg><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>69</LINE></Mseg>
-  <L1><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>73</LINE></L1>
+  <Inicio><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>15</LINE></Inicio>
+  <RSI_0><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>64</LINE></RSI_0>
+  <RSI_1><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>70</LINE></RSI_1>
+  <Cargar_valores><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>90</LINE></Cargar_valores>
+  <Wait><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>53</LINE></Wait>
+  <Mseg><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>76</LINE></Mseg>
+  <L1><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm</FILE><LINE>80</LINE></L1>
  </LABELS>
 </ASSEMBLER_INFO>

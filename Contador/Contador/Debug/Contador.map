@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm Fri Sep 06 01:39:05 2024
+AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador\main.asm Fri Sep 06 03:07:43 2024
 
 
 EQU  SIGNATURE_000 0000001e
@@ -696,9 +696,9 @@ EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 CSEG Inicio       00000005
-CSEG RSI_0        00000025
-CSEG RSI_1        00000027
-CSEG Cargar_valores 00000034
-CSEG Wait         0000001d
-CSEG Mseg         00000029
-CSEG L1           0000002c
+CSEG RSI_0        0000002b
+CSEG RSI_1        0000002e
+CSEG Cargar_valores 0000003c
+CSEG Wait         00000020
+CSEG Mseg         00000031
+CSEG L1           00000034
