@@ -1,174 +1,100 @@
+.include "m328pdef.inc" ; Define device ATmega328P
+.ORG	 0X0000
+RJMP     Inicio
+.ORG     0x0002
+RJMP     RSI_0
+.ORG     0x0004
+RJMP     RSI_1
 
-.include "m328pdef.inc"
-.equ DISPLAY_PORT = PORTB
-.equ POINT_PIN = 7
+Inicio:
+       SEI		;Habilitar interrupciones globales
 
-.org 0x00
-    rjmp start
+       ; Configurar SP
+	   LDI		R16, HIGH(RAMEND)
+       OUT		SPH, r16
+       LDI		R16, LOW(RAMEND)
+       OUT		SPL, r16
 
-start:
-    ; Configurar PORTB como salida para el display
-    ldi r16, 0xFF
-    out DDRB, r16
-    ldi r16, 0xF0
-    out DDRD, r16
+       LDI      r16, 0xFF
+       OUT      DDRC, r16
+       OUT      DDRB, r16
 
-    ldi r16, 0x0C ; Habilitar resistencias pull-up en PD2 y PD3
-    out PORTD, r16
+       CALL		Cargar_valores
+       LDI      r17, 0b0010010
+	   LDI		r18, 0x01
+       MOV      YH, r18
+       LDI      r18, 0x00
+       MOV      YL, r18
 
-    ; Inicializar el SP
-    ldi r16, LOW(RAMEND)
-    out SPL, r16
-    ldi r16, HIGH(RAMEND)
-    out SPH, r16
+       ;activamos los pull-up en los pines de INT0 e INT1
+       SBI      PORTD, 2
+       SBI      PORTD, 3
 
-    ; Mostrar el primer número (5)
-    rcall display_5
 
-main_loop:
-    ; Verificar botón de incremento
-    sbis PIND, PIND2
-    rcall increment_counter
+       ;Configuramos las interrupciones
+       LDI      r16, 0X03
+       OUT      EIMSK, r16       ;habilita las interrupciones INT0 e INT1
+       LDI      r16, 0x0F
+       STS      EICRA, r16       ; configura flancos de subida
 
-    ; Verificar botón de decremento
-    sbis PIND, PIND3
-    rcall decrement_counter
+Wait:
+       MOV      YL, r18
+       LD		r20, Y
+       MOV		r17, r20
+       OUT		PORTC, r17
+       SBI		PORTB, 0
+       CALL		Mseg
+       CBI		PORTB, 0
+       CALL		Mseg
+       RJMP		Wait
 
-    ; Parpadeo del punto decimal cada segundo
-    rcall toggle_point
+RSI_0:
+       inc		r18
+       RETI
 
-    rjmp main_loop
+RSI_1:
+       dec		r18
+       RETI
 
-increment_counter:
-    ; Incrementar el número
-    rcall next_number
-    ret
 
-decrement_counter:
-    ; Decrementar el número
-    rcall prev_number
-    ret
+Mseg:
+       ldi		r21, 21
+       ldi		r22, 75
+       ldi		r23, 189
+L1:
+       dec		r23
+       brne		L1
+       dec		r22
+       brne		L1
+       dec		r21
+       brne		L1
+       nop
+       RET
 
-toggle_point:
-    ; Alternar el punto del display
-    sbi DISPLAY_PORT, POINT_PIN
-    rcall delay_1s
-    cbi DISPLAY_PORT, POINT_PIN
-    rcall delay_1s
-    ret
+Cargar_valores:
+	   LDI		r28, 0x00
+	   LDI		r29, 0x01
+	   LDI		r20, 0b01000000
+	   ST		Y+, r20
+	   LDI		r20, 0b01111001
+	   ST		Y+, r20
+	   LDI		r20, 0b00100100
+	   ST		Y+, r20
+	   LDI		r20, 0b00110000
+	   ST		Y+, r20
+	   LDI		r20, 0b00011001
+	   ST		Y+, r20
+	   LDI		r20, 0b00010010
+	   ST		Y+, r20
+	   LDI		r20, 0b00000010
+	   ST		Y+, r20
+	   LDI		r20, 0b01111000
+	   ST		Y+, r20
+	   LDI		r20, 0b00000000
+	   ST		Y+, r20
+	   LDI		r20, 0b00011000
+	   ST		Y+, r20
+	   RET
 
-next_number:
-    ; Mover al siguiente número (0-9)
-    push r18 ; Guardar dirección actual
-
-    ; Llamar a la siguiente subrutina (número siguiente)
-    adiw r24, 1
-    cpi r24, 10
-    brcs valid_number
-    ldi r24, 0 ; Si llega a 10, reinicia a 0
-
-valid_number:
-    rcall display_number
-    pop r24
-
-    ret
-
-prev_number:
-    ; Mover al número anterior (9-0)
-    push r24 ; Guardar dirección actual
-
-    ; Llamar a la subrutina del número anterior
-    sbiw r24, 1
-    brmi set_to_9
-    rjmp valid_prev_number
-
-set_to_9:
-    ldi r24, 9
-
-valid_prev_number:
-    rcall display_number
-    pop r24
-    ret
-
-display_number:
-    ; Esta tabla llama a la subrutina correcta según r18
-    mov r30, r24
-    ldi r31, high(display_table)
-    adiw ZL, low(display_table)
-    ijmp
-
-display_table:
-    rjmp display_0
-    rjmp display_1
-    rjmp display_2
-    rjmp display_3
-    rjmp display_4
-    rjmp display_5
-    rjmp display_6
-    rjmp display_7
-    rjmp display_8
-    rjmp display_9
-
-; Subrutinas de cada número
-display_0:
-    ldi r16, 0b00111111 ; Patrones de segmento para el número 0
-    out DISPLAY_PORT, r16
-    ret
-
-display_1:
-    ldi r16, 0b00000110 ; Patrones de segmento para el número 1
-    out DISPLAY_PORT, r16
-    ret
-
-display_2:
-    ldi r16, 0b01011011 ; Patrones de segmento para el número 2
-    out DISPLAY_PORT, r16
-    ret
-
-display_3:
-    ldi r16, 0b01001111 ; Patrones de segmento para el número 3
-    out DISPLAY_PORT, r16
-    ret
-
-display_4:
-    ldi r16, 0b01100110 ; Patrones de segmento para el número 4
-    out DISPLAY_PORT, r16
-    ret
-
-display_5:
-    ldi r16, 0b01101101 ; Patrones de segmento para el número 5
-    out DISPLAY_PORT, r16
-    ret
-
-display_6:
-    ldi r16, 0b01111101 ; Patrones de segmento para el número 6
-    out DISPLAY_PORT, r16
-    ret
-
-display_7:
-    ldi r16, 0b00000111 ; Patrones de segmento para el número 7
-    out DISPLAY_PORT, r16
-    ret
-
-display_8:
-    ldi r16, 0b01111111 ; Patrones de segmento para el número 8
-    out DISPLAY_PORT, r16
-    ret
-
-display_9:
-    ldi r16, 0b01101111 ; Patrones de segmento para el número 9
-    out DISPLAY_PORT, r16
-    ret
-
-delay_1s:
-    ; Rutina de delay aproximado de 1 segundo
-    ldi r21, 255
-    ldi r22, 255
-wait_loop:
-    dec r22
-    brne wait_loop
-    dec r21
-    brne wait_loop
-	ret
 
 

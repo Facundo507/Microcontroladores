@@ -1,8 +1,8 @@
 /avr_sim_project_file
 C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador Up-down.asm
 mainasm=Contador Up-down.asm
-file=Contador Up-down.lst,175,56,166
-file=Contador Up-down.asm,1,1,1
+file=Contador Up-down.lst,166,56,166
+file=Contador Up-down.asm,22,1,1
 clock=1000000
 device-type=ATmega328P
 device-package=28-pin-PDIP

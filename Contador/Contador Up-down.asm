@@ -1,5 +1,5 @@
 .include "m328pdef.inc" ; Define device ATmega328P
-.ORG   0X0000
+.ORG	 0X0000
 RJMP     Inicio
 .ORG     0x0002
 RJMP     RSI_0
@@ -7,64 +7,94 @@ RJMP     RSI_0
 RJMP     RSI_1
 
 Inicio:
-       SEI
-       LDI      R16, 0xFF
-       OUT      DDRC, R16
-       OUT      DDRB, R16
-       LDI      R17, 0b0010010
+       SEI		;Habilitar interrupciones globales
+
+       ; Configurar SP
+	   LDI		R16, HIGH(RAMEND)
+       OUT		SPH, r16
+       LDI		R16, LOW(RAMEND)
+       OUT		SPL, r16
+
+       LDI      r16, 0xFF
+       OUT      DDRC, r16
+       OUT      DDRB, r16
+
+       CALL		Cargar_valores
+       LDI      r17, 0b0010010
+	   LDI		r18, 0x01
+       MOV      YH, r18
+       LDI      r18, 0x00
+       MOV      YL, r18
 
        ;activamos los pull-up en los pines de INT0 e INT1
        SBI      PORTD, 2
        SBI      PORTD, 3
-       LDI R16, HIGH(RAMEND)   ; Carga la parte alta de la dirección de la pila en R16
-       OUT SPH, R16            ; Configura el registro SPH
-       LDI R16, LOW(RAMEND)    ; Carga la parte baja de la dirección de la pila en R16
-       OUT SPL, R16
 
 
-
-       ;configuramos las interrupciones
-       LDI      R16, 0X03
-       OUT      EIMSK, R16       ;habilita las interrupciones INT0 e INT1
-       LDI      R16, 0x0F
-       STS      EICRA, R19       ; configura flancos de subida
+       ;Configuramos las interrupciones
+       LDI      r16, 0X03
+       OUT      EIMSK, r16       ;habilita las interrupciones INT0 e INT1
+       LDI      r16, 0x0F
+       STS      EICRA, r16       ; configura flancos de subida
 
 Wait:
-       OUT PORTC, r17
-       SBI PORTB, 0
-       CALL Mseg
-       CBI PORTB, 0
-       CALL Mseg
-       RJMP Wait
+       MOV      YL, r18
+       LD		r20, Y
+       MOV		r17, r20
+       OUT		PORTC, r17
+       SBI		PORTB, 0
+       CALL		Mseg
+       CBI		PORTB, 0
+       CALL		Mseg
+       RJMP		Wait
 
 RSI_0:
-       RJMP Incremento
+       inc		r18
        RETI
 
 RSI_1:
-       RJMP Decremento
+       dec		r18
        RETI
-
-Incremento:
-
-       RET
-
-Decremento:
-
-       RET
 
 
 Mseg:
-       ldi  r21, 21
-       ldi  r22, 75
-       ldi  r23, 189
+       ldi		r21, 21
+       ldi		r22, 75
+       ldi		r23, 189
 L1:
-       dec  r23
-       brne L1
-       dec  r22
-       brne L1
-       dec  r21
-       brne L1
+       dec		r23
+       brne		L1
+       dec		r22
+       brne		L1
+       dec		r21
+       brne		L1
        nop
        RET
-       
+
+Cargar_valores:
+	   LDI		r28, 0x00
+	   LDI		r29, 0x01
+	   LDI		r20, 0b01000000
+	   ST		Y+, r20
+	   LDI		r20, 0b01111001
+	   ST		Y+, r20
+	   LDI		r20, 0b00100100
+	   ST		Y+, r20
+	   LDI		r20, 0b00110000
+	   ST		Y+, r20
+	   LDI		r20, 0b00011001
+	   ST		Y+, r20
+	   LDI		r20, 0b00010010
+	   ST		Y+, r20
+	   LDI		r20, 0b00000010
+	   ST		Y+, r20
+	   LDI		r20, 0b01111000
+	   ST		Y+, r20
+	   LDI		r20, 0b00000000
+	   ST		Y+, r20
+	   LDI		r20, 0b00011000
+	   ST		Y+, r20
+	   RET
+
+
+

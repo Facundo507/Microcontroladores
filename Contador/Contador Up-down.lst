@@ -5,234 +5,137 @@ Path:        C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\
 Source file: Contador Up-down.asm
 Hex file:    Contador Up-down.hex
 Eeprom file: Contador Up-down.eep
-Compiled:    04.09.2024, 15:47:58
+Compiled:    06.09.2024, 00:17:07
 Pass:        2
 
-     1: ;
-     2: ; prueba.asm
-     3: ;
-     4: ; Created: 4/9/2024 15:23:13
-     5: ; Author : Facundo
-     6: ;
-     7: 
-     8: 
-     9: ; Definiciones
-    10: .include "m328pdef.inc"
+     1: .include "m328pdef.inc" ; Define device ATmega328P
  -> Warning 009: Include defs not necessary, using internal values!
-   File: C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador Up-down.asm, Line: 10
-   Source line: .include "m328pdef.inc"
-    11: .equ DISPLAY_PORT = PORTB
-    12: .equ POINT_PIN = 7
-    13: 
-    14: .org 0x00
-    15: 000000   C000  rjmp start
-    16: 
-    17: start:
-    18:     ; Configurar PORTB como salida para el display
-    19: 000001   EF0F  ldi r16, 0xFF
-    20: 000002   B904  out DDRB, r16
-    21: 000003   EF00  ldi r16, 0xF0
-    22: 000004   B90A  out DDRD, r16
-    23: 
-    24: 000005   E00C  ldi r16, 0x0C ; Habilitar resistencias pull-up en PD2 y PD3
-    25: 000006   B90B  out PORTD, r16
-    26: 
-    27:     ; Inicializar el SP
-    28: 000007   EF0F  ldi r16, LOW(RAMEND)
-    29: 000008   BF0D  out SPL, r16
-    30: 000009   E008  ldi r16, HIGH(RAMEND)
-    31: 00000A   BF0E  out SPH, r16
+   File: C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Contador\Contador Up-down.asm, Line: 1
+   Source line: .include "m328pdef.inc" ; Define device ATmega328P
+     2: .ORG	 0X0000
+     3: 000000   C004  RJMP     Inicio
+     4: .ORG     0x0002
+     5: 000002   C023  RJMP     RSI_0
+     6: .ORG     0x0004
+     7: 000004   C023  RJMP     RSI_1
+     8: 
+     9: Inicio:
+    10: 000005   9478  SEI		;Habilitar interrupciones globales
+    11: 
+    12:        ; Configurar SP
+    13: 000006   E008  LDI		R16, HIGH(RAMEND)
+    14: 000007   BF0E  OUT		SPH, r16
+    15: 000008   EF0F  LDI		R16, LOW(RAMEND)
+    16: 000009   BF0D  OUT		SPL, r16
+    17: 
+    18: 00000A   EF0F  LDI      r16, 0xFF
+    19: 00000B   B907  OUT      DDRC, r16
+    20: 00000C   B904  OUT      DDRB, r16
+    21: 
+    22: 00000D   940E  CALL		Cargar_valores
+        00000E   0035
+    23: 00000F   E112  LDI      r17, 0b0010010
+    24: 000010   E021  LDI		r18, 0x01
+    25: 000011   2FD2  MOV      YH, r18
+    26: 000012   E020  LDI      r18, 0x00
+    27: 000013   2FC2  MOV      YL, r18
+    28: 
+    29:        ;activamos los pull-up en los pines de INT0 e INT1
+    30: 000014   9A5A  SBI      PORTD, 2
+    31: 000015   9A5B  SBI      PORTD, 3
     32: 
-    33:     ; Mostrar el primer número (5)
-    34: 00000B   D03C  rcall display_5
-    35: 
-    36: main_loop:
-    37:     ; Verificar botón de incremento
-    38: 00000C   9B4A  sbis PIND, PIND2
-    39: 00000D   D004  rcall increment_counter
-    40: 
-    41:     ; Verificar botón de decremento
-    42: 00000E   9B4B  sbis PIND, PIND3
-    43: 00000F   D004  rcall decrement_counter
-    44: 
-    45:     ; Parpadeo del punto decimal cada segundo
-    46: 000010   D005  rcall toggle_point
-    47: 
-    48: 000011   CFFA  rjmp main_loop
-    49: 
-    50: increment_counter:
-    51:     ; Incrementar el número
-    52: 000012   D008  rcall next_number
-    53: 000013   9508  ret
+    33: 
+    34:        ;Configuramos las interrupciones
+    35: 000016   E003  LDI      r16, 0X03
+    36: 000017   BB0D  OUT      EIMSK, r16       ;habilita las interrupciones INT0 e INT1
+    37: 000018   E00F  LDI      r16, 0x0F
+    38: 000019   9300  STS      EICRA, r16       ; configura flancos de subida
+        00001A   0069
+    39: 
+    40: Wait:
+    41: 00001B   2FC2  MOV      YL, r18
+    42: 00001C   8148  LD		r20, Y
+    43: 00001D   2F14  MOV		r17, r20
+    44: 00001E   B918  OUT		PORTC, r17
+    45: 00001F   9A28  SBI		PORTB, 0
+    46: 000020   940E  CALL		Mseg
+        000021   002A
+    47: 000022   9828  CBI		PORTB, 0
+    48: 000023   940E  CALL		Mseg
+        000024   002A
+    49: 000025   CFF5  RJMP		Wait
+    50: 
+    51: RSI_0:
+    52: 000026   9523  inc		r18
+    53: 000027   9518  RETI
     54: 
-    55: decrement_counter:
-    56:     ; Decrementar el número
-    57: 000014   D00E  rcall prev_number
-    58: 000015   9508  ret
+    55: RSI_1:
+    56: 000028   952A  dec		r18
+    57: 000029   9518  RETI
+    58: 
     59: 
-    60: toggle_point:
-    61:     ; Alternar el punto del display
-    62: 000016   9A2F  sbi DISPLAY_PORT, POINT_PIN
-    63: 000017   D03F  rcall delay_1s
-    64: 000018   982F  cbi DISPLAY_PORT, POINT_PIN
-    65: 000019   D03D  rcall delay_1s
-    66: 00001A   9508  ret
-    67: 
-    68: next_number:
-    69:     ; Mover al siguiente número (0-9)
-    70: 00001B   932F  push r18 ; Guardar dirección actual
-    71: 
-    72:     ; Llamar a la siguiente subrutina (número siguiente)
-    73: 00001C   9601  adiw r24, 1
-    74: 00001D   308A  cpi r24, 10
-    75: 00001E   F008  brcs valid_number
-    76: 00001F   E080  ldi r24, 0 ; Si llega a 10, reinicia a 0
-    77: 
-    78: valid_number:
-    79: 000020   D00A  rcall display_number
-    80: 000021   918F  pop r24
-    81: 
-    82: 000022   9508  ret
-    83: 
-    84: prev_number:
-    85:     ; Mover al número anterior (9-0)
-    86: 000023   938F  push r24 ; Guardar dirección actual
-    87: 
-    88:     ; Llamar a la subrutina del número anterior
-    89: 000024   9701  sbiw r24, 1
-    90: 000025   F00A  brmi set_to_9
-    91: 000026   C001  rjmp valid_prev_number
-    92: 
-    93: set_to_9:
-    94: 000027   E089  ldi r24, 9
-    95: 
-    96: valid_prev_number:
-    97: 000028   D002  rcall display_number
-    98: 000029   918F  pop r24
-    99: 00002A   9508  ret
+    60: Mseg:
+    61: 00002A   E155  ldi		r21, 21
+    62: 00002B   E46B  ldi		r22, 75
+    63: 00002C   EB7D  ldi		r23, 189
+    64: L1:
+    65: 00002D   957A  dec		r23
+    66: 00002E   F7F1  brne		L1
+    67: 00002F   956A  dec		r22
+    68: 000030   F7E1  brne		L1
+    69: 000031   955A  dec		r21
+    70: 000032   F7D1  brne		L1
+    71: 000033   0000  nop
+    72: 000034   9508  RET
+    73: 
+    74: Cargar_valores:
+    75: 000035   E0C0  LDI		r28, 0x00
+    76: 000036   E0D1  LDI		r29, 0x01
+    77: 000037   E440  LDI		r20, 0b01000000
+    78: 000038   9349  ST		Y+, r20
+    79: 000039   E749  LDI		r20, 0b01111001
+    80: 00003A   9349  ST		Y+, r20
+    81: 00003B   E244  LDI		r20, 0b00100100
+    82: 00003C   9349  ST		Y+, r20
+    83: 00003D   E340  LDI		r20, 0b00110000
+    84: 00003E   9349  ST		Y+, r20
+    85: 00003F   E149  LDI		r20, 0b00011001
+    86: 000040   9349  ST		Y+, r20
+    87: 000041   E142  LDI		r20, 0b00010010
+    88: 000042   9349  ST		Y+, r20
+    89: 000043   E042  LDI		r20, 0b00000010
+    90: 000044   9349  ST		Y+, r20
+    91: 000045   E748  LDI		r20, 0b01111000
+    92: 000046   9349  ST		Y+, r20
+    93: 000047   E040  LDI		r20, 0b00000000
+    94: 000048   9349  ST		Y+, r20
+    95: 000049   E148  LDI		r20, 0b00011000
+    96: 00004A   9349  ST		Y+, r20
+    97: 00004B   9508  RET
+    98: 
+    99: 
    100: 
-   101: display_number:
-   102:     ; Esta tabla llama a la subrutina correcta según r18
-   103: 00002B   2FE8  mov r30, r24
-   104: 00002C   E0F0  ldi r31, high(display_table)
-   105: 00002D   96BF  adiw ZL, low(display_table)
-   106: 00002E   9409  ijmp
-   107: 
-   108: display_table:
-   109: 00002F   C009  rjmp display_0
-   110: 000030   C00B  rjmp display_1
-   111: 000031   C00D  rjmp display_2
-   112: 000032   C00F  rjmp display_3
-   113: 000033   C011  rjmp display_4
-   114: 000034   C013  rjmp display_5
-   115: 000035   C015  rjmp display_6
-   116: 000036   C017  rjmp display_7
-   117: 000037   C019  rjmp display_8
-   118: 000038   C01B  rjmp display_9
-   119: 
-   120: ; Subrutinas de cada número
-   121: display_0:
-   122: 000039   E30F  ldi r16, 0b00111111 ; Patrones de segmento para el número 0
-   123: 00003A   B905  out DISPLAY_PORT, r16
-   124: 00003B   9508  ret
-   125: 
-   126: display_1:
-   127: 00003C   E006  ldi r16, 0b00000110 ; Patrones de segmento para el número 1
-   128: 00003D   B905  out DISPLAY_PORT, r16
-   129: 00003E   9508  ret
-   130: 
-   131: display_2:
-   132: 00003F   E50B  ldi r16, 0b01011011 ; Patrones de segmento para el número 2
-   133: 000040   B905  out DISPLAY_PORT, r16
-   134: 000041   9508  ret
-   135: 
-   136: display_3:
-   137: 000042   E40F  ldi r16, 0b01001111 ; Patrones de segmento para el número 3
-   138: 000043   B905  out DISPLAY_PORT, r16
-   139: 000044   9508  ret
-   140: 
-   141: display_4:
-   142: 000045   E606  ldi r16, 0b01100110 ; Patrones de segmento para el número 4
-   143: 000046   B905  out DISPLAY_PORT, r16
-   144: 000047   9508  ret
-   145: 
-   146: display_5:
-   147: 000048   E60D  ldi r16, 0b01101101 ; Patrones de segmento para el número 5
-   148: 000049   B905  out DISPLAY_PORT, r16
-   149: 00004A   9508  ret
-   150: 
-   151: display_6:
-   152: 00004B   E70D  ldi r16, 0b01111101 ; Patrones de segmento para el número 6
-   153: 00004C   B905  out DISPLAY_PORT, r16
-   154: 00004D   9508  ret
-   155: 
-   156: display_7:
-   157: 00004E   E007  ldi r16, 0b00000111 ; Patrones de segmento para el número 7
-   158: 00004F   B905  out DISPLAY_PORT, r16
-   159: 000050   9508  ret
-   160: 
-   161: display_8:
-   162: 000051   E70F  ldi r16, 0b01111111 ; Patrones de segmento para el número 8
-   163: 000052   B905  out DISPLAY_PORT, r16
-   164: 000053   9508  ret
-   165: 
-   166: display_9:
-   167: 000054   E60F  ldi r16, 0b01101111 ; Patrones de segmento para el número 9
-   168: 000055   B905  out DISPLAY_PORT, r16
-   169: 000056   9508  ret
-   170: 
-   171: delay_1s:
-   172:     ; Rutina de delay aproximado de 1 segundo
-   173: 000057   EF5F  ldi r21, 255
-   174: 000058   EF6F  ldi r22, 255
-   175: wait_loop:
-   176: 000059   956A  dec r22
-   177: 00005A   F7F1  brne wait_loop
-   178: 00005B   955A  dec r21
-   179: 00005C   F7E1  brne wait_loop
-   180: 00005D   9508  ret
-   181: 
-   182: 
 
 List of symbols:
 Type nDef nUsed             Decimalval           Hexval Name
   T     1     1                    171               AB ATMEGA328P
-  L     1     2                      1               01 START
-  L     1     2                     12               0C MAIN_LOOP
-  L     1     2                     18               12 INCREMENT_COUNTER
-  L     1     2                     20               14 DECREMENT_COUNTER
-  L     1     2                     22               16 TOGGLE_POINT
-  L     1     2                     27               1B NEXT_NUMBER
-  L     1     2                     32               20 VALID_NUMBER
-  L     1     2                     35               23 PREV_NUMBER
-  L     1     2                     39               27 SET_TO_9
-  L     1     2                     40               28 VALID_PREV_NUMBER
-  L     1     4                     43               2B DISPLAY_NUMBER
-  L     1     2                     47               2F DISPLAY_TABLE
-  L     1     2                     57               39 DISPLAY_0
-  L     1     2                     60               3C DISPLAY_1
-  L     1     2                     63               3F DISPLAY_2
-  L     1     2                     66               42 DISPLAY_3
-  L     1     2                     69               45 DISPLAY_4
-  L     1     4                     72               48 DISPLAY_5
-  L     1     2                     75               4B DISPLAY_6
-  L     1     2                     78               4E DISPLAY_7
-  L     1     2                     81               51 DISPLAY_8
-  L     1     2                     84               54 DISPLAY_9
-  L     1     4                     87               57 DELAY_1S
-  L     1     4                     89               59 WAIT_LOOP
+  L     1     2                      5               05 INICIO
+  L     1     2                     27               1B WAIT
+  L     1     2                     38               26 RSI_0
+  L     1     2                     40               28 RSI_1
+  L     1     2                     42               2A MSEG
+  L     1     6                     45               2D L1
+  L     1     1                     53               35 CARGAR_VALORES
   C     1     0                     24               18 NOW_Y
   C     1     0                      9               09 NOW_M
-  C     1     0                      4               04 NOW_D
-  C     1     0                  45539             B1E3 NOW_I
-  C     1    12                      5               05 DISPLAY_PORT
-  C     1     2                      7               07 POINT_PIN
+  C     1     0                      6               06 NOW_D
+  C     1     0                  45541             B1E5 NOW_I
    No macros.
 
-Program             :       94 words.
+Program             :       74 words.
 Constants           :        0 words.
-Total program memory:       94 words.
+Total program memory:       74 words.
 Eeprom space        :        0 bytes.
 Data segment        :        0 bytes.
 Compilation completed, no errors.
-Compilation ended 04.09.2024, 15:47:58
+Compilation ended 06.09.2024, 00:17:07
