@@ -1,0 +1,221 @@
+gavrasm Gerd's AVR assembler version 5.4 (C)2022 by DG4FAC
+----------------------------------------------------------
+
+Path:        E:\Administrador\Documents\
+Source file: Matriz con botones.asm
+Hex file:    Matriz con botones.hex
+Eeprom file: Matriz con botones.eep
+Compiled:    08.09.2024, 02:50:30
+Pass:        2
+
+     1: ;
+     2: ; Contador.asm
+     3: ;
+     4: ; Created: 6/9/2024 1:03:39
+     5: ; Author : Facundo
+     6: ;
+     7: 
+     8: .ORG	 0X0000
+     9: 000000   C004  RJMP     Inicio
+    10: .ORG     0x0002
+    11: 000002   C022  RJMP     RSI_0
+    12: .ORG     0x0004
+    13: 000004   C023  RJMP     RSI_1
+    14: 
+    15: .include "m328Pdef.inc"
+ -> Warning 009: Include defs not necessary, using internal values!
+   File: E:\Administrador\Documents\Matriz con botones.asm, Line: 15
+   Source line: .include "m328Pdef.inc"
+    16: 
+    17: Inicio:
+    18: 000005   9478  SEI		;Habilitar interrupciones globales
+    19: 
+    20:        ; Configurar SP
+    21: 000006   E008  LDI		R16, HIGH(RAMEND)
+    22: 000007   BF0E  OUT		SPH, r16
+    23: 000008   EF0F  LDI		R16, LOW(RAMEND)
+    24: 000009   BF0D  OUT		SPL, r16
+    25: 
+    26: 00000A   EF0F  LDI      r16, 0xFF
+    27: 00000B   B904  OUT      DDRB, r16
+    28: 00000C   E00F  LDI		r16, 0x0F
+    29: 00000D   B907  OUT      DDRC, r16
+    30: 
+    31: 00000E   E021  LDI		r18, 0x01
+    32: 00000F   2FD2  MOV      YH, r18
+    33: 000010   E020  LDI      r18, 0x00
+    34: 000011   2FC2  MOV      YL, r18
+    35: 000012   E021  LDI		r18, 0x01
+    36: 000013   2FF2  MOV      ZH, r18
+    37: 000014   E221  LDI      r18, 0x21
+    38: 000015   2FE2  MOV      ZL, r18
+    39: 
+    40: 000016   2722  CLR		r18
+    41: 
+    42: 000017   940E  CALL		Cargar_valores
+        000018   0036
+    43: 
+    44:        ;activamos los pull-up en los pines de INT0 e INT1
+    45: 000019   9A5A  SBI      PORTD, 2
+    46: 00001A   9A5B  SBI      PORTD, 3
+    47: 
+    48: 
+    49:        ;Configuramos las interrupciones
+    50: 00001B   E003  LDI      r16, 0X03
+    51: 00001C   BB0D  OUT      EIMSK, r16       ;habilita las interrupciones INT0 e INT1
+    52: 00001D   E00F  LDI      r16, 0x0F
+    53: 00001E   9300  STS      EICRA, r16       ; configura flancos de subida
+        00001F   0069
+    54: 
+    55: Wait:
+    56: 000020   8118  LD		r17, Y
+    57: 000021   8120  LD		r18, Z
+    58: 000022   B915  OUT		PORTB, r17
+    59: 000023   B928  OUT		PORTC, r18
+    60: 000024   CFFB  RJMP		Wait
+    61: 
+    62: RSI_0:
+    63: 000025   9119  LD		r17, Y+
+    64: 000026   9121  LD		r18, Z+
+    65: 
+    66: 000027   9518  RETI
+    67: 
+    68: RSI_1:
+    69: 000028   911A  LD		r17, -Y
+    70: 000029   9122  LD		r18, -Z
+    71: 00002A   9518  RETI
+    72: 
+    73: 
+    74: Mseg:
+    75: 00002B   E15E  ldi		r21, 30
+    76: 00002C   E46B  ldi		r22, 75
+    77: 00002D   EB7D  ldi		r23, 189
+    78: L1:
+    79: 00002E   957A  dec		r23
+    80: 00002F   F7F1  brne		L1
+    81: 000030   956A  dec		r22
+    82: 000031   F7E1  brne		L1
+    83: 000032   955A  dec		r21
+    84: 000033   F7D1  brne		L1
+    85: 000034   0000  nop
+    86: 000035   9508  RET
+    87: 
+    88: Cargar_valores:
+    89:     ; Letra G
+    90: 000036   E34C  LDI     r20, 0b00111100
+    91: 000037   9349  ST      Y+, r20
+    92: 000038   E442  LDI     r20, 0b01000010
+    93: 000039   9349  ST      Y+, r20
+    94: 00003A   E440  LDI     r20, 0b01000000
+    95: 00003B   9349  ST      Y+, r20
+    96: 00003C   E44E  LDI     r20, 0b01001110
+    97: 00003D   9349  ST      Y+, r20
+    98: 00003E   E442  LDI     r20, 0b01000010
+    99: 00003F   9349  ST      Y+, r20
+   100: 000040   E442  LDI     r20, 0b01000010
+   101: 000041   9349  ST      Y+, r20
+   102: 000042   E34C  LDI     r20, 0b00111100
+   103: 000043   9349  ST      Y+, r20
+   104: 000044   E040  LDI     r20, 0b00000000
+   105: 000045   9349  ST      Y+, r20
+   106: 
+   107:     ; Letra U
+   108: 000046   E442  LDI     r20, 0b01000010
+   109: 000047   9349  ST      Y+, r20
+   110: 000048   E442  LDI     r20, 0b01000010
+   111: 000049   9349  ST      Y+, r20
+   112: 00004A   E442  LDI     r20, 0b01000010
+   113: 00004B   9349  ST      Y+, r20
+   114: 00004C   E442  LDI     r20, 0b01000010
+   115: 00004D   9349  ST      Y+, r20
+   116: 00004E   E442  LDI     r20, 0b01000010
+   117: 00004F   9349  ST      Y+, r20
+   118: 000050   E442  LDI     r20, 0b01000010
+   119: 000051   9349  ST      Y+, r20
+   120: 000052   E34C  LDI     r20, 0b00111100
+   121: 000053   9349  ST      Y+, r20
+   122: 000054   E040  LDI     r20, 0b00000000
+   123: 000055   9349  ST      Y+, r20
+   124: 
+   125:     ; Letra I
+   126: 000056   E34C  LDI     r20, 0b00111100
+   127: 000057   9349  ST      Y+, r20
+   128: 000058   E148  LDI     r20, 0b00011000
+   129: 000059   9349  ST      Y+, r20
+   130: 00005A   E148  LDI     r20, 0b00011000
+   131: 00005B   9349  ST      Y+, r20
+   132: 00005C   E148  LDI     r20, 0b00011000
+   133: 00005D   9349  ST      Y+, r20
+   134: 00005E   E148  LDI     r20, 0b00011000
+   135: 00005F   9349  ST      Y+, r20
+   136: 000060   E148  LDI     r20, 0b00011000
+   137: 000061   9349  ST      Y+, r20
+   138: 000062   E34C  LDI     r20, 0b00111100
+   139: 000063   9349  ST      Y+, r20
+   140: 000064   E040  LDI     r20, 0b00000000
+   141: 000065   9349  ST      Y+, r20
+   142: 
+   143:     ; Letra D
+   144: 000066   E348  LDI     r20, 0b00111000
+   145: 000067   9349  ST      Y+, r20
+   146: 000068   E444  LDI     r20, 0b01000100
+   147: 000069   9349  ST      Y+, r20
+   148: 00006A   E442  LDI     r20, 0b01000010
+   149: 00006B   9349  ST      Y+, r20
+   150: 00006C   E442  LDI     r20, 0b01000010
+   151: 00006D   9349  ST      Y+, r20
+   152: 00006E   E442  LDI     r20, 0b01000010
+   153: 00006F   9349  ST      Y+, r20
+   154: 000070   E444  LDI     r20, 0b01000100
+   155: 000071   9349  ST      Y+, r20
+   156: 000072   E348  LDI     r20, 0b00111000
+   157: 000073   9349  ST      Y+, r20
+   158: 000074   E040  LDI     r20, 0b00000000
+   159: 000075   9349  ST      Y+, r20
+   160: 
+   161:     ; Letra O
+   162: 000076   E34C  LDI     r20, 0b00111100
+   163: 000077   9349  ST      Y+, r20
+   164: 000078   E442  LDI     r20, 0b01000010
+   165: 000079   9349  ST      Y+, r20
+   166: 00007A   E442  LDI     r20, 0b01000010
+   167: 00007B   9349  ST      Y+, r20
+   168: 00007C   E442  LDI     r20, 0b01000010
+   169: 00007D   9349  ST      Y+, r20
+   170: 00007E   E442  LDI     r20, 0b01000010
+   171: 00007F   9349  ST      Y+, r20
+   172: 000080   E442  LDI     r20, 0b01000010
+   173: 000081   9349  ST      Y+, r20
+   174: 000082   E34C  LDI     r20, 0b00111100
+   175: 000083   9349  ST      Y+, r20
+   176: 000084   E040  LDI     r20, 0b00000000
+   177: 000085   9349  ST      Y+, r20
+   178: 
+   179: 000086   9508  RET
+   180: 
+   181: 
+   182: 
+
+List of symbols:
+Type nDef nUsed             Decimalval           Hexval Name
+  T     1     1                    171               AB ATMEGA328P
+  L     1     2                      5               05 INICIO
+  L     1     2                     32               20 WAIT
+  L     1     2                     37               25 RSI_0
+  L     1     2                     40               28 RSI_1
+  L     1     0                     43               2B MSEG
+  L     1     6                     46               2E L1
+  L     1     1                     54               36 CARGAR_VALORES
+  C     1     0                     24               18 NOW_Y
+  C     1     0                      9               09 NOW_M
+  C     1     0                      8               08 NOW_D
+  C     1     0                  45543             B1E7 NOW_I
+   No macros.
+
+Program             :      133 words.
+Constants           :        0 words.
+Total program memory:      133 words.
+Eeprom space        :        0 bytes.
+Data segment        :        0 bytes.
+Compilation completed, no errors.
+Compilation ended 08.09.2024, 02:50:30
