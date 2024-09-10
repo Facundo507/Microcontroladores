@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm Tue Sep 10 17:23:27 2024
+AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm Tue Sep 10 18:21:27 2024
 
 [builtin](2): Including file 'D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm(24): Including file 'D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
@@ -1005,9 +1005,9 @@ C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MAT
                                  .ORG	 0X0000
 000000 c004                      RJMP     Inicio
                                  .ORG     0x0002
-000002 c054                      RJMP     RSI_0
+000002 c046                      RJMP     RSI_0
                                  .ORG     0x0004
-000004 c056                      RJMP     RSI_1
+000004 c04a                      RJMP     RSI_1
                                  
                                  .include "m328Pdef.inc"
                                  
@@ -1079,7 +1079,7 @@ C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MAT
 000015 e624                             LDI      r18, 0x64
 000016 2fe2                             MOV      ZL, r18
                                  
-000017 940e 0068                 	   CALL		Cargar_valores
+000017 940e 0069                 	   CALL		Cargar_valores
                                  
                                         ; Activar pull-up en los pines de INT0 e INT1
 000019 9a5a                             SBI      PORTD, 2
@@ -1096,298 +1096,303 @@ C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MAT
 000022 e624                      	   LDI      r18, 0x64
 000023 2fe2                             MOV      ZL, r18
                                  	   
-                                 
-                                 	
-                                 
-                                 Wait:	
+                                 Wait:
 000024 8120                      	   LD		r18, Z
 000025 8118                      	   LD		r17, Y
 000026 b915                      	   OUT		PORTB, r17
 000027 b928                      	   OUT		PORTC, r18
-000028 940e 005d                 	   CALL		Mseg
-00002a 9121                      	   LD		r18, Z+
-00002b 9119                      	   LD		r17, Y+
-00002c b915                      	   OUT		PORTB, r17
-00002d b928                      	   OUT		PORTC, r18
-00002e 940e 005d                 	   CALL		Mseg
+000028 9121                      	   LD		r18, Z+
+000029 9119                      	   LD		r17, Y+
+00002a b915                      	   OUT		PORTB, r17
+00002b b928                      	   OUT		PORTC, r18
+00002c 9121                      	   LD		r18, Z+
+00002d 9119                      	   LD		r17, Y+
+00002e b915                      	   OUT		PORTB, r17
+00002f b928                      	   OUT		PORTC, r18
 000030 9121                      	   LD		r18, Z+
 000031 9119                      	   LD		r17, Y+
 000032 b915                      	   OUT		PORTB, r17
 000033 b928                      	   OUT		PORTC, r18
-000034 940e 005d                 	   CALL		Mseg
-000036 9121                      	   LD		r18, Z+
-000037 9119                      	   LD		r17, Y+
-000038 b915                      	   OUT		PORTB, r17
-000039 b928                      	   OUT		PORTC, r18
-00003a 940e 005d                 	   CALL		Mseg
+000034 9121                      	   LD		r18, Z+
+000035 9119                      	   LD		r17, Y+
+000036 b915                      	   OUT		PORTB, r17
+000037 b928                      	   OUT		PORTC, r18
+000038 9121                      	   LD		r18, Z+
+000039 9119                      	   LD		r17, Y+
+00003a b915                      	   OUT		PORTB, r17
+00003b b928                      	   OUT		PORTC, r18
 00003c 9121                      	   LD		r18, Z+
 00003d 9119                      	   LD		r17, Y+
 00003e b915                      	   OUT		PORTB, r17
 00003f b928                      	   OUT		PORTC, r18
-000040 940e 005d                 	   CALL		Mseg
-000042 9121                      	   LD		r18, Z+
-000043 9119                      	   LD		r17, Y+
-000044 b915                      	   OUT		PORTB, r17
-000045 b928                      	   OUT		PORTC, r18
-000046 940e 005d                 	   CALL		Mseg
-000048 9121                      	   LD		r18, Z+
-000049 9119                      	   LD		r17, Y+
-00004a b915                      	   OUT		PORTB, r17
-00004b b928                      	   OUT		PORTC, r18
-00004c 940e 005d                 	   CALL		Mseg
-00004e 9121                      	   LD		r18, Z+
-00004f 9119                      	   LD		r17, Y+
-000050 b915                      	   OUT		PORTB, r17
-000051 b928                      	   OUT		PORTC, r18
-000052 940e 005d                 	   CALL		Mseg
-000054 50c7                      	   SUBI		YL, 7
-000055 50e7                      	   SUBI		ZL, 7
-                                 
-000056 cfcd                             RJMP		Wait
+000040 9121                      	   LD		r18, Z+
+000041 9119                      	   LD		r17, Y+
+000042 b915                      	   OUT		PORTB, r17
+000043 b928                      	   OUT		PORTC, r18
+000044 50c7                      	   SUBI		YL, 7
+000045 50e7                      	   SUBI		ZL, 7
+000046 940e 005e                 	   CALL		miseg
+000048 cfdb                             RJMP		Wait
                                  
                                  RSI_0:
-000057 e007                      	   LDI		r16, 7
-000058 0fc0                      	   ADD		YL, r16
-000059 2700                      	   CLR		r16
-00005a 9518                             RETI
+000049 e007                      	   LDI		r16, 7
+00004a 0fc0                      	   ADD		YL, r16
+00004b 2700                      	   CLR		r16
+00004c 940e 0053                 	   CALL		Mseg
+00004e 9518                             RETI
                                  
                                  RSI_1:
-00005b 50c7                             SUBI		YL, 7
-00005c 9518                             RETI
+00004f 50c7                             SUBI		YL, 7
+000050 940e 0053                 	   CALL		Mseg
+000052 9518                             RETI
                                  
                                  Mseg:
-00005d e054                             ldi		r21, 4
-00005e e561                             ldi		r22, 81
-00005f ef7f                             ldi		r23, 255
+000053 e051                             ldi		r21, 1
+000054 ef6f                             ldi		r22, 255
+000055 ef7f                             ldi		r23, 255
                                  L1:
-000060 957a                             dec		r23
-000061 f7f1                             brne		L1
-000062 956a                             dec		r22
-000063 f7e1                             brne		L1
-000064 955a                             dec		r21
-000065 f7d1                             brne		L1
-000066 0000                             nop
-000067 9508                             RET
+000056 957a                             dec		r23
+000057 f7f1                             brne		L1
+000058 956a                             dec		r22
+000059 f7e1                             brne		L1
+00005a 955a                             dec		r21
+00005b f7d1                             brne		L1
+00005c 0000                             nop
+00005d 9508                             RET
+                                 
+                                 miseg:
+00005e e051                             ldi		r21, 1
+00005f e061                             ldi		r22, 1
+000060 e071                             ldi		r23, 1
+                                 L2:
+000061 957a                             dec		r23
+000062 f799                             brne		L1
+000063 956a                             dec		r22
+000064 f789                             brne		L1
+000065 955a                             dec		r21
+000066 f779                             brne		L1
+000067 0000                             nop
+000068 9508                             RET
                                  
                                  Cargar_valores:
                                  		; Letra H
-000068 e949                      		LDI     r20, 0b10011001
-000069 9349                      		ST      Y+, r20
-00006a e949                      		LDI     r20, 0b10011001
-00006b 9349                      		ST      Y+, r20
-00006c e949                      		LDI     r20, 0b10011001
-00006d 9349                      		ST      Y+, r20
-00006e e841                      		LDI     r20, 0b10000001
-00006f 9349                      		ST      Y+, r20
-000070 e949                      		LDI     r20, 0b10011001
-000071 9349                      		ST      Y+, r20
-000072 e949                      		LDI     r20, 0b10011001
-000073 9349                      		ST      Y+, r20
-000074 e949                      		LDI     r20, 0b10011001
-000075 9349                      		ST      Y+, r20
-000076 e949                      		LDI     r20, 0b10011001
-000077 9349                      		ST      Y+, r20
+000069 e949                      		LDI     r20, 0b10011001
+00006a 9349                      		ST      Y+, r20
+00006b e949                      		LDI     r20, 0b10011001
+00006c 9349                      		ST      Y+, r20
+00006d e949                      		LDI     r20, 0b10011001
+00006e 9349                      		ST      Y+, r20
+00006f e841                      		LDI     r20, 0b10000001
+000070 9349                      		ST      Y+, r20
+000071 e949                      		LDI     r20, 0b10011001
+000072 9349                      		ST      Y+, r20
+000073 e949                      		LDI     r20, 0b10011001
+000074 9349                      		ST      Y+, r20
+000075 e949                      		LDI     r20, 0b10011001
+000076 9349                      		ST      Y+, r20
+000077 e949                      		LDI     r20, 0b10011001
+000078 9349                      		ST      Y+, r20
                                  
                                  		; Letra O
-000078 ec43                      		LDI     r20, 0b11000011
-000079 9349                      		ST      Y+, r20
-00007a eb4d                      		LDI     r20, 0b10111101
-00007b 9349                      		ST      Y+, r20
-00007c eb4d                      		LDI     r20, 0b10111101
-00007d 9349                      		ST      Y+, r20
-00007e eb4d                      		LDI     r20, 0b10111101
-00007f 9349                      		ST      Y+, r20
-000080 eb4d                      		LDI     r20, 0b10111101
-000081 9349                      		ST      Y+, r20
-000082 eb4d                      		LDI     r20, 0b10111101
-000083 9349                      		ST      Y+, r20
-000084 ec43                      		LDI     r20, 0b11000011
-000085 9349                      		ST      Y+, r20
-000086 ef4f                      		LDI     r20, 0b11111111
-000087 9349                      		ST      Y+, r20
+000079 ec43                      		LDI     r20, 0b11000011
+00007a 9349                      		ST      Y+, r20
+00007b eb4d                      		LDI     r20, 0b10111101
+00007c 9349                      		ST      Y+, r20
+00007d eb4d                      		LDI     r20, 0b10111101
+00007e 9349                      		ST      Y+, r20
+00007f e841                      		LDI     r20, 0b10000001
+000080 9349                      		ST      Y+, r20
+000081 eb4d                      		LDI     r20, 0b10111101
+000082 9349                      		ST      Y+, r20
+000083 eb4d                      		LDI     r20, 0b10111101
+000084 9349                      		ST      Y+, r20
+000085 ec43                      		LDI     r20, 0b11000011
+000086 9349                      		ST      Y+, r20
+000087 ef4f                      		LDI     r20, 0b11111111
+000088 9349                      		ST      Y+, r20
                                  
                                  
                                  		; Letra L
-000088 ec47                      		LDI     r20, 0b11000111
-000089 9349                      		ST      Y+, r20
-00008a ec47                      		LDI     r20, 0b11000111
-00008b 9349                      		ST      Y+, r20
-00008c ec47                      		LDI     r20, 0b11000111
-00008d 9349                      		ST      Y+, r20
-00008e ec47                      		LDI     r20, 0b11000111
-00008f 9349                      		ST      Y+, r20
-000090 ec47                      		LDI     r20, 0b11000111
-000091 9349                      		ST      Y+, r20
-000092 ec47                      		LDI     r20, 0b11000111
-000093 9349                      		ST      Y+, r20
-000094 ef4f                      		LDI     r20, 0b11111111
-000095 9349                      		ST      Y+, r20
-000096 ef4f                      		LDI     r20, 0b11111111
-000097 9349                      		ST      Y+, r20
+000089 ec47                      		LDI     r20, 0b11000111
+00008a 9349                      		ST      Y+, r20
+00008b ec47                      		LDI     r20, 0b11000111
+00008c 9349                      		ST      Y+, r20
+00008d ec47                      		LDI     r20, 0b11000111
+00008e 9349                      		ST      Y+, r20
+00008f ec47                      		LDI     r20, 0b11000111
+000090 9349                      		ST      Y+, r20
+000091 ec47                      		LDI     r20, 0b11000111
+000092 9349                      		ST      Y+, r20
+000093 ec47                      		LDI     r20, 0b11000111
+000094 9349                      		ST      Y+, r20
+000095 ec47                      		LDI     r20, 0b11000111
+000096 9349                      		ST      Y+, r20
+000097 ef4f                      		LDI     r20, 0b11111111
+000098 9349                      		ST      Y+, r20
                                  
                                  
                                  		; Letra A
-000098 e949                      		LDI     r20, 0b10011001
-000099 9349                      		ST      Y+, r20
-00009a eb46                      		LDI     r20, 0b10110110
-00009b 9349                      		ST      Y+, r20
-00009c eb46                      		LDI     r20, 0b10110110
-00009d 9349                      		ST      Y+, r20
-00009e eb46                      		LDI     r20, 0b10110110
-00009f 9349                      		ST      Y+, r20
-0000a0 ef4f                      		LDI     r20, 0b11111111
-0000a1 9349                      		ST      Y+, r20
-0000a2 eb46                      		LDI     r20, 0b10110110
-0000a3 9349                      		ST      Y+, r20
-0000a4 eb46                      		LDI     r20, 0b10110110
-0000a5 9349                      		ST      Y+, r20
-0000a6 ef4f                      		LDI     r20, 0b11111111
-0000a7 9349                      		ST      Y+, r20
+000099 e841                      		LDI     r20, 0b10000001
+00009a 9349                      		ST      Y+, r20
+00009b eb4d                      		LDI     r20, 0b10111101
+00009c 9349                      		ST      Y+, r20
+00009d eb4d                      		LDI     r20, 0b10111101
+00009e 9349                      		ST      Y+, r20
+00009f eb4d                      		LDI     r20, 0b10111101
+0000a0 9349                      		ST      Y+, r20
+0000a1 e841                      		LDI     r20, 0b10000001
+0000a2 9349                      		ST      Y+, r20
+0000a3 eb4d                      		LDI     r20, 0b10111101
+0000a4 9349                      		ST      Y+, r20
+0000a5 eb4d                      		LDI     r20, 0b10111101
+0000a6 9349                      		ST      Y+, r20
+0000a7 eb4d                      		LDI     r20, 0b10111101
+0000a8 9349                      		ST      Y+, r20
                                  
                                  
                                  		; Letra U
-0000a8 eb4b                      		LDI     r20, 0b10111011
-0000a9 9349                      		ST      Y+, r20
-0000aa eb4b                      		LDI     r20, 0b10111011
-0000ab 9349                      		ST      Y+, r20
-0000ac eb4b                      		LDI     r20, 0b10111011
-0000ad 9349                      		ST      Y+, r20
-0000ae eb4b                      		LDI     r20, 0b10111011
-0000af 9349                      		ST      Y+, r20
-0000b0 eb4b                      		LDI     r20, 0b10111011
-0000b1 9349                      		ST      Y+, r20
-0000b2 eb4b                      		LDI     r20, 0b10111011
-0000b3 9349                      		ST      Y+, r20
-0000b4 ec43                      		LDI     r20, 0b11000011
-0000b5 9349                      		ST      Y+, r20
-0000b6 ef4f                      		LDI     r20, 0b11111111
-0000b7 9349                      		ST      Y+, r20
+0000a9 eb4b                      		LDI     r20, 0b10111011
+0000aa 9349                      		ST      Y+, r20
+0000ab eb4b                      		LDI     r20, 0b10111011
+0000ac 9349                      		ST      Y+, r20
+0000ad eb4b                      		LDI     r20, 0b10111011
+0000ae 9349                      		ST      Y+, r20
+0000af eb4b                      		LDI     r20, 0b10111011
+0000b0 9349                      		ST      Y+, r20
+0000b1 eb4b                      		LDI     r20, 0b10111011
+0000b2 9349                      		ST      Y+, r20
+0000b3 eb4b                      		LDI     r20, 0b10111011
+0000b4 9349                      		ST      Y+, r20
+0000b5 ec43                      		LDI     r20, 0b11000011
+0000b6 9349                      		ST      Y+, r20
+0000b7 ef4f                      		LDI     r20, 0b11111111
+0000b8 9349                      		ST      Y+, r20
                                  
                                  		; Letra R
-0000b8 e843                      		LDI     r20, 0b10000011
-0000b9 9349                      		ST      Y+, r20
-0000ba eb4b                      		LDI     r20, 0b10111011
-0000bb 9349                      		ST      Y+, r20
-0000bc eb4b                      		LDI     r20, 0b10111011
-0000bd 9349                      		ST      Y+, r20
-0000be e847                      		LDI     r20, 0b10000111
-0000bf 9349                      		ST      Y+, r20
-0000c0 e840                      		LDI     r20, 0b10000000
-0000c1 9349                      		ST      Y+, r20
-0000c2 e840                      		LDI     r20, 0b10000000
-0000c3 9349                      		ST      Y+, r20
-0000c4 ef4f                      		LDI     r20, 0b11111111
-0000c5 9349                      		ST      Y+, r20
-0000c6 ef4f                      		LDI     r20, 0b11111111
-0000c7 9349                      		ST      Y+, r20
+0000b9 ec43                      		LDI     r20, 0b11000011
+0000ba 9349                      		ST      Y+, r20
+0000bb eb4b                      		LDI     r20, 0b10111011
+0000bc 9349                      		ST      Y+, r20
+0000bd eb4b                      		LDI     r20, 0b10111011
+0000be 9349                      		ST      Y+, r20
+0000bf e847                      		LDI     r20, 0b10000111
+0000c0 9349                      		ST      Y+, r20
+0000c1 e94f                      		LDI     r20, 0b10011111
+0000c2 9349                      		ST      Y+, r20
+0000c3 ea4f                      		LDI     r20, 0b10101111
+0000c4 9349                      		ST      Y+, r20
+0000c5 eb47                      		LDI     r20, 0b10110111
+0000c6 9349                      		ST      Y+, r20
+0000c7 eb4b                      		LDI     r20, 0b10111011
+0000c8 9349                      		ST      Y+, r20
                                  
                                  		; Letra U
-0000c8 eb4b                      		LDI     r20, 0b10111011
-0000c9 9349                      		ST      Y+, r20
-0000ca eb4b                      		LDI     r20, 0b10111011
-0000cb 9349                      		ST      Y+, r20
-0000cc eb4b                      		LDI     r20, 0b10111011
-0000cd 9349                      		ST      Y+, r20
-0000ce eb4b                      		LDI     r20, 0b10111011
-0000cf 9349                      		ST      Y+, r20
-0000d0 eb4b                      		LDI     r20, 0b10111011
-0000d1 9349                      		ST      Y+, r20
-0000d2 eb4b                      		LDI     r20, 0b10111011
-0000d3 9349                      		ST      Y+, r20
-0000d4 ec43                      		LDI     r20, 0b11000011
-0000d5 9349                      		ST      Y+, r20
-0000d6 ef4f                      		LDI     r20, 0b11111111
-0000d7 9349                      		ST      Y+, r20
+0000c9 eb4b                      		LDI     r20, 0b10111011
+0000ca 9349                      		ST      Y+, r20
+0000cb eb4b                      		LDI     r20, 0b10111011
+0000cc 9349                      		ST      Y+, r20
+0000cd eb4b                      		LDI     r20, 0b10111011
+0000ce 9349                      		ST      Y+, r20
+0000cf eb4b                      		LDI     r20, 0b10111011
+0000d0 9349                      		ST      Y+, r20
+0000d1 eb4b                      		LDI     r20, 0b10111011
+0000d2 9349                      		ST      Y+, r20
+0000d3 eb4b                      		LDI     r20, 0b10111011
+0000d4 9349                      		ST      Y+, r20
+0000d5 ec43                      		LDI     r20, 0b11000011
+0000d6 9349                      		ST      Y+, r20
+0000d7 ef4f                      		LDI     r20, 0b11111111
+0000d8 9349                      		ST      Y+, r20
                                  
                                  		; Letra G
-0000d8 ec43                      		LDI     r20, 0b11000011
-0000d9 9349                      		ST      Y+, r20
-0000da eb4d                      		LDI     r20, 0b10111101
-0000db 9349                      		ST      Y+, r20
-0000dc eb4f                      		LDI     r20, 0b10111111
-0000dd 9349                      		ST      Y+, r20
-0000de eb41                      		LDI     r20, 0b10110001
-0000df 9349                      		ST      Y+, r20
-0000e0 eb4d                      		LDI     r20, 0b10111101
-0000e1 9349                      		ST      Y+, r20
-0000e2 eb4d                      		LDI     r20, 0b10111101
-0000e3 9349                      		ST      Y+, r20
-0000e4 ec43                      		LDI     r20, 0b11000011
-0000e5 9349                      		ST      Y+, r20
-0000e6 ef4f                      		LDI     r20, 0b11111111
-0000e7 9349                      		ST      Y+, r20
+0000d9 ec43                      		LDI     r20, 0b11000011
+0000da 9349                      		ST      Y+, r20
+0000db eb4d                      		LDI     r20, 0b10111101
+0000dc 9349                      		ST      Y+, r20
+0000dd eb4f                      		LDI     r20, 0b10111111
+0000de 9349                      		ST      Y+, r20
+0000df eb41                      		LDI     r20, 0b10110001
+0000e0 9349                      		ST      Y+, r20
+0000e1 eb4d                      		LDI     r20, 0b10111101
+0000e2 9349                      		ST      Y+, r20
+0000e3 eb4d                      		LDI     r20, 0b10111101
+0000e4 9349                      		ST      Y+, r20
+0000e5 ec43                      		LDI     r20, 0b11000011
+0000e6 9349                      		ST      Y+, r20
+0000e7 ef4f                      		LDI     r20, 0b11111111
+0000e8 9349                      		ST      Y+, r20
                                  
                                  		; Letra U
-0000e8 eb4b                      		LDI     r20, 0b10111011
-0000e9 9349                      		ST      Y+, r20
-0000ea eb4b                      		LDI     r20, 0b10111011
-0000eb 9349                      		ST      Y+, r20
-0000ec eb4b                      		LDI     r20, 0b10111011
-0000ed 9349                      		ST      Y+, r20
-0000ee eb4b                      		LDI     r20, 0b10111011
-0000ef 9349                      		ST      Y+, r20
-0000f0 eb4b                      		LDI     r20, 0b10111011
-0000f1 9349                      		ST      Y+, r20
-0000f2 eb4b                      		LDI     r20, 0b10111011
-0000f3 9349                      		ST      Y+, r20
-0000f4 ec43                      		LDI     r20, 0b11000011
-0000f5 9349                      		ST      Y+, r20
-0000f6 ef4f                      		LDI     r20, 0b11111111
-0000f7 9349                      		ST      Y+, r20
+0000e9 eb4b                      		LDI     r20, 0b10111011
+0000ea 9349                      		ST      Y+, r20
+0000eb eb4b                      		LDI     r20, 0b10111011
+0000ec 9349                      		ST      Y+, r20
+0000ed eb4b                      		LDI     r20, 0b10111011
+0000ee 9349                      		ST      Y+, r20
+0000ef eb4b                      		LDI     r20, 0b10111011
+0000f0 9349                      		ST      Y+, r20
+0000f1 eb4b                      		LDI     r20, 0b10111011
+0000f2 9349                      		ST      Y+, r20
+0000f3 eb4b                      		LDI     r20, 0b10111011
+0000f4 9349                      		ST      Y+, r20
+0000f5 ec43                      		LDI     r20, 0b11000011
+0000f6 9349                      		ST      Y+, r20
+0000f7 ef4f                      		LDI     r20, 0b11111111
+0000f8 9349                      		ST      Y+, r20
                                  
                                  		; Letra A
-0000f8 e949                      		LDI     r20, 0b10011001
-0000f9 9349                      		ST      Y+, r20
-0000fa eb46                      		LDI     r20, 0b10110110
-0000fb 9349                      		ST      Y+, r20
-0000fc eb46                      		LDI     r20, 0b10110110
-0000fd 9349                      		ST      Y+, r20
-0000fe eb46                      		LDI     r20, 0b10110110
-0000ff 9349                      		ST      Y+, r20
-000100 ef4f                      		LDI     r20, 0b11111111
-000101 9349                      		ST      Y+, r20
-000102 eb46                      		LDI     r20, 0b10110110
-000103 9349                      		ST      Y+, r20
-000104 eb46                      		LDI     r20, 0b10110110
-000105 9349                      		ST      Y+, r20
-000106 ef4f                      		LDI     r20, 0b11111111
-000107 9349                      		ST      Y+, r20
+0000f9 e949                      		LDI     r20, 0b10011001
+0000fa 9349                      		ST      Y+, r20
+0000fb eb46                      		LDI     r20, 0b10110110
+0000fc 9349                      		ST      Y+, r20
+0000fd eb46                      		LDI     r20, 0b10110110
+0000fe 9349                      		ST      Y+, r20
+0000ff eb46                      		LDI     r20, 0b10110110
+000100 9349                      		ST      Y+, r20
+000101 ef4f                      		LDI     r20, 0b11111111
+000102 9349                      		ST      Y+, r20
+000103 eb46                      		LDI     r20, 0b10110110
+000104 9349                      		ST      Y+, r20
+000105 eb46                      		LDI     r20, 0b10110110
+000106 9349                      		ST      Y+, r20
+000107 ef4f                      		LDI     r20, 0b11111111
+000108 9349                      		ST      Y+, r20
                                  
                                  		; Letra Y
-000108 eb4b                      		LDI     r20, 0b10111011
-000109 9349                      		ST      Y+, r20
-00010a eb4b                      		LDI     r20, 0b10111011
-00010b 9349                      		ST      Y+, r20
-00010c eb4b                      		LDI     r20, 0b10111011
-00010d 9349                      		ST      Y+, r20
-00010e ec43                      		LDI     r20, 0b11000011
-00010f 9349                      		ST      Y+, r20
-000110 ec43                      		LDI     r20, 0b11000011
-000111 9349                      		ST      Y+, r20
-000112 ec43                      		LDI     r20, 0b11000011
-000113 9349                      		ST      Y+, r20
-000114 ef4f                      		LDI     r20, 0b11111111
-000115 9349                      		ST      Y+, r20
+000109 eb4b                      		LDI     r20, 0b10111011
+00010a 9349                      		ST      Y+, r20
+00010b eb4b                      		LDI     r20, 0b10111011
+00010c 9349                      		ST      Y+, r20
+00010d eb4b                      		LDI     r20, 0b10111011
+00010e 9349                      		ST      Y+, r20
+00010f ec43                      		LDI     r20, 0b11000011
+000110 9349                      		ST      Y+, r20
+000111 ec43                      		LDI     r20, 0b11000011
+000112 9349                      		ST      Y+, r20
+000113 ec43                      		LDI     r20, 0b11000011
+000114 9349                      		ST      Y+, r20
+000115 ef4f                      		LDI     r20, 0b11111111
+000116 9349                      		ST      Y+, r20
                                  
                                  
                                  		; Filas
-000116 ef48                      		LDI		r20, 0xF8
-000117 9341                      		ST		Z+, r20
-000118 ef49                      		LDI		r20, 0xF9
-000119 9341                      		ST		Z+, r20
-00011a ef4a                      		LDI		r20, 0xFA
-00011b 9341                      		ST		Z+, r20
-00011c ef4b                      		LDI		r20, 0xFB
-00011d 9341                      		ST		Z+, r20
-00011e ef4c                      		LDI		r20, 0xFC
-00011f 9341                      		ST		Z+, r20
-000120 ef4d                      		LDI		r20, 0xFD
-000121 9341                      		ST		Z+, r20
-000122 ef4e                      		LDI		r20, 0xFE
-000123 9341                      		ST		Z+, r20
-000124 ef4f                      		LDI		r20, 0xFF
-000125 9341                      		ST		Z+, r20
-000126 9508                      		RET
+000117 ef48                      		LDI		r20, 0xF8
+000118 9341                      		ST		Z+, r20
+000119 ef49                      		LDI		r20, 0xF9
+00011a 9341                      		ST		Z+, r20
+00011b ef4a                      		LDI		r20, 0xFA
+00011c 9341                      		ST		Z+, r20
+00011d ef4b                      		LDI		r20, 0xFB
+00011e 9341                      		ST		Z+, r20
+00011f ef4c                      		LDI		r20, 0xFC
+000120 9341                      		ST		Z+, r20
+000121 ef4d                      		LDI		r20, 0xFD
+000122 9341                      		ST		Z+, r20
+000123 ef4e                      		LDI		r20, 0xFE
+000124 9341                      		ST		Z+, r20
+000125 ef4f                      		LDI		r20, 0xFF
+000126 9341                      		ST		Z+, r20
+000127 9508                      		RET
                                  
 
 
@@ -1409,7 +1414,7 @@ counted separately from r26..r31 here.
 x  :   0 y  :  95 z  :  16 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
 r13:   0 r14:   0 r15:   0 r16:  15 r17:  16 r18:  29 r19:   0 r20: 190 
-r21:   2 r22:   2 r23:   2 r24:   0 r25:   0 r26:   0 r27:   0 r28:   5 
+r21:   4 r22:   4 r23:   4 r24:   0 r25:   0 r26:   0 r27:   0 r28:   5 
 r29:   1 r30:   3 r31:   1 
 Registers used: 13 out of 35 (37.1%)
 
@@ -1418,16 +1423,16 @@ Registers used: 13 out of 35 (37.1%)
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   3 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   9 cbi   :   0 cbr   :   0 
+brne  :   6 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :   4 cbi   :   0 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   2 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :   0 cpse  :   0 dec   :   3 eor   :   0 fmul  :   0 fmuls :   0 
+cpi   :   0 cpse  :   0 dec   :   6 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   0 
-ld    :  16 ldd   :   0 ldi   : 111 lds   :   0 lpm   :   0 lsl   :   0 
+ld    :  16 ldd   :   0 ldi   : 114 lds   :   0 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   6 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   1 or    :   0 ori   :   0 out   :  21 pop   :   0 
-push  :   0 rcall :   0 ret   :   2 reti  :   2 rjmp  :   4 rol   :   0 
+neg   :   0 nop   :   2 or    :   0 ori   :   0 out   :  21 pop   :   0 
+push  :   0 rcall :   0 ret   :   3 reti  :   2 rjmp  :   4 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   2 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
@@ -1438,7 +1443,7 @@ Instructions used: 18 out of 113 (15.9%)
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00024e    586      0    586   32768   1.8%
+[.cseg] 0x000000 0x000250    588      0    588   32768   1.8%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm Tue Sep 10 17:23:27 2024
+AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm Tue Sep 10 18:21:27 2024
 
 
 EQU  SIGNATURE_000 0000001e
@@ -696,9 +696,11 @@ EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 CSEG Inicio       00000005
-CSEG RSI_0        00000057
-CSEG RSI_1        0000005b
-CSEG Cargar_valores 00000068
+CSEG RSI_0        00000049
+CSEG RSI_1        0000004f
+CSEG Cargar_valores 00000069
 CSEG Wait         00000024
-CSEG Mseg         0000005d
-CSEG L1           00000060
+CSEG miseg        0000005e
+CSEG Mseg         00000053
+CSEG L1           00000056
+CSEG L2           00000061

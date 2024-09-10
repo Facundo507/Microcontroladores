@@ -23,11 +23,13 @@
  </OUTPUT_FILES>
  <LABELS>
   <Inicio><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>26</LINE></Inicio>
-  <RSI_0><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>117</LINE></RSI_0>
-  <RSI_1><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>123</LINE></RSI_1>
-  <Cargar_valores><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>141</LINE></Cargar_valores>
-  <Wait><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>71</LINE></Wait>
-  <Mseg><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>127</LINE></Mseg>
-  <L1><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>131</LINE></L1>
+  <RSI_0><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>106</LINE></RSI_0>
+  <RSI_1><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>113</LINE></RSI_1>
+  <Cargar_valores><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>146</LINE></Cargar_valores>
+  <Wait><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>68</LINE></Wait>
+  <miseg><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>132</LINE></miseg>
+  <Mseg><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>118</LINE></Mseg>
+  <L1><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>122</LINE></L1>
+  <L2><FILE>C:\Users\Facundo\Desktop\LABS Micro\Microcontroladores\Matriz_Leds\MICROCHIP\MATRIZ LED - MICROCHIP\MATRIZ LED - MICROCHIP\main.asm</FILE><LINE>136</LINE></L2>
  </LABELS>
 </ASSEMBLER_INFO>

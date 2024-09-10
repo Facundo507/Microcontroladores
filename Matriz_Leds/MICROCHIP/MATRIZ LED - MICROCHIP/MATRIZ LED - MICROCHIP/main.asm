@@ -65,70 +65,75 @@ Inicio:
 	   LDI      r18, 0x64
        MOV      ZL, r18
 	   
-
-	
-
-Wait:	
+Wait:
 	   LD		r18, Z
 	   LD		r17, Y
 	   OUT		PORTB, r17
 	   OUT		PORTC, r18
-	   CALL		Mseg
 	   LD		r18, Z+
 	   LD		r17, Y+
 	   OUT		PORTB, r17
 	   OUT		PORTC, r18
-	   CALL		Mseg
 	   LD		r18, Z+
 	   LD		r17, Y+
 	   OUT		PORTB, r17
 	   OUT		PORTC, r18
-	   CALL		Mseg
 	   LD		r18, Z+
 	   LD		r17, Y+
 	   OUT		PORTB, r17
 	   OUT		PORTC, r18
-	   CALL		Mseg
 	   LD		r18, Z+
 	   LD		r17, Y+
 	   OUT		PORTB, r17
 	   OUT		PORTC, r18
-	   CALL		Mseg
 	   LD		r18, Z+
 	   LD		r17, Y+
 	   OUT		PORTB, r17
 	   OUT		PORTC, r18
-	   CALL		Mseg
 	   LD		r18, Z+
 	   LD		r17, Y+
 	   OUT		PORTB, r17
 	   OUT		PORTC, r18
-	   CALL		Mseg
 	   LD		r18, Z+
 	   LD		r17, Y+
 	   OUT		PORTB, r17
 	   OUT		PORTC, r18
-	   CALL		Mseg
 	   SUBI		YL, 7
 	   SUBI		ZL, 7
-
+	   CALL		miseg
        RJMP		Wait
 
 RSI_0:
 	   LDI		r16, 7
 	   ADD		YL, r16
 	   CLR		r16
+	   CALL		Mseg
        RETI
 
 RSI_1:
        SUBI		YL, 7
+	   CALL		Mseg
        RETI
 
 Mseg:
-       ldi		r21, 4
-       ldi		r22, 81
+       ldi		r21, 1
+       ldi		r22, 255
        ldi		r23, 255
 L1:
+       dec		r23
+       brne		L1
+       dec		r22
+       brne		L1
+       dec		r21
+       brne		L1
+       nop
+       RET
+
+miseg:
+       ldi		r21, 1
+       ldi		r22, 1
+       ldi		r23, 1
+L2:
        dec		r23
        brne		L1
        dec		r22
@@ -164,7 +169,7 @@ Cargar_valores:
 		ST      Y+, r20
 		LDI     r20, 0b10111101
 		ST      Y+, r20
-		LDI     r20, 0b10111101
+		LDI     r20, 0b10000001
 		ST      Y+, r20
 		LDI     r20, 0b10111101
 		ST      Y+, r20
@@ -189,28 +194,28 @@ Cargar_valores:
 		ST      Y+, r20
 		LDI     r20, 0b11000111
 		ST      Y+, r20
-		LDI     r20, 0b11111111
+		LDI     r20, 0b11000111
 		ST      Y+, r20
 		LDI     r20, 0b11111111
 		ST      Y+, r20
 
 
 		; Letra A
-		LDI     r20, 0b10011001
+		LDI     r20, 0b10000001
 		ST      Y+, r20
-		LDI     r20, 0b10110110
+		LDI     r20, 0b10111101
 		ST      Y+, r20
-		LDI     r20, 0b10110110
+		LDI     r20, 0b10111101
 		ST      Y+, r20
-		LDI     r20, 0b10110110
+		LDI     r20, 0b10111101
 		ST      Y+, r20
-		LDI     r20, 0b11111111
+		LDI     r20, 0b10000001
 		ST      Y+, r20
-		LDI     r20, 0b10110110
+		LDI     r20, 0b10111101
 		ST      Y+, r20
-		LDI     r20, 0b10110110
+		LDI     r20, 0b10111101
 		ST      Y+, r20
-		LDI     r20, 0b11111111
+		LDI     r20, 0b10111101
 		ST      Y+, r20
 
 
@@ -233,7 +238,7 @@ Cargar_valores:
 		ST      Y+, r20
 
 		; Letra R
-		LDI     r20, 0b10000011
+		LDI     r20, 0b11000011
 		ST      Y+, r20
 		LDI     r20, 0b10111011
 		ST      Y+, r20
@@ -241,13 +246,13 @@ Cargar_valores:
 		ST      Y+, r20
 		LDI     r20, 0b10000111
 		ST      Y+, r20
-		LDI     r20, 0b10000000
+		LDI     r20, 0b10011111
 		ST      Y+, r20
-		LDI     r20, 0b10000000
+		LDI     r20, 0b10101111
 		ST      Y+, r20
-		LDI     r20, 0b11111111
+		LDI     r20, 0b10110111
 		ST      Y+, r20
-		LDI     r20, 0b11111111
+		LDI     r20, 0b10111011
 		ST      Y+, r20
 
 		; Letra U
