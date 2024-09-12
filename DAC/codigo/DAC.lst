@@ -1,0 +1,100 @@
+gavrasm Gerd's AVR assembler version 5.4 (C)2022 by DG4FAC
+----------------------------------------------------------
+
+Path:        E:\Administrador\Documents\
+Source file: DAC.asm
+Hex file:    DAC.hex
+Eeprom file: DAC.eep
+Compiled:    11.09.2024, 22:27:57
+Pass:        1
+
+     1: 
+     2: .include "m328pdef.inc"
+     3: 
+     4: .cseg
+     5: 
+     6: .org 0x100  ; Dirección de memoria para la LUT
+     7: lut_data:
+ ===> Error 090: Unexpected parameter or trash on end of line!
+      Line:     .db 0x49, 0x4A, 0x4B, 0x4B, 0x4A, 0x49, 0x49, 0x49, 0x49, 0x48, 0x47, 0x45, 0x44, 0x43, 0x43, 0x43 ,0x44, 0x44, 0x43, 0x41, 0x3E, 0x3D, 0x3B, 0x39, 0x38, 0x37, 0x37, 0x36, 0x36, 0x36, 0x37, 0x37, 0x37, 0x37, 0x37, 0x37, 0x37, 0x36, 0x35, 0x33, 0x32, 0x31, 0x31, 0x34, 0x3D, 0x4D, 0x65, 0x84, 0xA9, 0xCF, 0xEE, 0xFF, 0xFE, 0xEA, 0xC6, 0x9A, 0x6D, 0x44, 0x25, 0x11, 0x05, 0x00, 0x01, 0x06, 0x0D, 0x14, 0x1C, 0x24, 0x2D, 0x34, 0x37, 0x39, 0x3D, 0x40, 0x41, 0x42, 0x43, 0x44, 0x44, 0x45, 0x46, 0x47, 0x47, 0x47, 0x47, 0x47, 0x47, 0x47, 0x48, 0x48, 0x48, 0x49, 0x49, 0x4A, 0x4B, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x56, 0x58, 0x5B, 0x5D, 0x60, 0x64, 0x66, 0x68, 0x6B, 0x6D, 0x70, 0x73, 0x76, 0x79, 0x7B, 0x7D, 0x7E, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7E, 0x7D, 0x7C, 0x79, 0x77, 0x74, 0x71, 0x6D, 0x6A, 0x62, 0x5F, 0x5C, 0x59, 0x56, 0x54, 0x51, 0x4F, 0x4D, 0x4C, 0x4A, 0x49, 0x48, 0x47, 0x43, 0x43, 0x43, 0x44, 0x44, 0x44, 0x45, 0x45, 0x45, 0x45, 0x45, 0x45, 0x44, 0x44, 0x43, 0x43, 0x43, 0x43, 0x42, 0x42, 0x42, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x40, 0x40, 0x3F, 0x3F, 0x40, 0x40, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x41, 0x41, 0x41, 0x42, 0x43, 0x44, 0x45, 0x47, 0x48, 0x49
+      File: E:\Administrador\Documents\DAC.asm, Line: 8
+     9: 
+ ===> Error 067: Unknown directive!
+      Line: .end = lut_data + 128
+      File: E:\Administrador\Documents\DAC.asm, Line: 10
+    11: 
+    12: .org 0x0000
+ ===> Error 046: Origin adress (0) points backwards in code segment!
+      Line: .org 0x0000
+      File: E:\Administrador\Documents\DAC.asm, Line: 12
+    13: 000100   C000  RJMP inicio
+    14: inicio:
+    15: 000101   E008  LDI R16, HIGH(RAMEND)    ; Activamos el SP
+    16: 000102   BF0E  OUT SPH, R16
+    17: 000103   EF0F  LDI R16, LOW(RAMEND)
+    18: 000104   BF0D  OUT SPL, R16
+    19: 
+    20: 000105   EF0F  ldi r16, 0xFF        ; Dejamos el puerto D como salida
+    21: 000106   B90A  OUT DDRD, R16
+    22: 
+    23: 000107   E021  LDI R18, 0X01
+    24: 000108   2FD2  MOV YH, R18
+    25: 000109   E020  LDI R18, 0X00
+    26: 00010A   2FC2  MOV YL, R18
+    27: 
+    28: 00010B   E0D1  LDI YH, HIGH(lut_data)
+    29: 00010C   E0C0  LDI YL, LOW(lut_data)
+    30: 
+    31: BUCLE:
+    32: 00010D   8118  LD R17, Y
+    33: 00010E   B91B  OUT PORTD, R17
+    34: 00010F   940E  CALL SEGUNDO
+        000110   0000
+    35: 000111   9119  LD R17, Y+
+    36: 
+    37:       ; Comparamos si hemos llegado al final de la LUT
+    38: 000112   E000  LDI R16, HIGH(end)
+ ===> Error 070: Unknown instruction or macro!
+      Line:       CPYH R16
+      File: E:\Administrador\Documents\DAC.asm, Line: 39
+    40: 000113   F401  BRNE CONTINUAR
+    41: 
+    42: 000114   E000  LDI R16, LOW(end)
+ ===> Error 070: Unknown instruction or macro!
+      Line:       CPYL R16
+      File: E:\Administrador\Documents\DAC.asm, Line: 43
+    44: 000115   F401  BRNE CONTINUAR
+    45: 
+    46:       ; Si hemos llegado al final de la LUT, reiniciamos Y
+    47: 000116   E0D1  LDI YH, HIGH(lut_data)
+    48: 000117   E0C0  LDI YL, LOW(lut_data)
+    49: 
+    50: CONTINUAR:
+    51: 000118   C000  RJMP BUCLE
+    52: 
+    53: SEGUNDO:
+    54: 000119   EF5F  LDI R21, 255
+    55: 00011A   EF6F  LDI R22, 255
+    56: RETARDO:
+    57: 00011B   956A  DEC R22
+    58: 00011C   F401  BRNE RETARDO
+    59: 00011D   955A  DEC R21
+    60: 00011E   F401  BRNE RETARDO
+    61: 00011F   9508  RET
+    62: 
+    63: 
+
+List of symbols:
+Type nDef nUsed             Decimalval           Hexval Name
+  T     1     1                    171               AB ATMEGA328P
+  L     1     4                    256             0100 LUT_DATA
+  L     1     0                    257             0101 INICIO
+  L     1     0                    269             010D BUCLE
+  L     1     0                    280             0118 CONTINUAR
+  L     1     0                    281             0119 SEGUNDO
+  L     1     0                    283             011B RETARDO
+  C     1     0                     24               18 NOW_Y
+  C     1     0                      9               09 NOW_M
+  C     1     0                     11               0B NOW_D
+  C     1     0                  45546             B1EA NOW_I
+Compilation aborted, 5 errors!
