@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm Fri Sep 13 18:32:08 2024
+AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm Fri Sep 13 20:02:52 2024
 
 [builtin](2): Including file 'D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm(8): Including file 'D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc'
@@ -1037,474 +1037,469 @@ C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm(8): Including file 'D:/M
                                  #endif  /* _M328PDEF_INC_ */
                                  
                                  ; ***** END OF FILE ******************************************************
-                                 
                                  .cseg
                                  
-                                 .org 0x0100  ; Dirección de memoria para la LUT
-000100 c000                          RJMP inicio
+000000 c000                          RJMP inicio
                                  	
                                  
                                  inicio:
-000101 e008                          LDI R16, HIGH(RAMEND)    ; Activamos el SP
-000102 bf0e                          OUT SPH, R16
-000103 ef0f                          LDI R16, LOW(RAMEND)
-000104 bf0d                          OUT SPL, R16
+000001 e008                          LDI R16, HIGH(RAMEND)    ; Activamos el SP
+000002 bf0e                          OUT SPH, R16
+000003 ef0f                          LDI R16, LOW(RAMEND)
+000004 bf0d                          OUT SPL, R16
                                  
-000105 ef0f                          LDI R16, 0xFF        ; Dejamos el puerto D como salida
-000106 b90a                          OUT DDRD, R16
+000005 ef0f                          LDI R16, 0xFF        ; Dejamos el puerto D como salida
+000006 b90a                          OUT DDRD, R16
                                  
-000107 e021                          LDI R18, 0X01
-000108 2fd2                          MOV YH, R18
-000109 e020                          LDI R18, 0X00
-00010a 2fc2                          MOV YL, R18
-00010b c012                      	RJMP guardar_codigos
+000007 e021                          LDI R18, 0X01
+000008 2fd2                          MOV YH, R18
+000009 e020                          LDI R18, 0X00
+00000a 2fc2                          MOV YL, R18
+00000b c011                      	RJMP guardar_codigos
                                  
                                  BUCLE:
-00010c 8118                          LD R17, Y
-00010d b91b                          OUT PORTD, R17
-00010e 940e 0117                     CALL SEGUNDO
-000110 9119                          LD R17, Y+
+00000c 8118                          LD R17, Y
+00000d b91b                          OUT PORTD, R17
+00000e 940e 0016                     CALL SEGUNDO
+000010 9119                          LD R17, Y+
                                  
                                  
-000111 ec0d                          LDI R16, 0xCD
-000112 17c0                          CP YL, R16         ; Compara la parte baja de Y con LOW(lut_data + 128)
-000113 f411                          BRNE CONTINUAR     ; Si no son iguales, continúa el bucle
+000011 ec0d                          LDI R16, 0xCD
+000012 17c0                          CP YL, R16         ; Compara la parte baja de Y con CD(Ultimo valor cargado)
+000013 f7c1                          BRNE BUCLE     ; Si no son iguales, continúa el bucle
                                  
                                      ; Si hemos llegado al final de la LUT, reiniciamos Y
-000114 e0d1                          LDI YH, 0x01
-000115 e0c0                          LDI YL, 0x00
-                                 
-                                 CONTINUAR:
-000116 cff5                          RJMP BUCLE
+000014 e0d1                          LDI YH, 0x01
+000015 e0c0                          LDI YL, 0x00
                                  
                                  SEGUNDO:
-000117 ef5f                          LDI R21, 255
-000118 ef6f                          LDI R22, 255
+000016 e850                          LDI R21, 128
+000017 e860                          LDI R22, 128
                                  RETARDO:
-000119 956a                          DEC R22
-00011a f7f1                          BRNE RETARDO
-00011b 955a                          DEC R21
-00011c f7e1                          BRNE RETARDO
-00011d 9508                      	RET
+000018 956a                          DEC R22
+000019 f7f1                          BRNE RETARDO
+00001a 955a                          DEC R21
+00001b f7e1                          BRNE RETARDO
+00001c 9508                      	RET
                                  
                                  guardar_codigos:
-00011e e0c0                      	ldi r28, 0x00     ; LOW (0x0100)
-00011f e0d1                      	ldi r29, 0x01     ; HIGH (0x0100)
+00001d e0c0                      	ldi r28, 0x00     ; LOW (0x0100)
+00001e e0d1                      	ldi r29, 0x01     ; HIGH (0x0100)
                                  
-000120 e449                      	ldi r20, 0x49     ; Cargamos 0x49
-000121 9349                      	ST Y+, r20
-000122 e44a                      	ldi r20, 0x4A     ; Cargamos 0x4A
-000123 9349                      	ST Y+, r20
-000124 e44b                      	ldi r20, 0x4B     ; Cargamos 0x4B
-000125 9349                      	ST Y+, r20
-000126 e44b                      	ldi r20, 0x4B     ; Cargamos 0x4B
-000127 9349                      	ST Y+, r20
-000128 e44a                      	ldi r20, 0x4A     ; Cargamos 0x4A
-000129 9349                      	ST Y+, r20
-00012a e449                      	ldi r20, 0x49     ; Cargamos 0x49
-00012b 9349                      	ST Y+, r20
-00012c e449                      	ldi r20, 0x49     ; Cargamos 0x49
-00012d 9349                      	ST Y+, r20
-00012e e449                      	ldi r20, 0x49     ; Cargamos 0x49
-00012f 9349                      	ST Y+, r20
-000130 e449                      	ldi r20, 0x49     ; Cargamos 0x49
-000131 9349                      	ST Y+, r20
-000132 e448                      	ldi r20, 0x48     ; Cargamos 0x48
-000133 9349                      	ST Y+, r20
-000134 e447                      	ldi r20, 0x47     ; Cargamos 0x47
-000135 9349                      	ST Y+, r20
-000136 e445                      	ldi r20, 0x45     ; Cargamos 0x45
-000137 9349                      	ST Y+, r20
-000138 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-000139 9349                      	ST Y+, r20
-00013a e443                      	ldi r20, 0x43     ; Cargamos 0x43
-00013b 9349                      	ST Y+, r20
-00013c e443                      	ldi r20, 0x43     ; Cargamos 0x43
-00013d 9349                      	ST Y+, r20
-00013e e443                      	ldi r20, 0x43     ; Cargamos 0x43
-00013f 9349                      	ST Y+, r20
-000140 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-000141 9349                      	ST Y+, r20
-000142 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-000143 9349                      	ST Y+, r20
-000144 e443                      	ldi r20, 0x43     ; Cargamos 0x43
-000145 9349                      	ST Y+, r20
-000146 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-000147 9349                      	ST Y+, r20
-000148 e34e                      	ldi r20, 0x3E     ; Cargamos 0x3E
-000149 9349                      	ST Y+, r20
-00014a e34d                      	ldi r20, 0x3D     ; Cargamos 0x3D
-00014b 9349                      	ST Y+, r20
-00014c e34b                      	ldi r20, 0x3B     ; Cargamos 0x3B
-00014d 9349                      	ST Y+, r20
-00014e e349                      	ldi r20, 0x39     ; Cargamos 0x39
-00014f 9349                      	ST Y+, r20
-000150 e348                      	ldi r20, 0x38     ; Cargamos 0x38
-000151 9349                      	ST Y+, r20
-000152 e347                      	ldi r20, 0x37     ; Cargamos 0x37
-000153 9349                      	ST Y+, r20
-000154 e347                      	ldi r20, 0x37     ; Cargamos 0x37
-000155 9349                      	ST Y+, r20
-000156 e346                      	ldi r20, 0x36     ; Cargamos 0x36
-000157 9349                      	ST Y+, r20
-000158 e346                      	ldi r20, 0x36     ; Cargamos 0x36
-000159 9349                      	ST Y+, r20
-00015a e346                      	ldi r20, 0x36     ; Cargamos 0x36
-00015b 9349                      	ST Y+, r20
-00015c e347                      	ldi r20, 0x37     ; Cargamos 0x37
-00015d 9349                      	ST Y+, r20
-00015e e347                      	ldi r20, 0x37     ; Cargamos 0x37
-00015f 9349                      	ST Y+, r20
-000160 e347                      	ldi r20, 0x37     ; Cargamos 0x37
-000161 9349                      	ST Y+, r20
-000162 e347                      	ldi r20, 0x37     ; Cargamos 0x37
-000163 9349                      	ST Y+, r20
-000164 e347                      	ldi r20, 0x37     ; Cargamos 0x37
-000165 9349                      	ST Y+, r20
-000166 e347                      	ldi r20, 0x37     ; Cargamos 0x37
-000167 9349                      	ST Y+, r20
-000168 e346                      	ldi r20, 0x36     ; Cargamos 0x36
-000169 9349                      	ST Y+, r20
-00016a e345                      	ldi r20, 0x35     ; Cargamos 0x35
-00016b 9349                      	ST Y+, r20
-00016c e343                      	ldi r20, 0x33     ; Cargamos 0x33
-00016d 9349                      	ST Y+, r20
-00016e e342                      	ldi r20, 0x32     ; Cargamos 0x32
-00016f 9349                      	ST Y+, r20
-000170 e341                      	ldi r20, 0x31     ; Cargamos 0x31
-000171 9349                      	ST Y+, r20
-000172 e341                      	ldi r20, 0x31     ; Cargamos 0x31
-000173 9349                      	ST Y+, r20
-000174 e344                      	ldi r20, 0x34     ; Cargamos 0x34
-000175 9349                      	ST Y+, r20
-000176 e34d                      	ldi r20, 0x3D     ; Cargamos 0x3D
-000177 9349                      	ST Y+, r20
-000178 e44d                      	ldi r20, 0x4D     ; Cargamos 0x4D
-000179 9349                      	ST Y+, r20
-00017a e645                      	ldi r20, 0x65     ; Cargamos 0x65
-00017b 9349                      	ST Y+, r20
-00017c e844                      	ldi r20, 0x84     ; Cargamos 0x84
-00017d 9349                      	ST Y+, r20
-00017e ea49                      	ldi r20, 0xA9     ; Cargamos 0xA9
-00017f 9349                      	ST Y+, r20
-000180 ec4f                      	ldi r20, 0xCF     ; Cargamos 0xCF
-000181 9349                      	ST Y+, r20
-000182 ee4e                      	ldi r20, 0xEE     ; Cargamos 0xEE
-000183 9349                      	ST Y+, r20
-000184 ef4f                      	ldi r20, 0xFF     ; Cargamos 0xFF
-000185 9349                      	ST Y+, r20
-000186 ef4e                      	ldi r20, 0xFE     ; Cargamos 0xFE
-000187 9349                      	ST Y+, r20
-000188 ee4a                      	ldi r20, 0xEA     ; Cargamos 0xEA
-000189 9349                      	ST Y+, r20
-00018a ec46                      	ldi r20, 0xC6     ; Cargamos 0xC6
-00018b 9349                      	ST Y+, r20
-00018c e94a                      	ldi r20, 0x9A     ; Cargamos 0x9A
-00018d 9349                      	ST Y+, r20
-00018e e64d                      	ldi r20, 0x6D     ; Cargamos 0x6D
-00018f 9349                      	ST Y+, r20
-000190 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-000191 9349                      	ST Y+, r20
-000192 e245                      	ldi r20, 0x25     ; Cargamos 0x25
-000193 9349                      	ST Y+, r20
-000194 e141                      	ldi r20, 0x11     ; Cargamos 0x11
-000195 9349                      	ST Y+, r20
-000196 e045                      	ldi r20, 0x05     ; Cargamos 0x05
-000197 9349                      	ST Y+, r20
-000198 e040                      	ldi r20, 0x00     ; Cargamos 0x00
-000199 9349                      	ST Y+, r20
-00019a e041                      	ldi r20, 0x01     ; Cargamos 0x01
-00019b 9349                      	ST Y+, r20
-00019c e046                      	ldi r20, 0x06     ; Cargamos 0x06
-00019d 9349                      	ST Y+, r20
-00019e e04d                      	ldi r20, 0x0D     ; Cargamos 0x0D
-00019f 9349                      	ST Y+, r20
-0001a0 e144                      	ldi r20, 0x14     ; Cargamos 0x14
-0001a1 9349                      	ST Y+, r20
-0001a2 e14c                      	ldi r20, 0x1C     ; Cargamos 0x1C
-0001a3 9349                      	ST Y+, r20
-0001a4 e244                      	ldi r20, 0x24     ; Cargamos 0x24
-0001a5 9349                      	ST Y+, r20
-0001a6 e24d                      	ldi r20, 0x2D     ; Cargamos 0x2D
-0001a7 9349                      	ST Y+, r20
-0001a8 e344                      	ldi r20, 0x34     ; Cargamos 0x34
-0001a9 9349                      	ST Y+, r20
-0001aa e347                      	ldi r20, 0x37     ; Cargamos 0x37
-0001ab 9349                      	ST Y+, r20
-0001ac e349                      	ldi r20, 0x39     ; Cargamos 0x39
-0001ad 9349                      	ST Y+, r20
-0001ae e34d                      	ldi r20, 0x3D     ; Cargamos 0x3D
-0001af 9349                      	ST Y+, r20
-0001b0 e440                      	ldi r20, 0x40     ; Cargamos 0x40
-0001b1 9349                      	ST Y+, r20
-0001b2 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-0001b3 9349                      	ST Y+, r20
-0001b4 e442                      	ldi r20, 0x42     ; Cargamos 0x42
-0001b5 9349                      	ST Y+, r20
-0001b6 e443                      	ldi r20, 0x43     ; Cargamos 0x43
-0001b7 9349                      	ST Y+, r20
-0001b8 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-0001b9 9349                      	ST Y+, r20
-0001ba e444                      	ldi r20, 0x44     ; Cargamos 0x44
-0001bb 9349                      	ST Y+, r20
-0001bc e445                      	ldi r20, 0x45     ; Cargamos 0x45
-0001bd 9349                      	ST Y+, r20
-0001be e446                      	ldi r20, 0x46     ; Cargamos 0x46
-0001bf 9349                      	ST Y+, r20
-0001c0 e447                      	ldi r20, 0x47     ; Cargamos 0x47
-0001c1 9349                      	ST Y+, r20
-0001c2 e447                      	ldi r20, 0x47     ; Cargamos 0x47
-0001c3 9349                      	ST Y+, r20
-0001c4 e447                      	ldi r20, 0x47     ; Cargamos 0x47
-0001c5 9349                      	ST Y+, r20
-0001c6 e447                      	ldi r20, 0x47     ; Cargamos 0x47
-0001c7 9349                      	ST Y+, r20
-0001c8 e447                      	ldi r20, 0x47     ; Cargamos 0x47
-0001c9 9349                      	ST Y+, r20
-0001ca e447                      	ldi r20, 0x47     ; Cargamos 0x47
-0001cb 9349                      	ST Y+, r20
-0001cc e447                      	ldi r20, 0x47     ; Cargamos 0x47
-0001cd 9349                      	ST Y+, r20
-0001ce e448                      	ldi r20, 0x48     ; Cargamos 0x48
-0001cf 9349                      	ST Y+, r20
-0001d0 e448                      	ldi r20, 0x48     ; Cargamos 0x48
-0001d1 9349                      	ST Y+, r20
-0001d2 e448                      	ldi r20, 0x48     ; Cargamos 0x48
-0001d3 9349                      	ST Y+, r20
-0001d4 e449                      	ldi r20, 0x49     ; Cargamos 0x49
-0001d5 9349                      	ST Y+, r20
-0001d6 e449                      	ldi r20, 0x49     ; Cargamos 0x49
-0001d7 9349                      	ST Y+, r20
-0001d8 e44a                      	ldi r20, 0x4A     ; Cargamos 0x4A
-0001d9 9349                      	ST Y+, r20
-0001da e44b                      	ldi r20, 0x4B     ; Cargamos 0x4B
-0001db 9349                      	ST Y+, r20
-0001dc e44b                      	ldi r20, 0x4B     ; Cargamos 0x4B
-0001dd 9349                      	ST Y+, r20
-0001de e44c                      	ldi r20, 0x4C     ; Cargamos 0x4C
-0001df 9349                      	ST Y+, r20
-0001e0 e44d                      	ldi r20, 0x4D     ; Cargamos 0x4D
-0001e1 9349                      	ST Y+, r20
-0001e2 e44e                      	ldi r20, 0x4E     ; Cargamos 0x4E
-0001e3 9349                      	ST Y+, r20
-0001e4 e44f                      	ldi r20, 0x4F     ; Cargamos 0x4F
-0001e5 9349                      	ST Y+, r20
-0001e6 e540                      	ldi r20, 0x50     ; Cargamos 0x50
-0001e7 9349                      	ST Y+, r20
-0001e8 e541                      	ldi r20, 0x51     ; Cargamos 0x51
-0001e9 9349                      	ST Y+, r20
-0001ea e542                      	ldi r20, 0x52     ; Cargamos 0x52
-0001eb 9349                      	ST Y+, r20
-0001ec e543                      	ldi r20, 0x53     ; Cargamos 0x53
-0001ed 9349                      	ST Y+, r20
-0001ee e544                      	ldi r20, 0x54     ; Cargamos 0x54
-0001ef 9349                      	ST Y+, r20
-0001f0 e546                      	ldi r20, 0x56     ; Cargamos 0x56
-0001f1 9349                      	ST Y+, r20
-0001f2 e548                      	ldi r20, 0x58     ; Cargamos 0x58
-0001f3 9349                      	ST Y+, r20
-0001f4 e54b                      	ldi r20, 0x5B     ; Cargamos 0x5B
-0001f5 9349                      	ST Y+, r20
-0001f6 e54d                      	ldi r20, 0x5D     ; Cargamos 0x5D
-0001f7 9349                      	ST Y+, r20
-0001f8 e640                      	ldi r20, 0x60     ; Cargamos 0x60
-0001f9 9349                      	ST Y+, r20
-0001fa e644                      	ldi r20, 0x64     ; Cargamos 0x64
-0001fb 9349                      	ST Y+, r20
-0001fc e646                      	ldi r20, 0x66     ; Cargamos 0x66
-0001fd 9349                      	ST Y+, r20
-0001fe e648                      	ldi r20, 0x68     ; Cargamos 0x68
-0001ff 9349                      	ST Y+, r20
-000200 e64b                      	ldi r20, 0x6B     ; Cargamos 0x6B
-000201 9349                      	ST Y+, r20
-000202 e64d                      	ldi r20, 0x6D     ; Cargamos 0x6D
-000203 9349                      	ST Y+, r20
-000204 e740                      	ldi r20, 0x70     ; Cargamos 0x70
-000205 9349                      	ST Y+, r20
-000206 e743                      	ldi r20, 0x73     ; Cargamos 0x73
-000207 9349                      	ST Y+, r20
-000208 e746                      	ldi r20, 0x76     ; Cargamos 0x76
-000209 9349                      	ST Y+, r20
-00020a e749                      	ldi r20, 0x79     ; Cargamos 0x79
-00020b 9349                      	ST Y+, r20
-00020c e74b                      	ldi r20, 0x7B     ; Cargamos 0x7B
-00020d 9349                      	ST Y+, r20
-00020e e74d                      	ldi r20, 0x7D     ; Cargamos 0x7D
-00020f 9349                      	ST Y+, r20
-000210 e74e                      	ldi r20, 0x7E     ; Cargamos 0x7E
-000211 9349                      	ST Y+, r20
-000212 e74f                      	ldi r20, 0x7F     ; Cargamos 0x7F
-000213 9349                      	ST Y+, r20
-000214 e74f                      	ldi r20, 0x7F     ; Cargamos 0x7F
-000215 9349                      	ST Y+, r20
-000216 e74f                      	ldi r20, 0x7F     ; Cargamos 0x7F
-000217 9349                      	ST Y+, r20
-000218 e74f                      	ldi r20, 0x7F     ; Cargamos 0x7F
-000219 9349                      	ST Y+, r20
-00021a e74f                      	ldi r20, 0x7F     ; Cargamos 0x7F
-00021b 9349                      	ST Y+, r20
-00021c e74e                      	ldi r20, 0x7E     ; Cargamos 0x7E
-00021d 9349                      	ST Y+, r20
-00021e e74d                      	ldi r20, 0x7D     ; Cargamos 0x7D
-00021f 9349                      	ST Y+, r20
-000220 e74c                      	ldi r20, 0x7C     ; Cargamos 0x7C
-000221 9349                      	ST Y+, r20
-000222 e749                      	ldi r20, 0x79     ; Cargamos 0x79
-000223 9349                      	ST Y+, r20
-000224 e747                      	ldi r20, 0x77     ; Cargamos 0x77
-000225 9349                      	ST Y+, r20
-000226 e744                      	ldi r20, 0x74     ; Cargamos 0x74
-000227 9349                      	ST Y+, r20
-000228 e741                      	ldi r20, 0x71     ; Cargamos 0x71
-000229 9349                      	ST Y+, r20
-00022a e64d                      	ldi r20, 0x6D     ; Cargamos 0x6D
-00022b 9349                      	ST Y+, r20
-00022c e64a                      	ldi r20, 0x6A     ; Cargamos 0x6A
-00022d 9349                      	ST Y+, r20
-00022e e642                      	ldi r20, 0x62     ; Cargamos 0x62
-00022f 9349                      	ST Y+, r20
-000230 e54f                      	ldi r20, 0x5F     ; Cargamos 0x5F
-000231 9349                      	ST Y+, r20
-000232 e54c                      	ldi r20, 0x5C     ; Cargamos 0x5C
-000233 9349                      	ST Y+, r20
-000234 e549                      	ldi r20, 0x59     ; Cargamos 0x59
-000235 9349                      	ST Y+, r20
-000236 e546                      	ldi r20, 0x56     ; Cargamos 0x56
-000237 9349                      	ST Y+, r20
-000238 e544                      	ldi r20, 0x54     ; Cargamos 0x54
-000239 9349                      	ST Y+, r20
-00023a e541                      	ldi r20, 0x51     ; Cargamos 0x51
-00023b 9349                      	ST Y+, r20
-00023c e44f                      	ldi r20, 0x4F     ; Cargamos 0x4F
-00023d 9349                      	ST Y+, r20
-00023e e44d                      	ldi r20, 0x4D     ; Cargamos 0x4D
-00023f 9349                      	ST Y+, r20
-000240 e44c                      	ldi r20, 0x4C     ; Cargamos 0x4C
-000241 9349                      	ST Y+, r20
-000242 e44a                      	ldi r20, 0x4A     ; Cargamos 0x4A
-000243 9349                      	ST Y+, r20
-000244 e449                      	ldi r20, 0x49     ; Cargamos 0x49
-000245 9349                      	ST Y+, r20
-000246 e448                      	ldi r20, 0x48     ; Cargamos 0x48
-000247 9349                      	ST Y+, r20
-000248 e447                      	ldi r20, 0x47     ; Cargamos 0x47
-000249 9349                      	ST Y+, r20
-00024a e443                      	ldi r20, 0x43     ; Cargamos 0x43
-00024b 9349                      	ST Y+, r20
-00024c e443                      	ldi r20, 0x43     ; Cargamos 0x43
-00024d 9349                      	ST Y+, r20
-00024e e443                      	ldi r20, 0x43     ; Cargamos 0x43
-00024f 9349                      	ST Y+, r20
-000250 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-000251 9349                      	ST Y+, r20
-000252 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-000253 9349                      	ST Y+, r20
-000254 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-000255 9349                      	ST Y+, r20
-000256 e445                      	ldi r20, 0x45     ; Cargamos 0x45
-000257 9349                      	ST Y+, r20
-000258 e445                      	ldi r20, 0x45     ; Cargamos 0x45
-000259 9349                      	ST Y+, r20
-00025a e445                      	ldi r20, 0x45     ; Cargamos 0x45
-00025b 9349                      	ST Y+, r20
-00025c e445                      	ldi r20, 0x45     ; Cargamos 0x45
-00025d 9349                      	ST Y+, r20
-00025e e445                      	ldi r20, 0x45     ; Cargamos 0x45
-00025f 9349                      	ST Y+, r20
-000260 e445                      	ldi r20, 0x45     ; Cargamos 0x45
-000261 9349                      	ST Y+, r20
-000262 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-000263 9349                      	ST Y+, r20
-000264 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-000265 9349                      	ST Y+, r20
-000266 e443                      	ldi r20, 0x43     ; Cargamos 0x43
-000267 9349                      	ST Y+, r20
-000268 e443                      	ldi r20, 0x43     ; Cargamos 0x43
-000269 9349                      	ST Y+, r20
-00026a e443                      	ldi r20, 0x43     ; Cargamos 0x43
-00026b 9349                      	ST Y+, r20
-00026c e443                      	ldi r20, 0x43     ; Cargamos 0x43
-00026d 9349                      	ST Y+, r20
-00026e e442                      	ldi r20, 0x42     ; Cargamos 0x42
-00026f 9349                      	ST Y+, r20
-000270 e442                      	ldi r20, 0x42     ; Cargamos 0x42
-000271 9349                      	ST Y+, r20
-000272 e442                      	ldi r20, 0x42     ; Cargamos 0x42
-000273 9349                      	ST Y+, r20
-000274 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-000275 9349                      	ST Y+, r20
-000276 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-000277 9349                      	ST Y+, r20
-000278 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-000279 9349                      	ST Y+, r20
-00027a e441                      	ldi r20, 0x41     ; Cargamos 0x41
-00027b 9349                      	ST Y+, r20
-00027c e441                      	ldi r20, 0x41     ; Cargamos 0x41
-00027d 9349                      	ST Y+, r20
-00027e e441                      	ldi r20, 0x41     ; Cargamos 0x41
-00027f 9349                      	ST Y+, r20
-000280 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-000281 9349                      	ST Y+, r20
-000282 e440                      	ldi r20, 0x40     ; Cargamos 0x40
-000283 9349                      	ST Y+, r20
-000284 e440                      	ldi r20, 0x40     ; Cargamos 0x40
-000285 9349                      	ST Y+, r20
-000286 e34f                      	ldi r20, 0x3F     ; Cargamos 0x3F
-000287 9349                      	ST Y+, r20
-000288 e34f                      	ldi r20, 0x3F     ; Cargamos 0x3F
-000289 9349                      	ST Y+, r20
-00028a e440                      	ldi r20, 0x40     ; Cargamos 0x40
-00028b 9349                      	ST Y+, r20
-00028c e440                      	ldi r20, 0x40     ; Cargamos 0x40
-00028d 9349                      	ST Y+, r20
-00028e e441                      	ldi r20, 0x41     ; Cargamos 0x41
-00028f 9349                      	ST Y+, r20
-000290 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-000291 9349                      	ST Y+, r20
-000292 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-000293 9349                      	ST Y+, r20
-000294 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-000295 9349                      	ST Y+, r20
-000296 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-000297 9349                      	ST Y+, r20
-000298 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-000299 9349                      	ST Y+, r20
-00029a e440                      	ldi r20, 0x40     ; Cargamos 0x40
-00029b 9349                      	ST Y+, r20
-00029c e440                      	ldi r20, 0x40     ; Cargamos 0x40
-00029d 9349                      	ST Y+, r20
-00029e e440                      	ldi r20, 0x40     ; Cargamos 0x40
-00029f 9349                      	ST Y+, r20
-0002a0 e440                      	ldi r20, 0x40     ; Cargamos 0x40
-0002a1 9349                      	ST Y+, r20
-0002a2 e440                      	ldi r20, 0x40     ; Cargamos 0x40
-0002a3 9349                      	ST Y+, r20
-0002a4 e440                      	ldi r20, 0x40     ; Cargamos 0x40
-0002a5 9349                      	ST Y+, r20
-0002a6 e440                      	ldi r20, 0x40     ; Cargamos 0x40
-0002a7 9349                      	ST Y+, r20
-0002a8 e441                      	ldi r20, 0x41     ; Cargamos 0x41
-0002a9 9349                      	ST Y+, r20
-0002aa e441                      	ldi r20, 0x41     ; Cargamos 0x41
-0002ab 9349                      	ST Y+, r20
-0002ac e441                      	ldi r20, 0x41     ; Cargamos 0x41
-0002ad 9349                      	ST Y+, r20
-0002ae e442                      	ldi r20, 0x42     ; Cargamos 0x42
-0002af 9349                      	ST Y+, r20
-0002b0 e443                      	ldi r20, 0x43     ; Cargamos 0x43
-0002b1 9349                      	ST Y+, r20
-0002b2 e444                      	ldi r20, 0x44     ; Cargamos 0x44
-0002b3 9349                      	ST Y+, r20
-0002b4 e445                      	ldi r20, 0x45     ; Cargamos 0x45
-0002b5 9349                      	ST Y+, r20
-0002b6 e447                      	ldi r20, 0x47     ; Cargamos 0x47
-0002b7 9349                      	ST Y+, r20
-0002b8 e448                      	ldi r20, 0x48     ; Cargamos 0x48
-0002b9 9349                      	ST Y+, r20
-0002ba e449                      	ldi r20, 0x49     ; Cargamos 0x49
-0002bb 9349                      	ST Y+, r20
+00001f e449                      	ldi r20, 0x49     
+000020 9349                      	ST Y+, r20
+000021 e44a                      	ldi r20, 0x4A    
+000022 9349                      	ST Y+, r20
+000023 e44b                      	ldi r20, 0x4B     
+000024 9349                      	ST Y+, r20
+000025 e44b                      	ldi r20, 0x4B     
+000026 9349                      	ST Y+, r20
+000027 e44a                      	ldi r20, 0x4A     
+000028 9349                      	ST Y+, r20
+000029 e449                      	ldi r20, 0x49    
+00002a 9349                      	ST Y+, r20
+00002b e449                      	ldi r20, 0x49     
+00002c 9349                      	ST Y+, r20
+00002d e449                      	ldi r20, 0x49  
+00002e 9349                      	ST Y+, r20
+00002f e449                      	ldi r20, 0x49     
+000030 9349                      	ST Y+, r20
+000031 e448                      	ldi r20, 0x48     
+000032 9349                      	ST Y+, r20
+000033 e447                      	ldi r20, 0x47    
+000034 9349                      	ST Y+, r20
+000035 e445                      	ldi r20, 0x45   
+000036 9349                      	ST Y+, r20
+000037 e444                      	ldi r20, 0x44     
+000038 9349                      	ST Y+, r20
+000039 e443                      	ldi r20, 0x43    
+00003a 9349                      	ST Y+, r20
+00003b e443                      	ldi r20, 0x43     
+00003c 9349                      	ST Y+, r20
+00003d e443                      	ldi r20, 0x43     
+00003e 9349                      	ST Y+, r20
+00003f e444                      	ldi r20, 0x44     
+000040 9349                      	ST Y+, r20
+000041 e444                      	ldi r20, 0x44     
+000042 9349                      	ST Y+, r20
+000043 e443                      	ldi r20, 0x43     
+000044 9349                      	ST Y+, r20
+000045 e441                      	ldi r20, 0x41     
+000046 9349                      	ST Y+, r20
+000047 e34e                      	ldi r20, 0x3E     
+000048 9349                      	ST Y+, r20
+000049 e34d                      	ldi r20, 0x3D    
+00004a 9349                      	ST Y+, r20
+00004b e34b                      	ldi r20, 0x3B    
+00004c 9349                      	ST Y+, r20
+00004d e349                      	ldi r20, 0x39   
+00004e 9349                      	ST Y+, r20
+00004f e348                      	ldi r20, 0x38     
+000050 9349                      	ST Y+, r20
+000051 e347                      	ldi r20, 0x37    
+000052 9349                      	ST Y+, r20
+000053 e347                      	ldi r20, 0x37     
+000054 9349                      	ST Y+, r20
+000055 e346                      	ldi r20, 0x36    
+000056 9349                      	ST Y+, r20
+000057 e346                      	ldi r20, 0x36     
+000058 9349                      	ST Y+, r20
+000059 e346                      	ldi r20, 0x36     
+00005a 9349                      	ST Y+, r20
+00005b e347                      	ldi r20, 0x37    
+00005c 9349                      	ST Y+, r20
+00005d e347                      	ldi r20, 0x37     
+00005e 9349                      	ST Y+, r20
+00005f e347                      	ldi r20, 0x37    
+000060 9349                      	ST Y+, r20
+000061 e347                      	ldi r20, 0x37     
+000062 9349                      	ST Y+, r20
+000063 e347                      	ldi r20, 0x37    
+000064 9349                      	ST Y+, r20
+000065 e347                      	ldi r20, 0x37   
+000066 9349                      	ST Y+, r20
+000067 e346                      	ldi r20, 0x36     
+000068 9349                      	ST Y+, r20
+000069 e345                      	ldi r20, 0x35    
+00006a 9349                      	ST Y+, r20
+00006b e343                      	ldi r20, 0x33    
+00006c 9349                      	ST Y+, r20
+00006d e342                      	ldi r20, 0x32    
+00006e 9349                      	ST Y+, r20
+00006f e341                      	ldi r20, 0x31     
+000070 9349                      	ST Y+, r20
+000071 e341                      	ldi r20, 0x31    
+000072 9349                      	ST Y+, r20
+000073 e344                      	ldi r20, 0x34   
+000074 9349                      	ST Y+, r20
+000075 e34d                      	ldi r20, 0x3D     
+000076 9349                      	ST Y+, r20
+000077 e44d                      	ldi r20, 0x4D     
+000078 9349                      	ST Y+, r20
+000079 e645                      	ldi r20, 0x65   
+00007a 9349                      	ST Y+, r20
+00007b e844                      	ldi r20, 0x84     
+00007c 9349                      	ST Y+, r20
+00007d ea49                      	ldi r20, 0xA9    
+00007e 9349                      	ST Y+, r20
+00007f ec4f                      	ldi r20, 0xCF    
+000080 9349                      	ST Y+, r20
+000081 ee4e                      	ldi r20, 0xEE     
+000082 9349                      	ST Y+, r20
+000083 ef4f                      	ldi r20, 0xFF    
+000084 9349                      	ST Y+, r20
+000085 ef4e                      	ldi r20, 0xFE   
+000086 9349                      	ST Y+, r20
+000087 ee4a                      	ldi r20, 0xEA    
+000088 9349                      	ST Y+, r20
+000089 ec46                      	ldi r20, 0xC6    
+00008a 9349                      	ST Y+, r20
+00008b e94a                      	ldi r20, 0x9A    
+00008c 9349                      	ST Y+, r20
+00008d e64d                      	ldi r20, 0x6D    
+00008e 9349                      	ST Y+, r20
+00008f e444                      	ldi r20, 0x44     
+000090 9349                      	ST Y+, r20
+000091 e245                      	ldi r20, 0x25     
+000092 9349                      	ST Y+, r20
+000093 e141                      	ldi r20, 0x11    
+000094 9349                      	ST Y+, r20
+000095 e045                      	ldi r20, 0x05    
+000096 9349                      	ST Y+, r20
+000097 e040                      	ldi r20, 0x00    
+000098 9349                      	ST Y+, r20
+000099 e041                      	ldi r20, 0x01     
+00009a 9349                      	ST Y+, r20
+00009b e046                      	ldi r20, 0x06    
+00009c 9349                      	ST Y+, r20
+00009d e04d                      	ldi r20, 0x0D     
+00009e 9349                      	ST Y+, r20
+00009f e144                      	ldi r20, 0x14   
+0000a0 9349                      	ST Y+, r20
+0000a1 e14c                      	ldi r20, 0x1C    
+0000a2 9349                      	ST Y+, r20
+0000a3 e244                      	ldi r20, 0x24    
+0000a4 9349                      	ST Y+, r20
+0000a5 e24d                      	ldi r20, 0x2D     
+0000a6 9349                      	ST Y+, r20
+0000a7 e344                      	ldi r20, 0x34
+0000a8 9349                      	ST Y+, r20
+0000a9 e347                      	ldi r20, 0x37    
+0000aa 9349                      	ST Y+, r20
+0000ab e349                      	ldi r20, 0x39     
+0000ac 9349                      	ST Y+, r20
+0000ad e34d                      	ldi r20, 0x3D   
+0000ae 9349                      	ST Y+, r20
+0000af e440                      	ldi r20, 0x40    
+0000b0 9349                      	ST Y+, r20
+0000b1 e441                      	ldi r20, 0x41    
+0000b2 9349                      	ST Y+, r20
+0000b3 e442                      	ldi r20, 0x42     
+0000b4 9349                      	ST Y+, r20
+0000b5 e443                      	ldi r20, 0x43  
+0000b6 9349                      	ST Y+, r20
+0000b7 e444                      	ldi r20, 0x44    
+0000b8 9349                      	ST Y+, r20
+0000b9 e444                      	ldi r20, 0x44   
+0000ba 9349                      	ST Y+, r20
+0000bb e445                      	ldi r20, 0x45   
+0000bc 9349                      	ST Y+, r20
+0000bd e446                      	ldi r20, 0x46   
+0000be 9349                      	ST Y+, r20
+0000bf e447                      	ldi r20, 0x47    
+0000c0 9349                      	ST Y+, r20
+0000c1 e447                      	ldi r20, 0x47  
+0000c2 9349                      	ST Y+, r20
+0000c3 e447                      	ldi r20, 0x47   
+0000c4 9349                      	ST Y+, r20
+0000c5 e447                      	ldi r20, 0x47    
+0000c6 9349                      	ST Y+, r20
+0000c7 e447                      	ldi r20, 0x47    
+0000c8 9349                      	ST Y+, r20
+0000c9 e447                      	ldi r20, 0x47     
+0000ca 9349                      	ST Y+, r20
+0000cb e447                      	ldi r20, 0x47     
+0000cc 9349                      	ST Y+, r20
+0000cd e448                      	ldi r20, 0x48    
+0000ce 9349                      	ST Y+, r20
+0000cf e448                      	ldi r20, 0x48     
+0000d0 9349                      	ST Y+, r20
+0000d1 e448                      	ldi r20, 0x48    
+0000d2 9349                      	ST Y+, r20
+0000d3 e449                      	ldi r20, 0x49     
+0000d4 9349                      	ST Y+, r20
+0000d5 e449                      	ldi r20, 0x49    
+0000d6 9349                      	ST Y+, r20
+0000d7 e44a                      	ldi r20, 0x4A    
+0000d8 9349                      	ST Y+, r20
+0000d9 e44b                      	ldi r20, 0x4B   
+0000da 9349                      	ST Y+, r20
+0000db e44b                      	ldi r20, 0x4B     
+0000dc 9349                      	ST Y+, r20
+0000dd e44c                      	ldi r20, 0x4C    
+0000de 9349                      	ST Y+, r20
+0000df e44d                      	ldi r20, 0x4D    
+0000e0 9349                      	ST Y+, r20
+0000e1 e44e                      	ldi r20, 0x4E    
+0000e2 9349                      	ST Y+, r20
+0000e3 e44f                      	ldi r20, 0x4F   
+0000e4 9349                      	ST Y+, r20
+0000e5 e540                      	ldi r20, 0x50    
+0000e6 9349                      	ST Y+, r20
+0000e7 e541                      	ldi r20, 0x51    
+0000e8 9349                      	ST Y+, r20
+0000e9 e542                      	ldi r20, 0x52   
+0000ea 9349                      	ST Y+, r20
+0000eb e543                      	ldi r20, 0x53   
+0000ec 9349                      	ST Y+, r20
+0000ed e544                      	ldi r20, 0x54    
+0000ee 9349                      	ST Y+, r20
+0000ef e546                      	ldi r20, 0x56    
+0000f0 9349                      	ST Y+, r20
+0000f1 e548                      	ldi r20, 0x58  
+0000f2 9349                      	ST Y+, r20
+0000f3 e54b                      	ldi r20, 0x5B
+0000f4 9349                      	ST Y+, r20
+0000f5 e54d                      	ldi r20, 0x5D    
+0000f6 9349                      	ST Y+, r20
+0000f7 e640                      	ldi r20, 0x60  
+0000f8 9349                      	ST Y+, r20
+0000f9 e644                      	ldi r20, 0x64    
+0000fa 9349                      	ST Y+, r20
+0000fb e646                      	ldi r20, 0x66   
+0000fc 9349                      	ST Y+, r20
+0000fd e648                      	ldi r20, 0x68 
+0000fe 9349                      	ST Y+, r20
+0000ff e64b                      	ldi r20, 0x6B   
+000100 9349                      	ST Y+, r20
+000101 e64d                      	ldi r20, 0x6D  
+000102 9349                      	ST Y+, r20
+000103 e740                      	ldi r20, 0x70   
+000104 9349                      	ST Y+, r20
+000105 e743                      	ldi r20, 0x73   
+000106 9349                      	ST Y+, r20
+000107 e746                      	ldi r20, 0x76    
+000108 9349                      	ST Y+, r20
+000109 e749                      	ldi r20, 0x79   
+00010a 9349                      	ST Y+, r20
+00010b e74b                      	ldi r20, 0x7B   
+00010c 9349                      	ST Y+, r20
+00010d e74d                      	ldi r20, 0x7D    
+00010e 9349                      	ST Y+, r20
+00010f e74e                      	ldi r20, 0x7E   
+000110 9349                      	ST Y+, r20
+000111 e74f                      	ldi r20, 0x7F   
+000112 9349                      	ST Y+, r20
+000113 e74f                      	ldi r20, 0x7F    
+000114 9349                      	ST Y+, r20
+000115 e74f                      	ldi r20, 0x7F   
+000116 9349                      	ST Y+, r20
+000117 e74f                      	ldi r20, 0x7F   
+000118 9349                      	ST Y+, r20
+000119 e74f                      	ldi r20, 0x7F  
+00011a 9349                      	ST Y+, r20
+00011b e74e                      	ldi r20, 0x7E   
+00011c 9349                      	ST Y+, r20
+00011d e74d                      	ldi r20, 0x7D   
+00011e 9349                      	ST Y+, r20
+00011f e74c                      	ldi r20, 0x7C   
+000120 9349                      	ST Y+, r20
+000121 e749                      	ldi r20, 0x79     
+000122 9349                      	ST Y+, r20
+000123 e747                      	ldi r20, 0x77   
+000124 9349                      	ST Y+, r20
+000125 e744                      	ldi r20, 0x74   
+000126 9349                      	ST Y+, r20
+000127 e741                      	ldi r20, 0x71  
+000128 9349                      	ST Y+, r20
+000129 e64d                      	ldi r20, 0x6D   
+00012a 9349                      	ST Y+, r20
+00012b e64a                      	ldi r20, 0x6A   
+00012c 9349                      	ST Y+, r20
+00012d e642                      	ldi r20, 0x62  
+00012e 9349                      	ST Y+, r20
+00012f e54f                      	ldi r20, 0x5F  
+000130 9349                      	ST Y+, r20
+000131 e54c                      	ldi r20, 0x5C    
+000132 9349                      	ST Y+, r20
+000133 e549                      	ldi r20, 0x59   
+000134 9349                      	ST Y+, r20
+000135 e546                      	ldi r20, 0x56   
+000136 9349                      	ST Y+, r20
+000137 e544                      	ldi r20, 0x54    
+000138 9349                      	ST Y+, r20
+000139 e541                      	ldi r20, 0x51  
+00013a 9349                      	ST Y+, r20
+00013b e44f                      	ldi r20, 0x4F  
+00013c 9349                      	ST Y+, r20
+00013d e44d                      	ldi r20, 0x4D  
+00013e 9349                      	ST Y+, r20
+00013f e44c                      	ldi r20, 0x4C    
+000140 9349                      	ST Y+, r20
+000141 e44a                      	ldi r20, 0x4A   
+000142 9349                      	ST Y+, r20
+000143 e449                      	ldi r20, 0x49  
+000144 9349                      	ST Y+, r20
+000145 e448                      	ldi r20, 0x48   
+000146 9349                      	ST Y+, r20
+000147 e447                      	ldi r20, 0x47    
+000148 9349                      	ST Y+, r20
+000149 e443                      	ldi r20, 0x43
+00014a 9349                      	ST Y+, r20
+00014b e443                      	ldi r20, 0x43   
+00014c 9349                      	ST Y+, r20
+00014d e443                      	ldi r20, 0x43 
+00014e 9349                      	ST Y+, r20
+00014f e444                      	ldi r20, 0x44  
+000150 9349                      	ST Y+, r20
+000151 e444                      	ldi r20, 0x44   
+000152 9349                      	ST Y+, r20
+000153 e444                      	ldi r20, 0x44   
+000154 9349                      	ST Y+, r20
+000155 e445                      	ldi r20, 0x45   
+000156 9349                      	ST Y+, r20
+000157 e445                      	ldi r20, 0x45    
+000158 9349                      	ST Y+, r20
+000159 e445                      	ldi r20, 0x45  
+00015a 9349                      	ST Y+, r20
+00015b e445                      	ldi r20, 0x45  
+00015c 9349                      	ST Y+, r20
+00015d e445                      	ldi r20, 0x45 
+00015e 9349                      	ST Y+, r20
+00015f e445                      	ldi r20, 0x45
+000160 9349                      	ST Y+, r20
+000161 e444                      	ldi r20, 0x44  
+000162 9349                      	ST Y+, r20
+000163 e444                      	ldi r20, 0x44  
+000164 9349                      	ST Y+, r20
+000165 e443                      	ldi r20, 0x43 
+000166 9349                      	ST Y+, r20
+000167 e443                      	ldi r20, 0x43
+000168 9349                      	ST Y+, r20
+000169 e443                      	ldi r20, 0x43  
+00016a 9349                      	ST Y+, r20
+00016b e443                      	ldi r20, 0x43  
+00016c 9349                      	ST Y+, r20
+00016d e442                      	ldi r20, 0x42  
+00016e 9349                      	ST Y+, r20
+00016f e442                      	ldi r20, 0x42 
+000170 9349                      	ST Y+, r20
+000171 e442                      	ldi r20, 0x42 
+000172 9349                      	ST Y+, r20
+000173 e441                      	ldi r20, 0x41 
+000174 9349                      	ST Y+, r20
+000175 e441                      	ldi r20, 0x41  
+000176 9349                      	ST Y+, r20
+000177 e441                      	ldi r20, 0x41 
+000178 9349                      	ST Y+, r20
+000179 e441                      	ldi r20, 0x41 
+00017a 9349                      	ST Y+, r20
+00017b e441                      	ldi r20, 0x41
+00017c 9349                      	ST Y+, r20
+00017d e441                      	ldi r20, 0x41  
+00017e 9349                      	ST Y+, r20
+00017f e441                      	ldi r20, 0x41 
+000180 9349                      	ST Y+, r20
+000181 e440                      	ldi r20, 0x40   
+000182 9349                      	ST Y+, r20
+000183 e440                      	ldi r20, 0x40  
+000184 9349                      	ST Y+, r20
+000185 e34f                      	ldi r20, 0x3F  
+000186 9349                      	ST Y+, r20
+000187 e34f                      	ldi r20, 0x3F  
+000188 9349                      	ST Y+, r20
+000189 e440                      	ldi r20, 0x40 
+00018a 9349                      	ST Y+, r20
+00018b e440                      	ldi r20, 0x40 
+00018c 9349                      	ST Y+, r20
+00018d e441                      	ldi r20, 0x41 
+00018e 9349                      	ST Y+, r20
+00018f e441                      	ldi r20, 0x41 
+000190 9349                      	ST Y+, r20
+000191 e441                      	ldi r20, 0x41 
+000192 9349                      	ST Y+, r20
+000193 e441                      	ldi r20, 0x41 
+000194 9349                      	ST Y+, r20
+000195 e441                      	ldi r20, 0x41 
+000196 9349                      	ST Y+, r20
+000197 e441                      	ldi r20, 0x41 
+000198 9349                      	ST Y+, r20
+000199 e440                      	ldi r20, 0x40   
+00019a 9349                      	ST Y+, r20
+00019b e440                      	ldi r20, 0x40   
+00019c 9349                      	ST Y+, r20
+00019d e440                      	ldi r20, 0x40     
+00019e 9349                      	ST Y+, r20
+00019f e440                      	ldi r20, 0x40   
+0001a0 9349                      	ST Y+, r20
+0001a1 e440                      	ldi r20, 0x40  
+0001a2 9349                      	ST Y+, r20
+0001a3 e440                      	ldi r20, 0x40   
+0001a4 9349                      	ST Y+, r20
+0001a5 e440                      	ldi r20, 0x40    
+0001a6 9349                      	ST Y+, r20
+0001a7 e441                      	ldi r20, 0x41   
+0001a8 9349                      	ST Y+, r20
+0001a9 e441                      	ldi r20, 0x41
+0001aa 9349                      	ST Y+, r20
+0001ab e441                      	ldi r20, 0x41    
+0001ac 9349                      	ST Y+, r20
+0001ad e442                      	ldi r20, 0x42   
+0001ae 9349                      	ST Y+, r20
+0001af e443                      	ldi r20, 0x43   
+0001b0 9349                      	ST Y+, r20
+0001b1 e444                      	ldi r20, 0x44    
+0001b2 9349                      	ST Y+, r20
+0001b3 e445                      	ldi r20, 0x45     
+0001b4 9349                      	ST Y+, r20
+0001b5 e447                      	ldi r20, 0x47   
+0001b6 9349                      	ST Y+, r20
+0001b7 e448                      	ldi r20, 0x48   
+0001b8 9349                      	ST Y+, r20
+0001b9 e449                      	ldi r20, 0x49   
+0001ba 9349                      	ST Y+, r20
                                  	
-0002bc ce4f                      	RJMP BUCLE
+0001bb ce50                      	RJMP BUCLE
 
 
 RESOURCE USE INFORMATION
@@ -1543,7 +1538,7 @@ fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   0
 ld    :   2 ldd   :   0 ldi   : 218 lds   :   0 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   2 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   4 pop   :   0 
-push  :   0 rcall :   0 ret   :   1 reti  :   0 rjmp  :   4 rol   :   0 
+push  :   0 rcall :   0 ret   :   1 reti  :   0 rjmp  :   3 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
@@ -1554,7 +1549,7 @@ Instructions used: 11 out of 113 (9.7%)
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000200 0x00057a    890      0    890   32768   2.7%
+[.cseg] 0x000000 0x000378    888      0    888   32768   2.7%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

@@ -23,11 +23,10 @@
   <FILE>DAC.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <inicio><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>16</LINE></inicio>
-  <guardar_codigos><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>59</LINE></guardar_codigos>
-  <BUCLE><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>31</LINE></BUCLE>
-  <SEGUNDO><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>49</LINE></SEGUNDO>
-  <CONTINUAR><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>46</LINE></CONTINUAR>
-  <RETARDO><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>52</LINE></RETARDO>
+  <inicio><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>14</LINE></inicio>
+  <guardar_codigos><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>54</LINE></guardar_codigos>
+  <BUCLE><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>29</LINE></BUCLE>
+  <SEGUNDO><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>44</LINE></SEGUNDO>
+  <RETARDO><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>47</LINE></RETARDO>
  </LABELS>
 </ASSEMBLER_INFO>
