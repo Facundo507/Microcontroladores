@@ -17,8 +17,8 @@ inicio:
        LDI R16, LOW(RAMEND)
        OUT SPL, R16
 
-           ldi r16, 0xFF        ; Dejamos el puerto D como salida
-           OUT DDRD, R16
+	   LDI r16, 0xFF        ; Dejamos el puerto D como salida
+       OUT DDRD, R16
 
        LDI R18, 0X01
        MOV YH, R18

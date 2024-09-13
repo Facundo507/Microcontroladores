@@ -1,0 +1,33 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.8</VERSION>
+ <DEVICE>"ATmega328P"</DEVICE>
+ <WORKING_DIR>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc</DIR>
+  <DIR>D:\Micro\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc</FILE>
+  <FILE>D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\Debug\DAC.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>DAC.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>DAC.map</FILE>
+  <FILE>DAC.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <inicio><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>16</LINE></inicio>
+  <guardar_codigos><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>59</LINE></guardar_codigos>
+  <BUCLE><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>31</LINE></BUCLE>
+  <SEGUNDO><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>49</LINE></SEGUNDO>
+  <CONTINUAR><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>46</LINE></CONTINUAR>
+  <RETARDO><FILE>C:\Users\Facundo\Desktop\MICRO\pruebas\DAC\DAC\main.asm</FILE><LINE>52</LINE></RETARDO>
+ </LABELS>
+</ASSEMBLER_INFO>
