@@ -30,7 +30,10 @@ inicio:
     ldi r16, 0xFF             
     out DDRB, r16             ; Configurar el puerto B como salida
     out DDRC, r16             ; Configurar el puerto C como salida
-    ldi r16, 0x00             
+    ldi r16, 0x00 
+	out DDRD, r16			  ; Configurar el puerto D como entrada
+	ldi r16, 0xFF
+	out PORTD, r16			  ; Configurar todos los pines de D en pull-up            
     out PORTB, r16            ; Apagar todos los LEDs
     out PORTC, r16            ; Apagar motor
 	ldi r24, STANDBY		  ; Inicializar el estado en STANDBY
