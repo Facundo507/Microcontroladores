@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\MICRO\LAB1\LAB1\main.asm Thu Sep 26 23:04:33 2024
+AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\MICRO\LAB1\LAB1\main.asm Sat Sep 28 15:12:25 2024
 
 [builtin](2): Including file 'D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 [builtin](2): Including file 'D:/Micro\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
@@ -1009,6 +1009,10 @@ AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\MICRO\LAB1\LAB1\main.asm Thu Sep 26 
                                  .equ SECADO3 = 13
                                  .equ FINAL = 14
                                  
+                                 .equ F_CPU = 16000000
+                                 .equ baud = 9600
+                                 .equ bps = (F_CPU/16/baud) - 1
+                                 
                                  .org 0x00                     
 000000 c000                          rjmp inicio              
                                  
@@ -1016,10 +1020,10 @@ AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\MICRO\LAB1\LAB1\main.asm Thu Sep 26 
 000001 ef0f                          ldi r16, 0xFF             
 000002 b904                          out DDRB, r16             ; Configurar el puerto B como salida
 000003 b907                          out DDRC, r16             ; Configurar el puerto C como salida
-000004 e000                          ldi r16, 0x00 
-000005 b90a                      	out DDRD, r16			  ; Configurar el puerto D como entrada
-000006 ef0f                      	ldi r16, 0xFF
-000007 b90b                      	out PORTD, r16			  ; Configurar todos los pines de D en pull-up            
+000004 ec00                          ldi r16, 0xC0 
+000005 b90a                      	out DDRD, r16			  ; Configurar el puerto D como entrada y salida
+000006 e000                      	ldi r16, 0x00
+000007 b90b                      	out PORTD, r16			  ; Configurar los pines de entrada D en pull-down            
 000008 b905                          out PORTB, r16            ; Apagar todos los LEDs
 000009 b908                          out PORTC, r16            ; Apagar motor
 00000a e080                      	ldi r24, STANDBY		  ; Inicializar el estado en STANDBY
@@ -1028,424 +1032,553 @@ AVRASM ver. 2.2.8  C:\Users\Facundo\Desktop\MICRO\LAB1\LAB1\main.asm Thu Sep 26 
 00000c 9300 003e                 	sts SPH, r16
 00000e ef0f                      	ldi r16, LOW(RAMEND)
 00000f 9300 003d                 	sts SPL, r16
+                                 	; Configuracion del USART
+000011 e607                      	ldi r16, LOW(bps)
+000012 9300 00c4                 	sts UBRR0L, r16
+000014 e000                      	ldi r16, HIGH(bps)
+000015 9300 00c5                 	sts UBRR0H, r16
+000017 e108                      	ldi r16, (1<<RXEN0) | (1<<TXEN0)
+000018 9300 00c1                 	sts UCSR0B, r16
                                  
                                  main_loop:
-000011 e020                      	ldi r18, STANDBY
-000012 1782                          cp r24, r18
-000013 f409                      	brne skip1
-000014 c035                      	rjmp estado_standby
+00001a e020                      	ldi r18, STANDBY
+00001b 1782                          cp r24, r18
+00001c f409                      	brne skip1
+00001d c035                      	rjmp estado_standby
                                  skip1:
-000015 e022                          ldi r18, AJUSTE1
-000016 1782                          cp r24, r18
-000017 f409                      	brne skip2
-000018 c039                      	rjmp estado_ajuste1
+00001e e022                          ldi r18, AJUSTE1
+00001f 1782                          cp r24, r18
+000020 f409                      	brne skip2
+000021 c03b                      	rjmp estado_ajuste1
                                  skip2:
-000019 e023                          ldi r18, AJUSTE2
-00001a 1782                          cp r24, r18
-00001b f409                      	brne skip3
-00001c c044                      	rjmp estado_ajuste2
+000022 e023                          ldi r18, AJUSTE2
+000023 1782                          cp r24, r18
+000024 f409                      	brne skip3
+000025 c048                      	rjmp estado_ajuste2
                                  skip3:
-00001d e024                          ldi r18, AJUSTE3
-00001e 1782                          cp r24, r18
-00001f f409                      	brne skip4
-000020 c04f                      	rjmp estado_ajuste3
+000026 e024                          ldi r18, AJUSTE3
+000027 1782                          cp r24, r18
+000028 f409                      	brne skip4
+000029 c055                      	rjmp estado_ajuste3
                                  skip4:
-000021 e025                          ldi r18, LAVADO1
-000022 1782                          cp r24, r18
-000023 f409                      	brne skip5
-000024 c05a                      	rjmp estado_lavado1
+00002a e025                          ldi r18, LAVADO1
+00002b 1782                          cp r24, r18
+00002c f409                      	brne skip5
+00002d c062                      	rjmp estado_lavado1
                                  skip5:
-000025 e026                          ldi r18, LAVADO2
-000026 1782                          cp r24, r18
-000027 f409                      	brne skip6
-000028 c068                      	rjmp estado_lavado2
+00002e e026                          ldi r18, LAVADO2
+00002f 1782                          cp r24, r18
+000030 f409                      	brne skip6
+000031 c074                      	rjmp estado_lavado2
                                  skip6:
-000029 e027                          ldi r18, LAVADO3
-00002a 1782                          cp r24, r18
-00002b f409                      	brne skip7
-00002c c076                      	rjmp estado_lavado3
+000032 e027                          ldi r18, LAVADO3
+000033 1782                          cp r24, r18
+000034 f409                      	brne skip7
+000035 c086                      	rjmp estado_lavado3
                                  skip7:
-00002d e028                          ldi r18, CENTRIFUGADO1
-00002e 1782                          cp r24, r18
-00002f f409                      	brne skip8
-000030 c084                      	rjmp estado_centrifugado1
+000036 e028                          ldi r18, CENTRIFUGADO1
+000037 1782                          cp r24, r18
+000038 f409                      	brne skip8
+000039 c098                      	rjmp estado_centrifugado1
                                  skip8:
-000031 e029                          ldi r18, CENTRIFUGADO2
-000032 1782                          cp r24, r18
-000033 f409                      	brne skip9
-000034 c08a                      	rjmp estado_centrifugado2
+00003a e029                          ldi r18, CENTRIFUGADO2
+00003b 1782                          cp r24, r18
+00003c f409                      	brne skip9
+00003d c0a2                      	rjmp estado_centrifugado2
                                  skip9:
-000035 e02a                          ldi r18, CENTRIFUGADO3
-000036 1782                          cp r24, r18
-000037 f409                      	brne skipA
-000038 c090                      	rjmp estado_centrifugado3
+00003e e02a                          ldi r18, CENTRIFUGADO3
+00003f 1782                          cp r24, r18
+000040 f409                      	brne skipA
+000041 c0ac                      	rjmp estado_centrifugado3
                                  skipA:
-000039 e02b                          ldi r18, SECADO1
-00003a 1782                          cp r24, r18
-00003b f409                      	brne skipB
-00003c c096                      	rjmp estado_secado1
+000042 e02b                          ldi r18, SECADO1
+000043 1782                          cp r24, r18
+000044 f409                      	brne skipB
+000045 c0b6                      	rjmp estado_secado1
                                  skipB:
-00003d e02c                          ldi r18, SECADO2
-00003e 1782                          cp r24, r18
-00003f f409                      	brne skipC
-000040 c09f                      	rjmp estado_secado2
+000046 e02c                          ldi r18, SECADO2
+000047 1782                          cp r24, r18
+000048 f409                      	brne skipC
+000049 c0c5                      	rjmp estado_secado2
                                  skipC:
-000041 e02d                          ldi r18, SECADO3
-000042 1782                          cp r24, r18
-000043 f409                      	brne skipD
-000044 c0a8                      	rjmp estado_secado3
+00004a e02d                          ldi r18, SECADO3
+00004b 1782                          cp r24, r18
+00004c f409                      	brne skipD
+00004d c0d4                      	rjmp estado_secado3
                                  skipD:
-000045 e02e                          ldi r18, FINAL
-000046 1782                          cp r24, r18
-000047 f409                      	brne skipE
-000048 c0b1                      	rjmp estado_final
+00004e e02e                          ldi r18, FINAL
+00004f 1782                          cp r24, r18
+000050 f409                      	brne skipE
+000051 c0e3                      	rjmp estado_final
                                  skipE:
-000049 cfc7                          rjmp main_loop
+000052 cfc7                          rjmp main_loop
                                  
                                  ; Definir las rutinas para cada estado
                                  estado_standby:
-00004a e000                      	ldi	r16, 0x00
-00004b b905                          out PORTB, r16              ; Apagar todos los LEDs
-00004c 9840                          cbi PORTC, 0                ; Apagar motor
-00004d 9b4b                      	sbis PIND, 3				; Si Boton2 = 1, skip	
-00004e cfc2                          rjmp main_loop
-00004f e082                      	ldi r24, AJUSTE1			; Nuevo estado actual
-000050 d0b9                      	RCALL Timer_2s				; Debounce time
-000051 cfbf                      	rjmp main_loop
+000053 d112                      	rcall Enviar_Estado_Standby
+000054 e000                      	ldi	r16, 0x00
+000055 b905                          out PORTB, r16              ; Apagar todos los LEDs
+000056 b90b                      	out PORTD, r16
+000057 9840                          cbi PORTC, 0                ; Apagar motor
+000058 9b4b                      	sbis PIND, 3				; Si Boton2 = 1, skip	
+000059 cfc0                          rjmp main_loop
+00005a e082                      	ldi r24, AJUSTE1			; Nuevo estado actual
+00005b d0e3                      	RCALL Timer_1s				; Debounce time
+00005c cfbd                      	rjmp main_loop
                                  
                                  
                                  estado_ajuste1:
-000052 e000                      	ldi r16, 0x00
-000053 b905                      	out PORTB, r16
-000054 9a28                          sbi PORTB, 0				; Encender LED1
-000055 9a2d                          sbi PORTB, 5                ; Encender LED6
-000056 994a                      	sbic PIND, 2			    ; Si Boton1 = 1 { 
-000057 e085                      	ldi r24, LAVADO1			;  ejecuta lavado
-000058 994a                      	sbic PIND, 2				;
-000059 d0b0                      	RCALL Timer_2s				;  Debounce time
-00005a 994a                      	sbic PIND, 2				;
-00005b cfb5                      	rjmp main_loop				;  Vuele al main }
-00005c 9b4b                      	sbis PIND, 3				; Si Boton2 = 1, Nuevo estado actual	
-00005d cfb3                          rjmp main_loop
-00005e e083                      	ldi r24, AJUSTE2
-00005f d0aa                      	RCALL Timer_2s
-000060 cfb0                      	rjmp main_loop
+00005d d119                      	rcall Enviar_Estado_Ajuste
+00005e e000                      	ldi r16, 0x00
+00005f b905                      	out PORTB, r16
+000060 b90b                      	out PORTD, r16
+000061 9a28                          sbi PORTB, 0				; Encender LED1
+000062 9a2d                          sbi PORTB, 5                ; Encender LED6
+000063 994a                      	sbic PIND, 2			    ; Si Boton1 = 1 { 
+000064 e085                      	ldi r24, LAVADO1			;  ejecuta lavado
+000065 994a                      	sbic PIND, 2				;
+000066 d0d8                      	RCALL Timer_1s				;  Debounce time
+000067 994a                      	sbic PIND, 2				;
+000068 cfb1                      	rjmp main_loop				;  Vuele al main }
+000069 9b4b                      	sbis PIND, 3				; Si Boton2 = 1, Nuevo estado actual	
+00006a cfaf                          rjmp main_loop
+00006b e083                      	ldi r24, AJUSTE2
+00006c d0d2                      	RCALL Timer_1s
+00006d cfac                      	rjmp main_loop
                                  
                                  
                                  estado_ajuste2:
-000061 e000                      	ldi r16, 0x00
-000062 b905                      	out PORTB, r16
-000063 9a28                          sbi PORTB, 0              ; Encender LED1
-000064 9a2e                          sbi PORTB, 6              ; Encender LED7
-000065 994a                          sbic PIND, 2			 
-000066 e086                      	ldi r24, LAVADO2			
-000067 994a                      	sbic PIND, 2			
-000068 d0a1                      	RCALL Timer_2s			
-000069 994a                      	sbic PIND, 2			
-00006a cfa6                      	rjmp main_loop				
-00006b 9b4b                      	sbis PIND, 3					
-00006c cfa4                          rjmp main_loop
-00006d e084                      	ldi r24, AJUSTE3
-00006e d09b                      	RCALL Timer_2s
-00006f cfa1                      	rjmp main_loop
-                                 
-                                 estado_ajuste3:
-000070 e000                      	ldi r16, 0x00
+00006e d108                      	rcall Enviar_Estado_Ajuste
+00006f e000                      	ldi r16, 0x00
+000070 b90b                      	out PORTD, r16
 000071 b905                      	out PORTB, r16
 000072 9a28                          sbi PORTB, 0              ; Encender LED1
-000073 9a2f                          sbi PORTB, 7              ; Encender LED8
-000074 994a                          sbic PIND, 2			   
-000075 e087                      	ldi r24, LAVADO3			
+000073 9a5e                          sbi PORTD, 6              ; Encender LED7
+000074 994a                          sbic PIND, 2			 
+000075 e086                      	ldi r24, LAVADO2			
 000076 994a                      	sbic PIND, 2			
-000077 d092                      	RCALL Timer_2s				
-000078 994a                      	sbic PIND, 2				
-000079 cf97                      	rjmp main_loop				
+000077 d0c7                      	RCALL Timer_1s			
+000078 994a                      	sbic PIND, 2			
+000079 cfa0                      	rjmp main_loop				
 00007a 9b4b                      	sbis PIND, 3					
-00007b cf95                          rjmp main_loop
-00007c e082                      	ldi r24, AJUSTE1
-00007d d08c                      	RCALL Timer_2s
-00007e cf92                      	rjmp main_loop
+00007b cf9e                          rjmp main_loop
+00007c e084                      	ldi r24, AJUSTE3
+00007d d0c1                      	RCALL Timer_1s
+00007e cf9b                      	rjmp main_loop
+                                 
+                                 estado_ajuste3:
+00007f d0f7                      	rcall Enviar_Estado_Ajuste
+000080 e000                      	ldi r16, 0x00
+000081 b905                      	out PORTB, r16
+000082 b90b                      	out PORTD, r16
+000083 9a28                          sbi PORTB, 0              ; Encender LED1
+000084 9a5f                          sbi PORTD, 7              ; Encender LED8
+000085 994a                          sbic PIND, 2			   
+000086 e087                      	ldi r24, LAVADO3			
+000087 994a                      	sbic PIND, 2			
+000088 d0b6                      	RCALL Timer_1s				
+000089 994a                      	sbic PIND, 2				
+00008a cf8f                      	rjmp main_loop				
+00008b 9b4b                      	sbis PIND, 3					
+00008c cf8d                          rjmp main_loop
+00008d e082                      	ldi r24, AJUSTE1
+00008e d0b0                      	RCALL Timer_1s
+00008f cf8a                      	rjmp main_loop
                                  
                                  estado_lavado1:
-00007f e015                      	ldi r17, 5				  ; Cantidad de ciclos
+000090 d0f5                      	rcall Enviar_Estado_Lavando
+000091 e045                      	ldi r20, 5				  ; Cantidad de ciclos
                                  b1:
-000080 9b4c                      	sbis PIND, 4			  ; Sensor de puerta
-000081 cffe                      	rjmp b1
-000082 9b4d                      	sbis PIND, 5			  ; Sensor agua
-000083 cffc                      	rjmp b1
-000084 e000                      	ldi r16, 0x00
-000085 b905                      	out PORTB, r16
-000086 9a40                          sbi PORTC, 0              ; Encender motor
-000087 9a29                          sbi PORTB, 1              ; Encender LED2
-000088 9a2d                          sbi PORTB, 5              ; Encender LED6
-000089 d080                      	rcall Timer_2s
-00008a 9840                      	cbi PORTC, 0			  ; Apaga el motor
-00008b d074                      	rcall Timer_1s
-00008c 951a                      	dec r17
-00008d f791                      	brne b1
-00008e e088                      	ldi r24, CENTRIFUGADO1
-00008f d07a                      	rcall Timer_2s			  ; Tiempo de espera entre estados
-000090 cf80                          rjmp main_loop
+000092 9b4c                      	sbis PIND, 4			  ; Sensor de puerta
+000093 cffe                      	rjmp b1
+000094 9b4d                      	sbis PIND, 5			  ; Sensor agua
+000095 cffc                      	rjmp b1
+000096 e000                      	ldi r16, 0x00
+000097 b90b                      	out PORTD, r16
+000098 b905                      	out PORTB, r16
+000099 9a40                          sbi PORTC, 0              ; Encender motor
+00009a 9841                      	cbi PORTC, 1
+00009b 9a29                          sbi PORTB, 1              ; Encender LED2
+00009c 9a2d                          sbi PORTB, 5              ; Encender LED6
+00009d d0ab                      	rcall Timer_2s
+00009e 9840                      	cbi PORTC, 0			  ; Apaga el motor
+00009f 9841                      	cbi PORTC, 1
+0000a0 d09e                      	rcall Timer_1s
+0000a1 954a                      	dec r20
+0000a2 f779                      	brne b1
+0000a3 e088                      	ldi r24, CENTRIFUGADO1
+0000a4 d09a                      	rcall Timer_1s			  ; Tiempo de espera entre estados
+0000a5 cf74                          rjmp main_loop
                                  
                                  estado_lavado2:
-000091 e015                      	ldi r17, 5				  ; Cantidad de ciclos
+0000a6 d0df                      	rcall Enviar_Estado_Lavando
+0000a7 e045                      	ldi r20, 5				  ; Cantidad de ciclos
                                  b2:
-000092 9b4c                      	sbis PIND, 4			  ; Sensor de puerta
-000093 cffe                      	rjmp b2
-000094 9b4d                      	sbis PIND, 5			  ; Sensor agua
-000095 cffc                      	rjmp b2
-000096 e000                      	ldi r16, 0x00
-000097 b905                      	out PORTB, r16
-000098 9a40                          sbi PORTC, 0              ; Encender motor
-000099 9a29                          sbi PORTB, 1              ; Encender LED2
-00009a 9a2e                          sbi PORTB, 6              ; Encender LED7
-00009b d078                          rcall Timer_3s
-00009c 9840                      	cbi PORTC, 0			  ; Apaga el motor
-00009d d06c                      	rcall Timer_2s
-00009e 951a                      	dec r17
-00009f f791                      	brne b2
-0000a0 e089                      	ldi r24, CENTRIFUGADO2
-0000a1 d068                      	rcall Timer_2s			  ; Tiempo de espera entre estados
-0000a2 cf6e                          rjmp main_loop
+0000a8 9b4c                      	sbis PIND, 4			  ; Sensor de puerta
+0000a9 cffe                      	rjmp b2
+0000aa 9b4d                      	sbis PIND, 5			  ; Sensor agua
+0000ab cffc                      	rjmp b2
+0000ac e000                      	ldi r16, 0x00
+0000ad b905                      	out PORTB, r16
+0000ae b90b                      	out PORTD, r16
+0000af 9a40                          sbi PORTC, 0              ; Encender motor
+0000b0 9841                      	cbi PORTC, 1
+0000b1 9a29                          sbi PORTB, 1              ; Encender LED2
+0000b2 9a5e                          sbi PORTD, 6              ; Encender LED7
+0000b3 d098                          rcall Timer_3s
+0000b4 9840                      	cbi PORTC, 0			  ; Apaga el motor
+0000b5 9841                      	cbi PORTC, 1
+0000b6 d092                      	rcall Timer_2s
+0000b7 954a                      	dec r20
+0000b8 f779                      	brne b2
+0000b9 e089                      	ldi r24, CENTRIFUGADO2
+0000ba d084                      	rcall Timer_1s			  ; Tiempo de espera entre estados
+0000bb cf5e                          rjmp main_loop
                                  
                                  estado_lavado3:
-0000a3 e015                      	ldi r17, 5				  ; Cantidad de ciclos
+0000bc d0c9                      	rcall Enviar_Estado_Lavando
+0000bd e045                      	ldi r20, 5				  ; Cantidad de ciclos
                                  b3:
-0000a4 9b4c                      	sbis PIND, 4			  ; Sensor de puerta
-0000a5 cffe                      	rjmp b3
-0000a6 9b4d                      	sbis PIND, 5			  ; Sensor agua
-0000a7 cffc                      	rjmp b3
-0000a8 e000                      	ldi r16, 0x00
-0000a9 b905                      	out PORTB, r16
-0000aa 9a40                          sbi PORTC, 0              ; Encender motor
-0000ab 9a29                          sbi PORTB, 1              ; Encender LED2
-0000ac 9a2f                          sbi PORTB, 7              ; Encender LED8
-0000ad d070                          rcall Timer_4s
-0000ae 9840                      	cbi PORTC, 0			  ; Apaga el motor
-0000af d064                      	rcall Timer_3s
-0000b0 951a                      	dec r17
-0000b1 f791                      	brne b3
-0000b2 e08a                      	ldi r24, CENTRIFUGADO3
-0000b3 d056                      	rcall Timer_2s			  ; Tiempo de espera entre estados
-0000b4 cf5c                          rjmp main_loop
+0000be 9b4c                      	sbis PIND, 4			  ; Sensor de puerta
+0000bf cffe                      	rjmp b3
+0000c0 9b4d                      	sbis PIND, 5			  ; Sensor agua
+0000c1 cffc                      	rjmp b3
+0000c2 e000                      	ldi r16, 0x00
+0000c3 b90b                      	out PORTD, r16
+0000c4 b905                      	out PORTB, r16
+0000c5 9a40                          sbi PORTC, 0              ; Encender motor
+0000c6 9841                      	cbi PORTC, 1
+0000c7 9a29                          sbi PORTB, 1              ; Encender LED2
+0000c8 9a5f                          sbi PORTD, 7              ; Encender LED8
+0000c9 d085                          rcall Timer_4s
+0000ca 9840                      	cbi PORTC, 0			  ; Apaga el motor
+0000cb 9841                      	cbi PORTC, 1
+0000cc d07f                      	rcall Timer_3s
+0000cd 954a                      	dec r20
+0000ce f779                      	brne b3
+0000cf e08a                      	ldi r24, CENTRIFUGADO3
+0000d0 d06e                      	rcall Timer_1s			  ; Tiempo de espera entre estados
+0000d1 cf48                          rjmp main_loop
                                  
                                  estado_centrifugado1:
-0000b5 e000                      	ldi r16, 0x00
-0000b6 b905                      	out PORTB, r16
-0000b7 9a40                          sbi PORTC, 0              ; Encender motor
-0000b8 9a2a                          sbi PORTB, 2              ; Encender LED3
-0000b9 9a2d                          sbi PORTB, 5              ; Encender LED6
-0000ba d08b                      	rcall Timer_15s
-0000bb 9840                      	cbi PORTC, 0
-0000bc e08b                      	ldi r24, SECADO1
-0000bd d04c                      	rcall Timer_2s			  ; Tiempo de espera entre estados
-0000be cf52                          rjmp main_loop
-                                 
-                                 estado_centrifugado2:
-0000bf e000                      	ldi r16, 0x00
-0000c0 b905                      	out PORTB, r16
-0000c1 9a40                          sbi PORTC, 0              ; Encender motor
-0000c2 9a2a                          sbi PORTB, 2              ; Encender LED3
-0000c3 9a2e                          sbi PORTB, 6              ; Encender LED7
-0000c4 d081                          rcall Timer_15s
-0000c5 9840                      	cbi PORTC, 0
-0000c6 e08c                      	ldi r24, SECADO2
-0000c7 d042                      	rcall Timer_2s			  ; Tiempo de espera entre estados
-0000c8 cf48                          rjmp main_loop
-                                 
-                                 estado_centrifugado3:
-0000c9 e000                      	ldi r16, 0x00
-0000ca b905                      	out PORTB, r16
-0000cb 9a40                          sbi PORTC, 0              ; Encender motor
-0000cc 9a2a                          sbi PORTB, 2              ; Encender LED3
-0000cd 9a2f                          sbi PORTB, 7              ; Encender LED8
-0000ce d077                          rcall Timer_15s
-0000cf 9840                      	cbi PORTC, 0
-0000d0 e08c                      	ldi r24, SECADO2
-0000d1 d038                      	rcall Timer_2s			  ; Tiempo de espera entre estados
-0000d2 cf3e                          rjmp main_loop
-                                 
-                                 estado_secado1:
+0000d2 d0c4                      	rcall Enviar_Estado_Centrifugando
 0000d3 e000                      	ldi r16, 0x00
 0000d4 b905                      	out PORTB, r16
-0000d5 9a40                          sbi PORTC, 0              ; Encender motor
-0000d6 9a2b                          sbi PORTB, 3              ; Encender LED4
-0000d7 9a2d                          sbi PORTB, 5              ; Encender LED6
-0000d8 d04f                      	rcall Timer_5s
-0000d9 9840                      	cbi PORTC, 0
-0000da d039                      	rcall Timer_3s
-0000db 9a40                      	sbi PORTC, 0
-0000dc d037                      	rcall Timer_3s
-0000dd 9840                      	cbi PORTC, 0
-0000de e08e                      	ldi r24, FINAL
-0000df cf31                          rjmp main_loop
+0000d5 b90b                      	out PORTD, r16
+0000d6 9a40                          sbi PORTC, 0              ; Encender motor
+0000d7 9841                      	cbi PORTC, 1
+0000d8 9a2a                          sbi PORTB, 2              ; Encender LED3
+0000d9 9a2d                          sbi PORTB, 5              ; Encender LED6
+0000da d080                      	rcall Timer_15s
+0000db 9840                      	cbi PORTC, 0
+0000dc 9841                      	cbi PORTC, 1
+0000dd e08b                      	ldi r24, SECADO1
+0000de d060                      	rcall Timer_1s			  ; Tiempo de espera entre estados
+0000df cf3a                          rjmp main_loop
+                                 
+                                 estado_centrifugado2:
+0000e0 d0b6                      	rcall Enviar_Estado_Centrifugando
+0000e1 e000                      	ldi r16, 0x00
+0000e2 b90b                      	out PORTD, r16
+0000e3 b905                      	out PORTB, r16
+0000e4 9a40                          sbi PORTC, 0              ; Encender motor
+0000e5 9841                      	cbi PORTC, 1
+0000e6 9a2a                          sbi PORTB, 2              ; Encender LED3
+0000e7 9a5e                          sbi PORTD, 6              ; Encender LED7
+0000e8 d072                          rcall Timer_15s
+0000e9 9840                      	cbi PORTC, 0
+0000ea 9841                      	cbi PORTC, 1
+0000eb e08c                      	ldi r24, SECADO2
+0000ec d052                      	rcall Timer_1s			  ; Tiempo de espera entre estados
+0000ed cf2c                          rjmp main_loop
+                                 
+                                 estado_centrifugado3:
+0000ee d0a8                      	rcall Enviar_Estado_Centrifugando
+0000ef e000                      	ldi r16, 0x00
+0000f0 b905                      	out PORTB, r16
+0000f1 b90b                      	out PORTD, r16
+0000f2 9a40                          sbi PORTC, 0              ; Encender motor
+0000f3 9841                      	cbi PORTC, 1
+0000f4 9a2a                          sbi PORTB, 2              ; Encender LED3
+0000f5 9a5f                          sbi PORTD, 7              ; Encender LED8
+0000f6 d064                          rcall Timer_15s
+0000f7 9840                      	cbi PORTC, 0
+0000f8 9841                      	cbi PORTC, 1
+0000f9 e08c                      	ldi r24, SECADO2
+0000fa d044                      	rcall Timer_1s			  ; Tiempo de espera entre estados
+0000fb cf1e                          rjmp main_loop
+                                 
+                                 estado_secado1:
+0000fc d0b7                      	rcall Enviar_Estado_Secando
+0000fd e000                      	ldi r16, 0x00
+0000fe b90b                      	out PORTD, r16
+0000ff b905                      	out PORTB, r16
+000100 9a40                          sbi PORTC, 0              ; Encender motor
+000101 9841                      	cbi PORTC, 1
+000102 9a2b                          sbi PORTB, 3              ; Encender LED4
+000103 9a2d                          sbi PORTB, 5              ; Encender LED6
+000104 d04d                      	rcall Timer_5s
+000105 9840                      	cbi PORTC, 0
+000106 9841                      	cbi PORTC, 1
+000107 d044                      	rcall Timer_3s
+000108 9840                      	cbi PORTC, 0
+000109 9a41                      	sbi PORTC, 1
+00010a d047                      	rcall Timer_5s
+00010b 9840                      	cbi PORTC, 0
+00010c 9841                      	cbi PORTC, 1
+00010d e08e                      	ldi r24, FINAL
+00010e cf0b                          rjmp main_loop
                                  
                                  estado_secado2:
-0000e0 e000                      	ldi r16, 0x00
-0000e1 b905                      	out PORTB, r16
-0000e2 9a40                          sbi PORTC, 0              ; Encender motor
-0000e3 9a2b                          sbi PORTB, 3              ; Encender LED4
-0000e4 9a2e                          sbi PORTB, 6              ; Encender LED7
-0000e5 d04c                          rcall Timer_7s
-0000e6 9840                      	cbi PORTC, 0
-0000e7 d040                      	rcall Timer_5s
-0000e8 9a40                      	sbi PORTC, 0
-0000e9 d048                      	rcall Timer_7s
-0000ea 9840                      	cbi PORTC, 0
-0000eb e08e                      	ldi r24, FINAL
-0000ec cf24                          rjmp main_loop
+00010f d0a4                      	rcall Enviar_Estado_Secando
+000110 e000                      	ldi r16, 0x00
+000111 b90b                      	out PORTD, r16
+000112 b905                      	out PORTB, r16
+000113 9a40                          sbi PORTC, 0              ; Encender motor
+000114 9841                      	cbi PORTC, 1
+000115 9a2b                          sbi PORTB, 3              ; Encender LED4
+000116 9a5e                          sbi PORTD, 6              ; Encender LED7
+000117 d03d                          rcall Timer_7s
+000118 9840                      	cbi PORTC, 0
+000119 9841                      	cbi PORTC, 1
+00011a d037                      	rcall Timer_5s
+00011b 9840                      	cbi PORTC, 0
+00011c 9a41                      	sbi PORTC, 1
+00011d d037                      	rcall Timer_7s
+00011e 9840                      	cbi PORTC, 0
+00011f 9841                      	cbi PORTC, 1
+000120 e08e                      	ldi r24, FINAL
+000121 cef8                          rjmp main_loop
                                  
                                  estado_secado3:
-0000ed e000                      	ldi r16, 0x00
-0000ee b905                      	out PORTB, r16
-0000ef 9a40                          sbi PORTC, 0              ; Encender motor
-0000f0 9a2b                          sbi PORTB, 3              ; Encender LED4
-0000f1 9a2f                          sbi PORTB, 7              ; Encender LED8
-0000f2 d049                          rcall Timer_9s
-0000f3 9840                      	cbi PORTC, 0
-0000f4 d03d                      	rcall Timer_7s
-0000f5 9a40                      	sbi PORTC, 0
-0000f6 d045                      	rcall Timer_9s
-0000f7 9840                      	cbi PORTC, 0
-0000f8 e08e                      	ldi r24, FINAL
-0000f9 cf17                          rjmp main_loop
+000122 d091                      	rcall Enviar_Estado_Secando
+000123 e000                      	ldi r16, 0x00
+000124 b905                      	out PORTB, r16
+000125 b90b                      	out PORTD, r16
+000126 9a40                          sbi PORTC, 0
+000127 9841                      	cbi PORTC, 1              ; Encender motor
+000128 9a2b                          sbi PORTB, 3              ; Encender LED4
+000129 9a5f                          sbi PORTD, 7              ; Encender LED8
+00012a d02d                          rcall Timer_9s
+00012b 9840                      	cbi PORTC, 0
+00012c 9841                      	cbi PORTC, 1
+00012d d027                      	rcall Timer_7s
+00012e 9840                      	cbi PORTC, 0
+00012f 9a41                      	sbi PORTC, 1
+000130 d027                      	rcall Timer_9s
+000131 9840                      	cbi PORTC, 0
+000132 9841                      	cbi PORTC, 1
+000133 e08e                      	ldi r24, FINAL
+000134 cee5                          rjmp main_loop
                                  
                                  estado_final:
-0000fa 9840                          cbi PORTC, 0              ; Apagar motor
-0000fb 9a2c                          sbi PORTB, 4              ; Encender LED5
-0000fc 994c                      	sbic PIND, 4
-0000fd cffc                      	rjmp estado_final
-0000fe e080                      	ldi r24, STANDBY
-0000ff cf11                          rjmp main_loop
+000135 d08f                      	rcall Enviar_Estado_Completado
+000136 e000                      	ldi r16, 0x00
+000137 b90b                      	out PORTD, r16
+000138 b905                      	out PORTB, r16
+000139 9840                          cbi PORTC, 0              ; Apagar motor
+00013a 9a2c                          sbi PORTB, 4              ; Encender LED5
+00013b 994c                      	sbic PIND, 4
+00013c cff8                      	rjmp estado_final
+00013d e080                      	ldi r24, STANDBY
+00013e cedb                          rjmp main_loop
                                  
                                  Timer_1s:
-000100 e80c                      	ldi r16, 140
-000101 e21b                      	ldi r17, 43
-000102 e027                      	ldi r18, 7
+00013f ef0a                      	ldi r16, 250
+000140 ef1a                      	ldi r17, 250
+000141 e525                      	ldi r18, 85
                                  L1:
-000103 950a                      	dec r16
-000104 f7f1                      	brne L1
-000105 951a                      	dec r17
-000106 f7e1                      	brne L1
-000107 952a                      	dec r18
-000108 f7d1                      	brne L1
-000109 9508                      	RET
+000142 950a                      	dec r16
+000143 f7f1                      	brne L1
+000144 951a                      	dec r17
+000145 f7e1                      	brne L1
+000146 952a                      	dec r18
+000147 f7d1                      	brne L1
+000148 9508                      	RET
                                  	
                                  Timer_2s:
-00010a e707                      	ldi r16, 119
-00010b e216                      	ldi r17, 38
-00010c e124                      	ldi r18, 20
-                                 L2:
-00010d 950a                      	dec r16
-00010e f7f1                      	brne L2
-00010f 951a                      	dec r17
-000110 f7e1                      	brne L2
-000111 952a                      	dec r18
-000112 f7d1                      	brne L2
-000113 9508                      	RET
+000149 dff5                      	rcall Timer_1s
+00014a dff4                      	rcall Timer_1s
+00014b 9508                      	ret
                                  
                                  Timer_3s:
-000114 ee09                      	ldi r16, 233
-000115 e511                      	ldi r17, 81
-000116 e024                      	ldi r18, 4
-                                 L3:
-000117 950a                      	dec r16
-000118 f7f1                      	brne L3
-000119 951a                      	dec r17
-00011a f7e1                      	brne L3
-00011b 952a                      	dec r18
-00011c f7d1                      	brne L3
-00011d 9508                      	RET
+00014c dff2                      	rcall Timer_1s
+00014d dffb                      	rcall Timer_2s
+00014e 9508                      	ret
                                  
                                  Timer_4s:
-00011e e509                      	ldi r16, 89
-00011f e311                      	ldi r17, 49
-000120 e229                      	ldi r18, 41
-                                 L4:
-000121 950a                      	dec r16
-000122 f7f1                      	brne L4
-000123 951a                      	dec r17
-000124 f7e1                      	brne L4
-000125 952a                      	dec r18
-000126 f7d1                      	brne L4
-000127 9508                      	RET
+00014f dff9                      	rcall Timer_2s
+000150 dff8                      	rcall Timer_2s
+000151 9508                      	ret
                                  
                                  Timer_5s:
-000128 e908                      	ldi r16, 152
-000129 e21f                      	ldi r17, 47
-00012a e129                      	ldi r18, 25
-                                 L5:
-00012b 950a                      	dec r16
-00012c f7f1                      	brne L5
-00012d 951a                      	dec r17
-00012e f7e1                      	brne L5
-00012f 952a                      	dec r18
-000130 f7d1                      	brne L5
-000131 9508                      	RET
+000152 dffc                      	rcall Timer_4s
+000153 dfeb                      	rcall Timer_1s
+000154 9508                      	ret
                                  
                                  Timer_7s:
-000132 ec01                      	ldi r16, 193
-000133 e214                      	ldi r17, 36
-000134 e12f                      	ldi r18, 31
-                                 L7:
-000135 950a                      	dec r16
-000136 f7f1                      	brne L7
-000137 951a                      	dec r17
-000138 f7e1                      	brne L7
-000139 952a                      	dec r18
-00013a f7d1                      	brne L7
-00013b 9508                      	RET
+000155 dffc                      	rcall Timer_5s
+000156 dff2                      	rcall Timer_2s
+000157 9508                      	ret
                                  
                                  Timer_9s:
-00013c eb01                      	ldi r16, 177
-00013d e415                      	ldi r17, 69
-00013e e126                      	ldi r18, 22
-                                 L9:
-00013f 950a                      	dec r16
-000140 f7f1                      	brne L9
-000141 951a                      	dec r17
-000142 f7e1                      	brne L9
-000143 952a                      	dec r18
-000144 f7d1                      	brne L9
-000145 9508                      	RET
+000158 dffc                      	rcall Timer_7s
+000159 dfef                      	rcall Timer_2s
+00015a 9508                      	ret
                                  
                                  Timer_15s:
-000146 ee04                      	ldi r16, 228
-000147 e412                      	ldi r17, 66
-000148 e129                      	ldi r18, 25
-                                 L15:
-000149 950a                      	dec r16
-00014a f7f1                      	brne L15
-00014b 951a                      	dec r17
-00014c f7e1                      	brne L15
-00014d 952a                      	dec r18
-00014e f7d1                      	brne L15
-00014f 9508                      	RET
+00015b dff9                      	rcall Timer_7s
+00015c dff8                      	rcall Timer_7s
+00015d dfe1                      	rcall Timer_1s
+00015e 9508                      	ret
                                  
                                  Timer_18s:
-000150 e906                      	ldi r16, 150
-000151 e916                      	ldi r17, 150
-000152 e124                      	ldi r18, 20
-                                 L18:
-000153 950a                      	dec r16
-000154 f7f1                      	brne L18
-000155 951a                      	dec r17
-000156 f7e1                      	brne L18
-000157 952a                      	dec r18
-000158 f7d1                      	brne L18
-000159 9508                      	RET
+00015f dffb                      	rcall Timer_15s
+000160 dfeb                      	rcall Timer_3s
+000161 9508                      	RET
                                  
                                  Timer_21s:
-00015a ea0d                      	ldi r16, 173
-00015b e417                      	ldi r17, 71
-00015c e22f                      	ldi r18, 47
-                                 L21:
-00015d 950a                      	dec r16
-00015e f7f1                      	brne L21
-00015f 951a                      	dec r17
-000160 f7e1                      	brne L21
-000161 952a                      	dec r18
-000162 f7d1                      	brne L21
+000162 dff8                      	rcall Timer_15s
+000163 dfee                      	rcall Timer_5s
+000164 dfda                      	rcall Timer_1s
+000165 9508                      	ret
+                                 
+                                 Enviar_Estado_Standby:
+000166 e503                      	ldi r16, 'S'
+000167 d074                          rcall Enviar
+000168 e504                      	ldi r16, 'T'
+000169 d072                          rcall Enviar
+00016a e401                      	ldi r16, 'A'
+00016b d070                          rcall Enviar
+00016c e40e                      	ldi r16, 'N'
+00016d d06e                          rcall Enviar
+00016e e404                      	ldi r16, 'D'
+00016f d06c                          rcall Enviar
+000170 e402                      	ldi r16, 'B'
+000171 d06a                          rcall Enviar
+000172 e509                      	ldi r16, 'Y'
+000173 d068                          rcall Enviar
+000174 e00a                      	ldi r16, 0x0A
+000175 d066                          rcall Enviar
+000176 9508                      	ret
+                                 
+                                 Enviar_Estado_Ajuste:
+000177 e401                      	ldi r16, 'A'
+000178 d063                          rcall Enviar
+000179 e40a                      	ldi r16, 'J'
+00017a d061                          rcall Enviar
+00017b e505                      	ldi r16, 'U'
+00017c d05f                          rcall Enviar
+00017d e503                      	ldi r16, 'S'
+00017e d05d                          rcall Enviar
+00017f e504                      	ldi r16, 'T'
+000180 d05b                          rcall Enviar
+000181 e405                      	ldi r16, 'E'
+000182 d059                          rcall Enviar
+000183 e00a                      	ldi r16, 0x0A
+000184 d057                          rcall Enviar
+000185 9508                      	ret
+                                 
+                                 Enviar_Estado_Lavando:
+000186 e40c                      	ldi r16, 'L'
+000187 d054                          rcall Enviar
+000188 e401                      	ldi r16, 'A'
+000189 d052                          rcall Enviar
+00018a e506                      	ldi r16, 'V'
+00018b d050                          rcall Enviar
+00018c e401                      	ldi r16, 'A'
+00018d d04e                          rcall Enviar
+00018e e40e                      	ldi r16, 'N'
+00018f d04c                          rcall Enviar
+000190 e404                      	ldi r16, 'D'
+000191 d04a                          rcall Enviar
+000192 e40f                      	ldi r16, 'O'
+000193 d048                          rcall Enviar
+000194 e00a                      	ldi r16, 0x0A
+000195 d046                          rcall Enviar
+000196 9508                      	ret
+                                 
+                                 Enviar_Estado_Centrifugando:
+000197 e403                      	ldi r16, 'C'
+000198 d043                          rcall Enviar
+000199 e405                      	ldi r16, 'E'
+00019a d041                          rcall Enviar
+00019b e40e                      	ldi r16, 'N'
+00019c d03f                          rcall Enviar
+00019d e504                      	ldi r16, 'T'
+00019e d03d                          rcall Enviar
+00019f e502                      	ldi r16, 'R'
+0001a0 d03b                          rcall Enviar
+0001a1 e409                      	ldi r16, 'I'
+0001a2 d039                          rcall Enviar
+0001a3 e406                      	ldi r16, 'F'
+0001a4 d037                          rcall Enviar
+0001a5 e505                      	ldi r16, 'U'
+0001a6 d035                          rcall Enviar
+0001a7 e407                      	ldi r16, 'G'
+0001a8 d033                          rcall Enviar
+0001a9 e401                      	ldi r16, 'A'
+0001aa d031                          rcall Enviar
+0001ab e40e                      	ldi r16, 'N'
+0001ac d02f                          rcall Enviar
+0001ad e404                      	ldi r16, 'D'
+0001ae d02d                          rcall Enviar
+0001af e40f                      	ldi r16, 'O'
+0001b0 d02b                          rcall Enviar
+0001b1 e00a                      	ldi r16, 0x0A
+0001b2 d029                          rcall Enviar
+0001b3 9508                      	ret
+                                 
+                                 Enviar_Estado_Secando:
+0001b4 e503                      	ldi r16, 'S'
+0001b5 d026                          rcall Enviar
+0001b6 e405                      	ldi r16, 'E'
+0001b7 d024                          rcall Enviar
+0001b8 e403                      	ldi r16, 'C'
+0001b9 d022                          rcall Enviar
+0001ba e401                      	ldi r16, 'A'
+0001bb d020                          rcall Enviar
+0001bc e40e                      	ldi r16, 'N'
+0001bd d01e                          rcall Enviar
+0001be e404                      	ldi r16, 'D'
+0001bf d01c                          rcall Enviar
+0001c0 e40f                      	ldi r16, 'O'
+0001c1 d01a                          rcall Enviar
+0001c2 e00a                      	ldi r16, 0x0A
+0001c3 d018                          rcall Enviar
+0001c4 9508                      	ret
+                                 
+                                 Enviar_Estado_Completado:
+0001c5 e403                      	ldi r16, 'C'
+0001c6 d015                          rcall Enviar
+0001c7 e40f                      	ldi r16, 'O'
+0001c8 d013                          rcall Enviar
+0001c9 e40d                      	ldi r16, 'M'
+0001ca d011                          rcall Enviar
+0001cb e500                      	ldi r16, 'P'
+0001cc d00f                          rcall Enviar
+0001cd e40c                      	ldi r16, 'L'
+0001ce d00d                          rcall Enviar
+0001cf e405                      	ldi r16, 'E'
+0001d0 d00b                          rcall Enviar
+0001d1 e504                      	ldi r16, 'T'
+0001d2 d009                          rcall Enviar
+0001d3 e401                      	ldi r16, 'A'
+0001d4 d007                          rcall Enviar
+0001d5 e404                      	ldi r16, 'D'
+0001d6 d005                          rcall Enviar
+0001d7 e40f                      	ldi r16, 'O'
+0001d8 d003                          rcall Enviar
+0001d9 e00a                      	ldi r16, 0x0A
+0001da d001                          rcall Enviar
+0001db 9508                      	ret
+                                 
+                                 Enviar:
+0001dc 9110 00c0                     lds r17, UCSR0A
+0001de ff15                          sbrs r17, UDRE0
+0001df cffc                          rjmp Enviar
+0001e0 9300 00c6                     sts UDR0, r16     
+0001e2 9508                          ret          
 
 
 RESOURCE USE INFORMATION
@@ -1465,37 +1598,37 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 x  :   0 y  :   0 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  59 r17:  26 r18:  48 r19:   0 r20:   0 
+r13:   0 r14:   0 r15:   0 r16: 120 r17:   4 r18:  30 r19:   0 r20:   6 
 r21:   0 r22:   0 r23:   0 r24:  32 r25:   0 r26:   0 r27:   0 r28:   0 
 r29:   0 r30:   0 r31:   0 
-Registers used: 4 out of 35 (11.4%)
+Registers used: 5 out of 35 (14.3%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :  47 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :  14 cbr   :   0 
+brne  :  20 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :  38 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :  14 cpc   :   0 
-cpi   :   0 cpse  :   0 dec   :  33 eor   :   0 fmul  :   0 fmuls :   0 
+cpi   :   0 cpse  :   0 dec   :   6 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :  83 lds   :   0 lpm   :   0 lsl   :   0 
+ld    :   0 ldd   :   0 ldi   : 116 lds   :   1 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  19 pop   :   0 
-push  :   0 rcall :  31 ret   :  10 reti  :   0 rjmp  :  44 rol   :   0 
+neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  34 pop   :   0 
+push  :   0 rcall : 121 ret   :  17 reti  :   0 rjmp  :  45 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :  37 sbic  :  10 sbis  :  10 
-sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
+sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   1 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   2 
+sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   6 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 13 out of 113 (11.5%)
+Instructions used: 15 out of 113 (13.3%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0002c8    712      0    712   32768   2.2%
+[.cseg] 0x000000 0x0003c6    966      0    966   32768   2.9%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 

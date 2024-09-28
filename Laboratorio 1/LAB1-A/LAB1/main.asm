@@ -23,6 +23,10 @@
 .equ SECADO3 = 13
 .equ FINAL = 14
 
+.equ F_CPU = 16000000
+.equ baud = 9600
+.equ bps = (F_CPU/16/baud) - 1
+
 .org 0x00                     
     rjmp inicio              
 
@@ -30,10 +34,10 @@ inicio:
     ldi r16, 0xFF             
     out DDRB, r16             ; Configurar el puerto B como salida
     out DDRC, r16             ; Configurar el puerto C como salida
-    ldi r16, 0x00 
-	out DDRD, r16			  ; Configurar el puerto D como entrada
-	ldi r16, 0xFF
-	out PORTD, r16			  ; Configurar todos los pines de D en pull-up            
+    ldi r16, 0xC0 
+	out DDRD, r16			  ; Configurar el puerto D como entrada y salida
+	ldi r16, 0x00
+	out PORTD, r16			  ; Configurar los pines de entrada D en pull-down            
     out PORTB, r16            ; Apagar todos los LEDs
     out PORTC, r16            ; Apagar motor
 	ldi r24, STANDBY		  ; Inicializar el estado en STANDBY
@@ -42,6 +46,13 @@ inicio:
 	sts SPH, r16
 	ldi r16, LOW(RAMEND)
 	sts SPL, r16
+	; Configuracion del USART
+	ldi r16, LOW(bps)
+	sts UBRR0L, r16
+	ldi r16, HIGH(bps)
+	sts UBRR0H, r16
+	ldi r16, (1<<RXEN0) | (1<<TXEN0)
+	sts UCSR0B, r16
 
 main_loop:
 	ldi r18, STANDBY
@@ -118,91 +129,104 @@ skipE:
 
 ; Definir las rutinas para cada estado
 estado_standby:
+	rcall Enviar_Estado_Standby
 	ldi	r16, 0x00
     out PORTB, r16              ; Apagar todos los LEDs
+	out PORTD, r16
     cbi PORTC, 0                ; Apagar motor
 	sbis PIND, 3				; Si Boton2 = 1, skip	
     rjmp main_loop
 	ldi r24, AJUSTE1			; Nuevo estado actual
-	RCALL Timer_2s				; Debounce time
+	RCALL Timer_1s				; Debounce time
 	rjmp main_loop
 
 
 estado_ajuste1:
+	rcall Enviar_Estado_Ajuste
 	ldi r16, 0x00
 	out PORTB, r16
+	out PORTD, r16
     sbi PORTB, 0				; Encender LED1
     sbi PORTB, 5                ; Encender LED6
 	sbic PIND, 2			    ; Si Boton1 = 1 { 
 	ldi r24, LAVADO1			;  ejecuta lavado
 	sbic PIND, 2				;
-	RCALL Timer_2s				;  Debounce time
+	RCALL Timer_1s				;  Debounce time
 	sbic PIND, 2				;
 	rjmp main_loop				;  Vuele al main }
 	sbis PIND, 3				; Si Boton2 = 1, Nuevo estado actual	
     rjmp main_loop
 	ldi r24, AJUSTE2
-	RCALL Timer_2s
+	RCALL Timer_1s
 	rjmp main_loop
 
 
 estado_ajuste2:
+	rcall Enviar_Estado_Ajuste
 	ldi r16, 0x00
+	out PORTD, r16
 	out PORTB, r16
     sbi PORTB, 0              ; Encender LED1
-    sbi PORTB, 6              ; Encender LED7
+    sbi PORTD, 6              ; Encender LED7
     sbic PIND, 2			 
 	ldi r24, LAVADO2			
 	sbic PIND, 2			
-	RCALL Timer_2s			
+	RCALL Timer_1s			
 	sbic PIND, 2			
 	rjmp main_loop				
 	sbis PIND, 3					
     rjmp main_loop
 	ldi r24, AJUSTE3
-	RCALL Timer_2s
+	RCALL Timer_1s
 	rjmp main_loop
 
 estado_ajuste3:
+	rcall Enviar_Estado_Ajuste
 	ldi r16, 0x00
 	out PORTB, r16
+	out PORTD, r16
     sbi PORTB, 0              ; Encender LED1
-    sbi PORTB, 7              ; Encender LED8
+    sbi PORTD, 7              ; Encender LED8
     sbic PIND, 2			   
 	ldi r24, LAVADO3			
 	sbic PIND, 2			
-	RCALL Timer_2s				
+	RCALL Timer_1s				
 	sbic PIND, 2				
 	rjmp main_loop				
 	sbis PIND, 3					
     rjmp main_loop
 	ldi r24, AJUSTE1
-	RCALL Timer_2s
+	RCALL Timer_1s
 	rjmp main_loop
 
 estado_lavado1:
-	ldi r17, 5				  ; Cantidad de ciclos
+	rcall Enviar_Estado_Lavando
+	ldi r20, 5				  ; Cantidad de ciclos
 b1:
 	sbis PIND, 4			  ; Sensor de puerta
 	rjmp b1
 	sbis PIND, 5			  ; Sensor agua
 	rjmp b1
 	ldi r16, 0x00
+	out PORTD, r16
 	out PORTB, r16
     sbi PORTC, 0              ; Encender motor
+	cbi PORTC, 1
     sbi PORTB, 1              ; Encender LED2
     sbi PORTB, 5              ; Encender LED6
 	rcall Timer_2s
 	cbi PORTC, 0			  ; Apaga el motor
+	cbi PORTC, 1
 	rcall Timer_1s
-	dec r17
+	dec r20
 	brne b1
 	ldi r24, CENTRIFUGADO1
-	rcall Timer_2s			  ; Tiempo de espera entre estados
+	rcall Timer_1s			  ; Tiempo de espera entre estados
     rjmp main_loop
 
 estado_lavado2:
-	ldi r17, 5				  ; Cantidad de ciclos
+	rcall Enviar_Estado_Lavando
+	ldi r20, 5				  ; Cantidad de ciclos
 b2:
 	sbis PIND, 4			  ; Sensor de puerta
 	rjmp b2
@@ -210,121 +234,162 @@ b2:
 	rjmp b2
 	ldi r16, 0x00
 	out PORTB, r16
+	out PORTD, r16
     sbi PORTC, 0              ; Encender motor
+	cbi PORTC, 1
     sbi PORTB, 1              ; Encender LED2
-    sbi PORTB, 6              ; Encender LED7
+    sbi PORTD, 6              ; Encender LED7
     rcall Timer_3s
 	cbi PORTC, 0			  ; Apaga el motor
+	cbi PORTC, 1
 	rcall Timer_2s
-	dec r17
+	dec r20
 	brne b2
 	ldi r24, CENTRIFUGADO2
-	rcall Timer_2s			  ; Tiempo de espera entre estados
+	rcall Timer_1s			  ; Tiempo de espera entre estados
     rjmp main_loop
 
 estado_lavado3:
-	ldi r17, 5				  ; Cantidad de ciclos
+	rcall Enviar_Estado_Lavando
+	ldi r20, 5				  ; Cantidad de ciclos
 b3:
 	sbis PIND, 4			  ; Sensor de puerta
 	rjmp b3
 	sbis PIND, 5			  ; Sensor agua
 	rjmp b3
 	ldi r16, 0x00
+	out PORTD, r16
 	out PORTB, r16
     sbi PORTC, 0              ; Encender motor
+	cbi PORTC, 1
     sbi PORTB, 1              ; Encender LED2
-    sbi PORTB, 7              ; Encender LED8
+    sbi PORTD, 7              ; Encender LED8
     rcall Timer_4s
 	cbi PORTC, 0			  ; Apaga el motor
+	cbi PORTC, 1
 	rcall Timer_3s
-	dec r17
+	dec r20
 	brne b3
 	ldi r24, CENTRIFUGADO3
-	rcall Timer_2s			  ; Tiempo de espera entre estados
+	rcall Timer_1s			  ; Tiempo de espera entre estados
     rjmp main_loop
 
 estado_centrifugado1:
+	rcall Enviar_Estado_Centrifugando
 	ldi r16, 0x00
 	out PORTB, r16
+	out PORTD, r16
     sbi PORTC, 0              ; Encender motor
+	cbi PORTC, 1
     sbi PORTB, 2              ; Encender LED3
     sbi PORTB, 5              ; Encender LED6
 	rcall Timer_15s
 	cbi PORTC, 0
+	cbi PORTC, 1
 	ldi r24, SECADO1
-	rcall Timer_2s			  ; Tiempo de espera entre estados
+	rcall Timer_1s			  ; Tiempo de espera entre estados
     rjmp main_loop
 
 estado_centrifugado2:
+	rcall Enviar_Estado_Centrifugando
 	ldi r16, 0x00
+	out PORTD, r16
 	out PORTB, r16
     sbi PORTC, 0              ; Encender motor
+	cbi PORTC, 1
     sbi PORTB, 2              ; Encender LED3
-    sbi PORTB, 6              ; Encender LED7
+    sbi PORTD, 6              ; Encender LED7
     rcall Timer_15s
 	cbi PORTC, 0
+	cbi PORTC, 1
 	ldi r24, SECADO2
-	rcall Timer_2s			  ; Tiempo de espera entre estados
+	rcall Timer_1s			  ; Tiempo de espera entre estados
     rjmp main_loop
 
 estado_centrifugado3:
+	rcall Enviar_Estado_Centrifugando
 	ldi r16, 0x00
 	out PORTB, r16
+	out PORTD, r16
     sbi PORTC, 0              ; Encender motor
+	cbi PORTC, 1
     sbi PORTB, 2              ; Encender LED3
-    sbi PORTB, 7              ; Encender LED8
+    sbi PORTD, 7              ; Encender LED8
     rcall Timer_15s
 	cbi PORTC, 0
+	cbi PORTC, 1
 	ldi r24, SECADO2
-	rcall Timer_2s			  ; Tiempo de espera entre estados
+	rcall Timer_1s			  ; Tiempo de espera entre estados
     rjmp main_loop
 
 estado_secado1:
+	rcall Enviar_Estado_Secando
 	ldi r16, 0x00
+	out PORTD, r16
 	out PORTB, r16
     sbi PORTC, 0              ; Encender motor
+	cbi PORTC, 1
     sbi PORTB, 3              ; Encender LED4
     sbi PORTB, 5              ; Encender LED6
 	rcall Timer_5s
 	cbi PORTC, 0
-	rcall Timer_3s
-	sbi PORTC, 0
+	cbi PORTC, 1
 	rcall Timer_3s
 	cbi PORTC, 0
+	sbi PORTC, 1
+	rcall Timer_5s
+	cbi PORTC, 0
+	cbi PORTC, 1
 	ldi r24, FINAL
     rjmp main_loop
 
 estado_secado2:
+	rcall Enviar_Estado_Secando
 	ldi r16, 0x00
+	out PORTD, r16
 	out PORTB, r16
     sbi PORTC, 0              ; Encender motor
+	cbi PORTC, 1
     sbi PORTB, 3              ; Encender LED4
-    sbi PORTB, 6              ; Encender LED7
+    sbi PORTD, 6              ; Encender LED7
     rcall Timer_7s
 	cbi PORTC, 0
+	cbi PORTC, 1
 	rcall Timer_5s
-	sbi PORTC, 0
+	cbi PORTC, 0
+	sbi PORTC, 1
 	rcall Timer_7s
 	cbi PORTC, 0
+	cbi PORTC, 1
 	ldi r24, FINAL
     rjmp main_loop
 
 estado_secado3:
+	rcall Enviar_Estado_Secando
 	ldi r16, 0x00
 	out PORTB, r16
-    sbi PORTC, 0              ; Encender motor
+	out PORTD, r16
+    sbi PORTC, 0
+	cbi PORTC, 1              ; Encender motor
     sbi PORTB, 3              ; Encender LED4
-    sbi PORTB, 7              ; Encender LED8
+    sbi PORTD, 7              ; Encender LED8
     rcall Timer_9s
 	cbi PORTC, 0
+	cbi PORTC, 1
 	rcall Timer_7s
-	sbi PORTC, 0
+	cbi PORTC, 0
+	sbi PORTC, 1
 	rcall Timer_9s
 	cbi PORTC, 0
+	cbi PORTC, 1
 	ldi r24, FINAL
     rjmp main_loop
 
 estado_final:
+	rcall Enviar_Estado_Completado
+	ldi r16, 0x00
+	out PORTD, r16
+	out PORTB, r16
     cbi PORTC, 0              ; Apagar motor
     sbi PORTB, 4              ; Encender LED5
 	sbic PIND, 4
@@ -333,9 +398,9 @@ estado_final:
     rjmp main_loop
 
 Timer_1s:
-	ldi r16, 140
-	ldi r17, 43
-	ldi r18, 7
+	ldi r16, 250
+	ldi r17, 250
+	ldi r18, 85
 L1:
 	dec r16
 	brne L1
@@ -346,118 +411,185 @@ L1:
 	RET
 	
 Timer_2s:
-	ldi r16, 119
-	ldi r17, 38
-	ldi r18, 20
-L2:
-	dec r16
-	brne L2
-	dec r17
-	brne L2
-	dec r18
-	brne L2
-	RET
+	rcall Timer_1s
+	rcall Timer_1s
+	ret
 
 Timer_3s:
-	ldi r16, 233
-	ldi r17, 81
-	ldi r18, 4
-L3:
-	dec r16
-	brne L3
-	dec r17
-	brne L3
-	dec r18
-	brne L3
-	RET
+	rcall Timer_1s
+	rcall Timer_2s
+	ret
 
 Timer_4s:
-	ldi r16, 89
-	ldi r17, 49
-	ldi r18, 41
-L4:
-	dec r16
-	brne L4
-	dec r17
-	brne L4
-	dec r18
-	brne L4
-	RET
+	rcall Timer_2s
+	rcall Timer_2s
+	ret
 
 Timer_5s:
-	ldi r16, 152
-	ldi r17, 47
-	ldi r18, 25
-L5:
-	dec r16
-	brne L5
-	dec r17
-	brne L5
-	dec r18
-	brne L5
-	RET
+	rcall Timer_4s
+	rcall Timer_1s
+	ret
 
 Timer_7s:
-	ldi r16, 193
-	ldi r17, 36
-	ldi r18, 31
-L7:
-	dec r16
-	brne L7
-	dec r17
-	brne L7
-	dec r18
-	brne L7
-	RET
+	rcall Timer_5s
+	rcall Timer_2s
+	ret
 
 Timer_9s:
-	ldi r16, 177
-	ldi r17, 69
-	ldi r18, 22
-L9:
-	dec r16
-	brne L9
-	dec r17
-	brne L9
-	dec r18
-	brne L9
-	RET
+	rcall Timer_7s
+	rcall Timer_2s
+	ret
 
 Timer_15s:
-	ldi r16, 228
-	ldi r17, 66
-	ldi r18, 25
-L15:
-	dec r16
-	brne L15
-	dec r17
-	brne L15
-	dec r18
-	brne L15
-	RET
+	rcall Timer_7s
+	rcall Timer_7s
+	rcall Timer_1s
+	ret
 
 Timer_18s:
-	ldi r16, 150
-	ldi r17, 150
-	ldi r18, 20
-L18:
-	dec r16
-	brne L18
-	dec r17
-	brne L18
-	dec r18
-	brne L18
+	rcall Timer_15s
+	rcall Timer_3s
 	RET
 
 Timer_21s:
-	ldi r16, 173
-	ldi r17, 71
-	ldi r18, 47
-L21:
-	dec r16
-	brne L21
-	dec r17
-	brne L21
-	dec r18
-	brne L21
-	RET
+	rcall Timer_15s
+	rcall Timer_5s
+	rcall Timer_1s
+	ret
+
+Enviar_Estado_Standby:
+	ldi r16, 'S'
+    rcall Enviar
+	ldi r16, 'T'
+    rcall Enviar
+	ldi r16, 'A'
+    rcall Enviar
+	ldi r16, 'N'
+    rcall Enviar
+	ldi r16, 'D'
+    rcall Enviar
+	ldi r16, 'B'
+    rcall Enviar
+	ldi r16, 'Y'
+    rcall Enviar
+	ldi r16, 0x0A
+    rcall Enviar
+	ret
+
+Enviar_Estado_Ajuste:
+	ldi r16, 'A'
+    rcall Enviar
+	ldi r16, 'J'
+    rcall Enviar
+	ldi r16, 'U'
+    rcall Enviar
+	ldi r16, 'S'
+    rcall Enviar
+	ldi r16, 'T'
+    rcall Enviar
+	ldi r16, 'E'
+    rcall Enviar
+	ldi r16, 0x0A
+    rcall Enviar
+	ret
+
+Enviar_Estado_Lavando:
+	ldi r16, 'L'
+    rcall Enviar
+	ldi r16, 'A'
+    rcall Enviar
+	ldi r16, 'V'
+    rcall Enviar
+	ldi r16, 'A'
+    rcall Enviar
+	ldi r16, 'N'
+    rcall Enviar
+	ldi r16, 'D'
+    rcall Enviar
+	ldi r16, 'O'
+    rcall Enviar
+	ldi r16, 0x0A
+    rcall Enviar
+	ret
+
+Enviar_Estado_Centrifugando:
+	ldi r16, 'C'
+    rcall Enviar
+	ldi r16, 'E'
+    rcall Enviar
+	ldi r16, 'N'
+    rcall Enviar
+	ldi r16, 'T'
+    rcall Enviar
+	ldi r16, 'R'
+    rcall Enviar
+	ldi r16, 'I'
+    rcall Enviar
+	ldi r16, 'F'
+    rcall Enviar
+	ldi r16, 'U'
+    rcall Enviar
+	ldi r16, 'G'
+    rcall Enviar
+	ldi r16, 'A'
+    rcall Enviar
+	ldi r16, 'N'
+    rcall Enviar
+	ldi r16, 'D'
+    rcall Enviar
+	ldi r16, 'O'
+    rcall Enviar
+	ldi r16, 0x0A
+    rcall Enviar
+	ret
+
+Enviar_Estado_Secando:
+	ldi r16, 'S'
+    rcall Enviar
+	ldi r16, 'E'
+    rcall Enviar
+	ldi r16, 'C'
+    rcall Enviar
+	ldi r16, 'A'
+    rcall Enviar
+	ldi r16, 'N'
+    rcall Enviar
+	ldi r16, 'D'
+    rcall Enviar
+	ldi r16, 'O'
+    rcall Enviar
+	ldi r16, 0x0A
+    rcall Enviar
+	ret
+
+Enviar_Estado_Completado:
+	ldi r16, 'C'
+    rcall Enviar
+	ldi r16, 'O'
+    rcall Enviar
+	ldi r16, 'M'
+    rcall Enviar
+	ldi r16, 'P'
+    rcall Enviar
+	ldi r16, 'L'
+    rcall Enviar
+	ldi r16, 'E'
+    rcall Enviar
+	ldi r16, 'T'
+    rcall Enviar
+	ldi r16, 'A'
+    rcall Enviar
+	ldi r16, 'D'
+    rcall Enviar
+	ldi r16, 'O'
+    rcall Enviar
+	ldi r16, 0x0A
+    rcall Enviar
+	ret
+
+Enviar:
+    lds r17, UCSR0A
+    sbrs r17, UDRE0
+    rjmp Enviar
+    sts UDR0, r16     
+    ret          
