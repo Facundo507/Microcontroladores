@@ -198,7 +198,7 @@ void dibujar_circulo() {
 	mover_solenoide(0);
 }
 
-void Flor(){
+void dibujar_Flor(){
 	Centrar();
 	mover_solenoide(1);  // Bajar solenoide
 	_delay_ms(1500);
@@ -259,6 +259,89 @@ void dibujar_cruz(){
 	mover_solenoide(0);	
 }
 
+void dibujar_Zorro(){
+	Centrar();
+	mover_solenoide(1);
+	_delay_ms(1500);
+	mover_plotter(5);
+	mover_plotter(5);
+	mover_plotter(5);
+	mover_plotter(5);
+	mover_plotter(5);
+	mover_plotter(0);
+	mover_plotter(7);
+	mover_plotter(6);
+	mover_plotter(6);
+	mover_plotter(1);
+	mover_plotter(1);
+	mover_plotter(1);
+	mover_plotter(7);
+	mover_plotter(7);
+	mover_plotter(3);
+	mover_plotter(3);
+	mover_plotter(7);
+	mover_plotter(0);
+	mover_plotter(0);
+	mover_plotter(4);
+	mover_plotter(0);
+	mover_plotter(5);
+	mover_plotter(5);
+	mover_plotter(0);
+	mover_plotter(0);
+	mover_plotter(4);
+	mover_plotter(0);
+	mover_plotter(4);
+	mover_plotter(4);
+	mover_plotter(2);
+	mover_plotter(6);
+	mover_plotter(4);
+	mover_plotter(2);
+	mover_plotter(2);
+	mover_plotter(2);
+	mover_plotter(2);
+	mover_plotter(6);
+	mover_plotter(4);
+	mover_plotter(2);
+	mover_plotter(2);
+	mover_plotter(7);
+	mover_plotter(1);
+	mover_plotter(1);
+	mover_plotter(1);
+	mover_plotter(6);
+	mover_plotter(1);
+	mover_plotter(1);
+	mover_plotter(1);
+	mover_plotter(7);
+	mover_plotter(2);
+	mover_plotter(2);
+	mover_plotter(6);
+	mover_plotter(6);
+	mover_plotter(6);
+	mover_plotter(1);
+	mover_plotter(3);
+	mover_plotter(3);
+	mover_plotter(3);
+	mover_plotter(7);
+	mover_plotter(7);
+	mover_plotter(1);
+	mover_plotter(1);
+	mover_plotter(5);
+	mover_plotter(5);
+	mover_plotter(3);
+	mover_plotter(1);
+	mover_plotter(1);
+	mover_plotter(5);
+	mover_plotter(5);
+	mover_plotter(0);
+	mover_plotter(0);
+	mover_plotter(0);
+	mover_plotter(0);
+	mover_plotter(4);
+	mover_plotter(4);
+	mover_solenoide(0);
+	_delay_ms(1500);
+}
+
 int main(void) {
 	// Configurar UART con la velocidad de baudios de 9600
 	UART_init(103);
@@ -297,11 +380,12 @@ int main(void) {
 		}
 		if (Opcion == '4'){
 			UART_sendString("Dibujando Zorro: \n");
+			dibujar_Zorro();
 			UART_sendString("Zorro Finalizado: \n");
 		}
 		if (Opcion == '5'){
 			UART_sendString("Dibujando Flor: \n");
-			Flor();
+			dibujar_Flor();
 			UART_sendString("Flor Finalizado: \n");
 		}
 		if (Opcion == '6'){
