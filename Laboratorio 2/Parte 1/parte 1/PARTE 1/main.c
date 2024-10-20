@@ -36,21 +36,16 @@ void UART_sendString(const char *str) {
 }
 
 void init_pins() {
-	// Configurar los pines como salida en el puerto B (asignación de pines)
-	DDRB |= (1 << PB2) | (1 << PB3) | (1 << PB4) | (1 << PB5) | (1 << PB6) | (1 << PB7);
-
-	// Configurar los pines para entrada en el puerto D si es necesario (ejemplo para botones)
-	DDRD &= ~(1 << PD2) & ~(1 << PD3);  // Configura PD2 y PD3 como entrada
-	PORTD |= (1 << PD2) | (1 << PD3);   // Activa pull-up en PD2 y PD3
+	DDRD |= (1 << PD2) | (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7);
 }
 
 void mover_solenoide(int bajar) {
 	if (bajar) {
-		PORTB |= (1 << PB2);   // Activar solenoide para bajar
-		PORTB &= ~(1 << PB3);  // Desactivar solenoide para subir
+		PORTD |= (1 << PD2);   // Activar solenoide para bajar
+		PORTD &= ~(1 << PD3);  // Desactivar solenoide para subir
 		} else {
-		PORTB &= ~(1 << PB2);  // Desactivar solenoide para bajar
-		PORTB |= (1 << PB3);   // Activar solenoide para subir
+		PORTD &= ~(1 << PD2);  // Desactivar solenoide para bajar
+		PORTD |= (1 << PD3);   // Activar solenoide para subir
 	}
 }
 
@@ -78,7 +73,7 @@ void mover_plotter(int dir) {
 		PORTD &= ~(1 << PD7);
 		break;
 		case 4:  // Mover hacia abajo-izquierda (diagonal)
-		for(int i = 0; i < 14; i++){
+		for(int i = 0; i < 10; i++){
 			PORTD &= ~(1 << PD6);
 			PORTD |= (1 << PD4);
 			_delay_ms(50);
@@ -89,7 +84,7 @@ void mover_plotter(int dir) {
 		PORTD &= (~(1 << PD4) & ~(1 << PD6));
 		break;
 		case 5:  // Mover hacia abajo-derecha (diagonal)
-		for(int i = 0; i < 14; i++){
+		for(int i = 0; i < 10; i++){
 			PORTD &= ~(1 << PD7);
 			PORTD |= (1 << PD4);
 			_delay_ms(50);
@@ -100,7 +95,7 @@ void mover_plotter(int dir) {
 		PORTD &= (~(1 << PD4) & ~(1 << PD7));
 		break;
 		case 6:  // Mover hacia arriba-izquierda (diagonal)
-		for(int i = 0; i < 14; i++){
+		for(int i = 0; i < 10; i++){
 			PORTD &= ~(1 << PD6);
 			PORTD |= (1 << PD5);
 			_delay_ms(50);
@@ -111,7 +106,7 @@ void mover_plotter(int dir) {
 		PORTD &= (~(1 << PD5) & ~(1 << PD6));
 		break;
 		case 7:  // Mover hacia arriba-derecha (diagonal)
-		for(int i = 0; i < 14; i++){
+		for(int i = 0; i < 10; i++){
 			PORTD &= ~(1 << PD7);
 			PORTD |= (1 << PD5);
 			_delay_ms(50);
@@ -343,11 +338,14 @@ void dibujar_Zorro(){
 }
 
 int main(void) {
+	// Configurar los pines
+	init_pins();
 	// Configurar UART con la velocidad de baudios de 9600
 	UART_init(103);
 	char Opcion;
 	
 	while(1){
+		_delay_ms(1000);
 		UART_sendString("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * \n");
 		UART_sendString(" \n");
 		UART_sendString("Bienvenido al programa para dibujar sobre el Plotter con ATmega328p\r\n");
@@ -389,9 +387,6 @@ int main(void) {
 			UART_sendString("Flor Finalizado: \n");
 		}
 		if (Opcion == '6'){
-			Centrar();
-			mover_solenoide(1);
-			_delay_ms(1500);
 			UART_sendString("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * \n");
 			UART_sendString("Lea las siguientes instrucciones para dibujar: \n");
 			UART_sendString("w- Mover el puntero hacia arriba: \n");
@@ -399,6 +394,11 @@ int main(void) {
 			UART_sendString("d- Mover el puntero hacia la derecha: \n");
 			UART_sendString("a- Mover el puntero hacia la izquierda: \n");
 			UART_sendString("0- Volver al menú principal: \n");
+			UART_sendString("Centrando... ");
+			Centrar();
+			mover_solenoide(1);
+			UART_sendString("Listo!\n");
+			_delay_ms(1500);
 			Opcion = UART_receiveChar();
 			while (Opcion != 0){
 				if (Opcion == 'w'){
