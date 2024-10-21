@@ -53,8 +53,8 @@ void SetupPWM(void){
 	// los 3 menos significativos configuran el prescaler, en este
 	// caso configurado en 1024, pin 3 y 4 configuracion del WGM1 para hacerlo en FASTPWM
 	//
-	ICR1 = 1024; // Valor del top, este valor con el prescaler de 64 nos da una frecuenca de 1736,11hz, el más proximo a 1725hz.
-	OCR1A = 72; // Valor del Ciclo útil
+	ICR1 = 1024; // Valor del top, este valor con el prescaler de 64 nos da una frecuenca de 1736,11hz, el mÃ¡s proximo a 1725hz.
+	OCR1A = 72; // Valor del Ciclo Ãºtil
 	OCR1B = 72;
 }
 
