@@ -19,7 +19,7 @@
 #define SupAzul 390
 #define InfAzul 320
 
-
+//Se cambio tipo de dato valorADC para que pueda recibir datos negativos
 
 void UART_init(unsigned int ubrr) {
 	// Configurar el valor de UBRR (Baud Rate Register)
@@ -51,8 +51,8 @@ void UART_sendString(const char *str) {
 
 void UART_send16bitsComoString(uint16_t Entero1024) {
 	char Cadena[6];  
-	sprintf(Cadena, "%u", Entero1024); //envía a la cadena de char los valores de Entero1024
-	UART_sendString(Cadena);        //Envía la cadena de caracteres
+	sprintf(Cadena, "%u", Entero1024); //envÃ­a a la cadena de char los valores de Entero1024
+	UART_sendString(Cadena);        //EnvÃ­a la cadena de caracteres
 }
 
 void SetupPWM(void){
@@ -63,7 +63,7 @@ void SetupPWM(void){
 	// caso configurado en 1024, pin 3 y 4 configuracion del WGM1 para hacerlo en FASTPWM
 	//
 	ICR1 = 4999;
-	OCR1A = 125; // Valor del Ciclo útil
+	OCR1A = 125; // Valor del Ciclo Ãºtil
 }
 
 void SetupADC(void){
@@ -102,7 +102,7 @@ int main(void){
 		
 		
 		if ((ValorADC >= InfAmarillo) & (ValorADC <= SupAmarillo)){
-		UART_sendString("Color leído: Amarillo");
+		UART_sendString("Color leÃ­do: Amarillo");
 		UART_sendString("\r\n");
 		UART_sendString("Intervalo del color: (");
 		UART_send16bitsComoString(InfAmarillo);
@@ -129,7 +129,7 @@ int main(void){
 		
 		
 		if ((ValorADC >= InfRojo) & (ValorADC <= SupRojo)){
-			UART_sendString("Color leído: Rojo");
+			UART_sendString("Color leÃ­do: Rojo");
 			UART_sendString("\r\n");
 			UART_sendString("Intervalo del color: (");
 			UART_send16bitsComoString(InfRojo);
@@ -150,7 +150,7 @@ int main(void){
 			_delay_ms(300);
 		}
 		if ((ValorADC >= InfRosado) & (ValorADC <= SupRosado)){
-			UART_sendString("Color leído: Rosado");
+			UART_sendString("Color leÃ­do: Rosado");
 			UART_sendString("\r\n");
 			
 			UART_sendString("Intervalo del color: (");
@@ -174,7 +174,7 @@ int main(void){
 			_delay_ms(300);
 		}
 		if ((ValorADC >= InfAzul) & (ValorADC <= SupAzul)){
-			UART_sendString("Color leído: Azul");
+			UART_sendString("Color leÃ­do: Azul");
 			UART_sendString("\r\n");
 			
 			UART_sendString("Intervalo del color: (");
