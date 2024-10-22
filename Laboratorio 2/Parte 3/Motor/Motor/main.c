@@ -71,7 +71,7 @@ int main(void) {
 		
 		if (valorPot2 < valorPot1) {
 			OCR1B = 0; 
-			OCR1A = valorPot1Ajustado; // PWM horario
+			OCR1A = 255 - valorPot2Ajustado; // PWM horario
 		} else if (valorPot2 > valorPot1) {
 			OCR1A = 0;                 
 			OCR1B = valorPot2Ajustado;  // PWM antihorario
@@ -90,13 +90,6 @@ int main(void) {
 		USARTPrint(Mensaje);
 		snprintf(Mensaje, sizeof(Mensaje), "PWM antihorario: %u\n", OCR1B);
 		USARTPrint(Mensaje);
-		if(valorPot2 < valorPot1){
-			snprintf(Mensaje, sizeof(Mensaje), "Sentido Horario\n\n");
-			USARTPrint(Mensaje);
-		} else {
-			snprintf(Mensaje, sizeof(Mensaje), "Sentido Antihorario\n\n");
-			USARTPrint(Mensaje);
-		}
 		_delay_ms(100);
 	}
 }

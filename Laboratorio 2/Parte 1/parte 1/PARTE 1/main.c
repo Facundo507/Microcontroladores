@@ -73,7 +73,7 @@ void mover_plotter(int dir) {
 		PORTD &= ~(1 << PD7);
 		break;
 		case 4:  // Mover hacia abajo-izquierda (diagonal)
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < 20; i++){
 			PORTD &= ~(1 << PD6);
 			PORTD |= (1 << PD4);
 			_delay_ms(50);
@@ -84,7 +84,7 @@ void mover_plotter(int dir) {
 		PORTD &= (~(1 << PD4) & ~(1 << PD6));
 		break;
 		case 5:  // Mover hacia abajo-derecha (diagonal)
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < 20; i++){
 			PORTD &= ~(1 << PD7);
 			PORTD |= (1 << PD4);
 			_delay_ms(50);
@@ -95,7 +95,7 @@ void mover_plotter(int dir) {
 		PORTD &= (~(1 << PD4) & ~(1 << PD7));
 		break;
 		case 6:  // Mover hacia arriba-izquierda (diagonal)
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < 20; i++){
 			PORTD &= ~(1 << PD6);
 			PORTD |= (1 << PD5);
 			_delay_ms(50);
@@ -106,7 +106,7 @@ void mover_plotter(int dir) {
 		PORTD &= (~(1 << PD5) & ~(1 << PD6));
 		break;
 		case 7:  // Mover hacia arriba-derecha (diagonal)
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < 20; i++){
 			PORTD &= ~(1 << PD7);
 			PORTD |= (1 << PD5);
 			_delay_ms(50);
@@ -118,22 +118,22 @@ void mover_plotter(int dir) {
 		break;
 		case 10:  // Mover hacia abajo
 		PORTD |= (1 << PD4);  // Activar PD4 (Abajo)
-		_delay_ms(50);
+		_delay_ms(100);
 		PORTD &= ~(1 << PD4); // Desactivar PD4
 		break;
 		case 11:  // Mover hacia arriba
 		PORTD |= (1 << PD5);  // Activar PD5 (Arriba)
-		_delay_ms(50);
+		_delay_ms(100);
 		PORTD &= ~(1 << PD5); // Desactivar PD5
 		break;
 		case 12:  // Mover hacia la izquierda
 		PORTD |= (1 << PD6);  // Activar PD6 (Izquierda)
-		_delay_ms(50);
+		_delay_ms(100);
 		PORTD &= ~(1 << PD6); // Desactivar PD6
 		break;
 		case 13:  // Mover hacia la derecha
 		PORTD |= (1 << PD7);  // Activar PD7 (Derecha)
-		_delay_ms(50);
+		_delay_ms(100);
 		PORTD &= ~(1 << PD7); // Desactivar PD7
 		break;
 	}
@@ -145,6 +145,9 @@ void Centrar(){
 	mover_plotter(2);
 	mover_plotter(2);
 	mover_plotter(2);
+	mover_plotter(2);
+	mover_plotter(2);
+	mover_plotter(2);
 
 	mover_plotter(2);
 	mover_plotter(2);
@@ -152,8 +155,6 @@ void Centrar(){
 	mover_plotter(2);
 	mover_plotter(2);
 
-	mover_plotter(0);
-	mover_plotter(0);
 	mover_plotter(0);
 	mover_plotter(0);
 	mover_plotter(0);
@@ -169,28 +170,135 @@ void dibujar_circulo() {
 	Centrar();
 	mover_solenoide(1);
 	_delay_ms(1500);
-	int radio = 20;
-	// Aumentar la resolución usando más puntos
-	for (double angle = 0; angle < 2 * M_PI; angle += 0.01) { // Incrementar el ángulo
-		int x = (int)(radio * cos(angle));
-		int y = (int)(radio * sin(angle));
-
-		// Dibujar punto en la posición (x, y)
-		if (x >= 0 && y >= 0) {
-			mover_plotter(13);
-			mover_plotter(11);
-			} else if (x < 0 && y >= 0) {
-			mover_plotter(12);
-			mover_plotter(11);
-			} else if (x >= 0 && y < 0) {
-			mover_plotter(13);
-			mover_plotter(10);
-			} else {
-			mover_plotter(12);
-			mover_plotter(10);
-		}
-	}
+	
+	mover_plotter(13);
+	mover_plotter(13);
+	mover_plotter(13);
+	
+	mover_plotter(10);
+	
+	mover_plotter(13);
+	mover_plotter(13);
+	
+	mover_plotter(10);
+	
+	mover_plotter(13);
+	mover_plotter(13);
+	
+	mover_plotter(10);
+	
+	mover_plotter(13);
+	
+	mover_plotter(10);
+	mover_plotter(10);
+	
+	mover_plotter(13);
+	
+	mover_plotter(10);
+	mover_plotter(10);
+	
+	mover_plotter(13);
+	
+	mover_plotter(10);
+	mover_plotter(10);
+	mover_plotter(10);
+	mover_plotter(10);
+	mover_plotter(10);
+	mover_plotter(10);
+	
+	mover_plotter(12);
+	
+	mover_plotter(10);
+	mover_plotter(10);
+	
+	mover_plotter(12);
+	
+	mover_plotter(10);
+	mover_plotter(10);
+	
+	mover_plotter(12);
+	
+	mover_plotter(10);
+	
+	mover_plotter(12);
+	mover_plotter(12);
+	
+	mover_plotter(10);
+	
+	mover_plotter(12);
+	mover_plotter(12);
+	
+	mover_plotter(10);
+	
+	mover_plotter(12);
+	mover_plotter(12);
+	mover_plotter(12);
+	mover_plotter(12);
+	mover_plotter(12);
+	mover_plotter(12);
+	
+	mover_plotter(11);
+	
+	mover_plotter(12);
+	mover_plotter(12);
+	
+	mover_plotter(11);
+	
+	mover_plotter(12);
+	mover_plotter(12);
+	
+	mover_plotter(11);
+	
+	mover_plotter(12);
+	
+	mover_plotter(11);
+	mover_plotter(11);
+	
+	mover_plotter(12);
+	
+	mover_plotter(11);
+	mover_plotter(11);
+	
+	mover_plotter(12);
+	
+	mover_plotter(11);
+	mover_plotter(11);
+	mover_plotter(11);
+	mover_plotter(11);
+	mover_plotter(11);
+	mover_plotter(11);
+	
+	mover_plotter(13);
+	
+	mover_plotter(11);
+	mover_plotter(11);
+	
+	mover_plotter(13);
+	
+	mover_plotter(11);
+	mover_plotter(11);
+	
+	mover_plotter(13);
+	
+	mover_plotter(11);
+	
+	mover_plotter(13);
+	mover_plotter(13);
+	
+	mover_plotter(11);
+	
+	mover_plotter(13);
+	mover_plotter(13);
+	
+	mover_plotter(11);
+	
+	mover_plotter(13);
+	mover_plotter(13);
+	mover_plotter(13);
+	
+	_delay_ms(1500);
 	mover_solenoide(0);
+	
 }
 
 void dibujar_Flor(){
@@ -236,6 +344,7 @@ void dibujar_Triangulo(){
 	_delay_ms(1500);
 	mover_plotter(7);
 	mover_plotter(5);
+	mover_plotter(2);
 	mover_plotter(2);
 	mover_solenoide(0);
 }
@@ -336,6 +445,9 @@ void dibujar_Zorro(){
 	mover_solenoide(0);
 	_delay_ms(1500);
 }
+void dibujar_circulo_cuadrado(int radio);
+void dibujar_movimientos(int x, int y);
+void mover_plotter_en_xy(int x, int y);
 
 int main(void) {
 	// Configurar los pines
@@ -424,4 +536,64 @@ int main(void) {
 			_delay_ms(1500);
 		}
 	} 
+}
+
+void dibujar_circulo_cuadrado(int radio) {
+	Centrar();  // Centrar antes de dibujar
+	mover_solenoide(1);  // Bajar solenoide
+	_delay_ms(1500);
+
+	int x = radio;
+	int y = 0;
+	int error = 0;
+
+	// Dibujar el círculo solo con movimientos en los ejes
+	while (x >= y) {
+		// Dibujar los cuadrantes usando solo movimientos en X y Y
+		dibujar_movimientos(x, y);
+		
+		y++;
+		error += 2*y + 1;
+		if (2*(error - x) + 1 > 0) {
+			x--;
+			error -= 2*x + 1;
+		}
+	}
+
+	mover_solenoide(0);  // Subir solenoide
+}
+
+void dibujar_movimientos(int x, int y) {
+	// Dibujar los cuadrantes del círculo con movimientos discretos
+	mover_plotter_en_xy(x, y);   // (x, y)
+	mover_plotter_en_xy(-x, y);  // (-x, y)
+	mover_plotter_en_xy(x, -y);  // (x, -y)
+	mover_plotter_en_xy(-x, -y); // (-x, -y)
+	mover_plotter_en_xy(y, x);   // (y, x)
+	mover_plotter_en_xy(-y, x);  // (-y, x)
+	mover_plotter_en_xy(y, -x);  // (y, -x)
+	mover_plotter_en_xy(-y, -x); // (-y, -x)
+}
+
+void mover_plotter_en_xy(int x, int y) {
+	// Esta función mueve el plóter solo en direcciones discretas (arriba, abajo, izquierda, derecha)
+	if (x > 0) {
+		for (int i = 0; i < x; i++) {
+			mover_plotter(3);  // Mover hacia la derecha
+		}
+		} else {
+		for (int i = 0; i < -x; i++) {
+			mover_plotter(2);  // Mover hacia la izquierda
+		}
+	}
+
+	if (y > 0) {
+		for (int i = 0; i < y; i++) {
+			mover_plotter(1);  // Mover hacia arriba
+		}
+		} else {
+		for (int i = 0; i < -y; i++) {
+			mover_plotter(0);  // Mover hacia abajo
+		}
+	}
 }
