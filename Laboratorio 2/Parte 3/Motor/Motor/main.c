@@ -9,6 +9,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdio.h>
+#include <math.h>
 
 #define BAUD 9600
 #define bps F_CPU/16/BAUD-1
@@ -55,6 +56,9 @@ int main(void) {
 	setupAdc();
 	setupPwm();
 	
+	uint16_t valorPWM;
+	int x;
+	
 	while (1) {
 		uint16_t valorPot1 = readAdc(0);
 		uint16_t valorPot2 = readAdc(1);
@@ -70,11 +74,67 @@ int main(void) {
 		}
 		
 		if (valorPot2 < valorPot1) {
-			OCR1B = 0; 
-			OCR1A = 255 - valorPot2Ajustado; // PWM horario
+			x = valorPot1 - valorPot2;
+			valorPWM = fabs(x);
+			if((valorPWM < 2) | (valorPWM > 1023)){
+				valorPWM = 0;
+			}
+			if(valorPWM > 1000){
+				OCR1B = 0;
+				OCR1A = 150; // PWM horario
+			} else if(valorPWM > 800){
+				OCR1B = 0;
+				OCR1A = 140;
+			} else if(valorPWM > 600){
+				OCR1B = 0;
+				OCR1A = 130;
+			} else if(valorPWM > 400){
+				OCR1B = 0;
+				OCR1A = 120;
+			} else if(valorPWM > 200){
+				OCR1B = 0;
+				OCR1A = 110;
+			} else if(valorPWM > 100){
+				OCR1B = 0;
+				OCR1A = 100;
+			} else if(valorPWM < 3){ // Para evitar diferencias minimas en los potenciometros
+				OCR1B = 0;
+				OCR1A = 0;			
+			} else {
+				OCR1B = 0;
+				OCR1A = 90;
+			}
 		} else if (valorPot2 > valorPot1) {
-			OCR1A = 0;                 
-			OCR1B = valorPot2Ajustado;  // PWM antihorario
+			x = valorPot1 - valorPot2;
+			valorPWM = fabs(x);
+			if((valorPWM < 2) | (valorPWM > 1023)){
+				valorPWM = 0;
+			}
+			if(valorPWM > 1000){
+				OCR1B = 150; // Antihorario
+				OCR1A = 0;
+			} else if(valorPWM > 800){
+				OCR1B = 140;
+				OCR1A = 0;
+			} else if(valorPWM > 600){
+				OCR1B = 130;
+				OCR1A = 0;
+			} else if(valorPWM > 400){
+				OCR1B = 120;
+				OCR1A = 0;
+			} else if(valorPWM > 200){
+				OCR1B = 110;
+				OCR1A = 0;
+			} else if(valorPWM > 100){
+				OCR1B = 100;
+				OCR1A = 0;
+			} else if (valorPWM < 3){
+				OCR1B = 0;
+				OCR1A = 0;
+			} else {
+				OCR1B = 90;
+				OCR1A = 0;
+			}
 		} else {
 			OCR1A = 0; // Detener el motor si las posiciones son iguales
 			OCR1B = 0;
