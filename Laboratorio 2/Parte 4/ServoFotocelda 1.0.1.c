@@ -20,6 +20,7 @@
 #define InfAzul 320
 
 //Se cambio tipo de dato valorADC para que pueda recibir datos negativos
+// Entre 319 y 301 no se definió ningún color pero aun asi los colores azul y rosado se mostraban bien.
 
 void UART_init(unsigned int ubrr) {
 	// Configurar el valor de UBRR (Baud Rate Register)
