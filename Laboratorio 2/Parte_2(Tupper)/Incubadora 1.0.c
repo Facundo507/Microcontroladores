@@ -12,7 +12,7 @@
 #include <util/delay.h>
 #include <stdio.h>
 
-#define EnCaliente 0 // Cuando las resistencias del puente de weathson calientan, la caracterización cambia:
+#define EnCaliente 0 // Cuando las resistencias del puente de weathson calientan, la caracterizaciÃ³n cambia:
 #define Temp0 100 + EnCaliente
 #define Temp22 160 + EnCaliente	
 #define Temp30 165 + EnCaliente
@@ -98,8 +98,8 @@ void UART_sendString(const char *str) {
 
 void UART_send16bitsComoString(uint16_t Entero1024) {
 	char Cadena[6];
-	sprintf(Cadena, "%u", Entero1024); //envía a la cadena de char los valores de Entero1024
-	UART_sendString(Cadena);        //Envía la cadena de caracteres
+	sprintf(Cadena, "%u", Entero1024); //envÃ­a a la cadena de char los valores de Entero1024
+	UART_sendString(Cadena);        //EnvÃ­a la cadena de caracteres
 	
 		
 	}
@@ -418,8 +418,8 @@ void SetupPWM(void){
 	// los 3 menos significativos configuran el prescaler, en este
 	// caso configurado en 1024, pin 3 y 4 configuracion del WGM1 para hacerlo en FASTPWM
 	//
-	ICR1 = 1024; // Valor del top, este valor con el prescaler de 64 nos da una frecuenca de 1736,11hz, el más proximo a 1725hz.
-	OCR1A = 72; // Valor del Ciclo útil
+	ICR1 = 1024; // Valor del top, este valor con el prescaler de 64 nos da una frecuenca de 1736,11hz, el mÃ¡s proximo a 1725hz.
+	OCR1A = 72; // Valor del Ciclo Ãºtil
 	OCR1B = 0;
 }
 
@@ -460,7 +460,7 @@ int main(void){
 	
 	UART_init(103);
 	UART_sendString("Bienvenido al programa, para cambiar los rangos de temperatura ideal presione la tecla A");
-	UART_sendString("Por un minuto se calentará la incubadora");
+	UART_sendString("Por un minuto se calentarÃ¡ la incubadora");
 	
 	UART_sendString("\r\n");
 	UART_sendString("____ Tiempo ____ ValorADC ___ Voltaje ___Temperatura ______ EstadoCalentador ______ EstadoVentilador\r\n ");
@@ -530,10 +530,10 @@ int main(void){
 		UART_sendString("\r\n ");
 		if (UCSR0A & (1 << RXC0)) {
 			char receivedChar = UDR0;
-			UART_sendString("Seleccionó la opción de Cambiar Intervalo de temperatura ideales: \r\n");
-			UART_sendString("Seleccione temperatura mínimo ideal: \r\n");
+			UART_sendString("SeleccionÃ³ la opciÃ³n de Cambiar Intervalo de temperatura ideales: \r\n");
+			UART_sendString("Seleccione temperatura mÃ­nimo ideal: \r\n");
 			TminIdeal = UART_receiveChar();
-			UART_sendString("Seleccione temperatura máxima ideal: \r\n");
+			UART_sendString("Seleccione temperatura mÃ¡xima ideal: \r\n");
 			TmaxIdeal = UART_receiveChar();
 			UART_sendString("Datos recibidos, Programa se sigue ejecutando...: \r\n");
 		}
