@@ -33,11 +33,13 @@
 #define desHabilitarY PORTC &= ~(1 << EnableY);
 #define DerechaY PORTC |= (1 << DirY);
 #define IzquierdaY PORTC &= ~(1 << DirY);
+#define SubirSolenoide PORTC |= ((1 << Solenoide));
+#define BajarSolenoide PORTC &= ~((1 << Solenoide));
 
 
 #define LED PD5
 
-void int0_init(){
+void int01_init(){
 	DDRD &= ~(1 << PD2); //PD2 como entrada (INT0)
 	//PORTD |= (1 << PD2); //Resistencia pull-up
 	
@@ -71,7 +73,49 @@ ISR(INT1_vect) {
 	desHabilitarX
 	desHabilitarY
 }
+void Reloj(int Tiempo){
+	for (int i = 0; i<Tiempo; i++){
+		ForcePWMY();
+	}
+}
 
+void TrianguloIs(void){
+	BajarSolenoide
+	HabilitarX
+	HabilitarY
+	ArribaX
+	DerechaY
+	Reloj(500);
+	AbajoX
+	DerechaY
+	Reloj(500);
+	desHabilitarX
+	IzquierdaY;
+	Reloj(1000);
+}
+
+void Cuadrado(void){
+	BajarSolenoide
+	desHabilitarY
+	HabilitarX
+	ArribaX
+	Reloj(500);
+	desHabilitarX
+	HabilitarY
+	DerechaY
+	Reloj(500);
+	desHabilitarY
+	HabilitarX
+	AbajoX
+	Reloj(500);
+	HabilitarY
+	desHabilitarX
+	IzquierdaY
+	Reloj(500);
+	desHabilitarX
+	desHabilitarY
+	SubirSolenoide
+}
 
 
 int main(void) {
@@ -79,22 +123,26 @@ int main(void) {
 	DDRC |= (1 << Solenoide) | (1 << RelojY) | (1 << DirY) | (1 << EnableY);
 	DDRD |= (1 << LED);
 	
-	int0_init();             // Inicializa la interrupción INT0
+	int01_init();             // Inicializa la interrupción INT0
+	SubirSolenoide
+	_delay_ms(1000);
+	
 	while (1) {
-		if ((PIND & (1 << Limite_Y_D )) || (PIND & (1 << Limite_Y_A ))){
+		
+		HabilitarX
+		AbajoX
+		Reloj(10);
+		
+		if (((PIND) & (1 << Limite_Y_D )) || ((PIND) & (1 << Limite_Y_A ))){
+			desHabilitarY
+			desHabilitarY
+
 			
 			
+		}else{
 			HabilitarX
 			AbajoX
-			PORTC |= ((1 << Solenoide));
-			
-			
-			for (int i = 0; i<500; i++){
-				ForcePWMY();
-			}
-			
-			
-			
+			Reloj(10);
 		}
 		
 	}
