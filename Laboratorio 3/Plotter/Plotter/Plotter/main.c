@@ -10,7 +10,6 @@
 
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include "PWM.h"
 
 
 #define RelojX PB3
@@ -26,32 +25,17 @@
 #define Limite_Y_A PD2
 #define Limite_Y_D PD3
 
+#define AbajoX PORTB |= (1 << DirX);
+#define ArribaX PORTB &= ~(1 << DirX);
+#define HabilitarX PORTB |= (1 << EnableX);
+#define HabilitarY PORTC |= (1 << EnableY);
+#define desHabilitarX PORTB &= ~(1 << EnableX);
+#define desHabilitarY PORTC &= ~(1 << EnableY);
+#define DerechaY PORTC |= (1 << DirY);
+#define IzquierdaY PORTC &= ~(1 << DirY);
+
+
 #define LED PD5
-
-
-void UART_init(unsigned int ubrr) {
-	// Configurar el valor de UBRR (Baud Rate Register)
-	UBRR0H = (unsigned char)(ubrr >> 8);
-	UBRR0L = (unsigned char)ubrr;
-	UCSR0B = (1 << RXEN0) | (1 << TXEN0);
-	UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
-}
-
-void UART_sendChar(char data) {
-	while (!(UCSR0A & (1 << UDRE0))){}
-	UDR0 = data;
-}
-
-char UART_receiveChar(void) {
-	while (!(UCSR0A & (1 << RXC0))){}
-	return UDR0;
-}
-
-void UART_sendString(const char *str) {
-	while (*str) {
-		UART_sendChar(*str++);
-	}
-}
 
 void int0_init(){
 	DDRD &= ~(1 << PD2); //PD2 como entrada (INT0)
@@ -61,37 +45,57 @@ void int0_init(){
 	
 	EICRA |= (1 << ISC01);
 	EICRA |= (1 << ISC00);
+	EICRA |= (1 << ISC11);
+	EICRA |= (1 << ISC10);
 	
-	EIMSK |= (1 << INT0);
+	EIMSK |= (1 << INT0) | (1 << INT1);
 	sei();
 }
 
-ISR(INT0_vect) {
-
-
+void ForcePWMY(void){
+	if ((PIND & (1 << Limite_Y_D )) || (PIND & (1 << Limite_Y_A ))){
+	PORTC &= ~(1 << RelojY);
+	PORTB &= ~(1 << RelojX);
+	_delay_ms(1);
+	PORTC |= (1 << RelojY);
+	PORTB |= (1 << RelojX);
+	_delay_ms(1);
+	}
 }
 
+ISR(INT0_vect) {
+	desHabilitarX
+	desHabilitarY
+}
+ISR(INT1_vect) {
+	desHabilitarX
+	desHabilitarY
+}
+
+
+
 int main(void) {
-	UART_init(103);
 	DDRB |= (1 << RelojX) | (1 << DirX) | (1 << EnableX);
 	DDRC |= (1 << Solenoide) | (1 << RelojY) | (1 << DirY) | (1 << EnableY);
 	DDRD |= (1 << LED);
-	SetupPWM();
 	
 	int0_init();             // Inicializa la interrupción INT0
 	while (1) {
-		PORTC |= (1 << EnableY);
-		PORTB |= (1 << EnableX) | (1 << DirX);
-		PORTC |= (1 << EnableY) | (1 << DirY);
-		PORTC |= ((1 << Solenoide));
+		if ((PIND & (1 << Limite_Y_D )) || (PIND & (1 << Limite_Y_A ))){
+			
+			
+			HabilitarX
+			AbajoX
+			PORTC |= ((1 << Solenoide));
+			
+			
+			for (int i = 0; i<500; i++){
+				ForcePWMY();
+			}
+			
+			
+			
+		}
 		
-		_delay_ms(500);
-		
-		PORTB &= ~(1 << EnableX);
-		PORTC &= ~(1 << EnableY);
-		
-		
-		_delay_ms(3000);
-		//PORTC |= ((1 << EnableX));
 	}
 }
