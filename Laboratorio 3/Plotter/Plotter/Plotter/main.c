@@ -7,9 +7,11 @@
 #define F_CPU 1000000UL
 #include <xc.h>
 #include <avr/io.h>
-#include <avr/delay.h>
+
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "PWM.h"
+
 
 #define RelojX PB3
 #define DirX PB4
@@ -73,13 +75,23 @@ int main(void) {
 	UART_init(103);
 	DDRB |= (1 << RelojX) | (1 << DirX) | (1 << EnableX);
 	DDRC |= (1 << Solenoide) | (1 << RelojY) | (1 << DirY) | (1 << EnableY);
-	DDRD |= (1 << Limite_Y_A) | (1 << Limite_Y_D) | (1 << LED);
-	
+	DDRD |= (1 << LED);
+	SetupPWM();
 	
 	int0_init();             // Inicializa la interrupción INT0
 	while (1) {
-		UART_sendString("Bienvenido al programa del plotter en Atmega328P\r\n");
-		UART_sendString("\r\n");
+		PORTC |= (1 << EnableY);
+		PORTB |= (1 << EnableX) | (1 << DirX);
+		PORTC |= (1 << EnableY) | (1 << DirY);
+		PORTC |= ((1 << Solenoide));
 		
+		_delay_ms(500);
+		
+		PORTB &= ~(1 << EnableX);
+		PORTC &= ~(1 << EnableY);
+		
+		
+		_delay_ms(3000);
+		//PORTC |= ((1 << EnableX));
 	}
 }
