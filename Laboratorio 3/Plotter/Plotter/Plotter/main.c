@@ -575,8 +575,6 @@ int main(void) {
 	//N(1500);
 	//MostrarTodo();
 	
-	
-	
 	MostrarTodo();
 	
 	while (1) {
