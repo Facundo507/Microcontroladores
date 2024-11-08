@@ -41,9 +41,10 @@ void cambiar_Contrasena(char* new_password);
 void activar_Alarma();
 
 int state = 0;   // Estado inicial
-char pass[6];    
-char new_password[6]; 
-char password_ref[6] EEMEM = "1234";  // Contraseña por defecto en la EEPROM
+char pass[4];    
+char new_password[4];
+char password[6]; 
+char password_ref[4] EEMEM = "1234";  // Contraseña por defecto en la EEPROM
 int intentos = 0; 
 
 int main(void) {
@@ -52,8 +53,6 @@ int main(void) {
 	
 	char caracter = '\0';
 	int contador = 0;
-	char Cadena1[16];
-	char Cadena2[16];
 	
 	Bienvenida();
 	
@@ -63,69 +62,92 @@ int main(void) {
 			comprobar_Teclado(&state, &caracter);
 			_delay_ms(500);
 			
-			} else if (state == 1) {             // Menu de opciones
+		} else if (state == 1) {             // Menu de opciones
 			Enviar_Mensaje("* : Abrir", "# : Cambiar PASS");
 			comprobar_Teclado(&state, &caracter);
 			_delay_ms(500);
 			
-			} else if (state == 2) {             // Solicitar Contraseña para abrir
+		} else if (state == 2) {             // Solicitar Contraseña para abrir
 			if(contador == 0){
-				Enviar_Mensaje("Ingrese PASS", " ");
+				Enviar_Mensaje("Ingrese PASS", "     ");
 				_delay_ms(500);
 			}
 			comprobar_Teclado(&state, &caracter);
-			if(caracter != '\0' && contador < 6){ 
-				pass[contador] = caracter; 
-				Enviar_Mensaje(Cadena1, pass);
+			if(caracter != '\0' && contador < 4){ 
+				pass[contador] = '*';
+				password[contador] = caracter; 
+				Enviar_Mensaje("Ingrese PASS", pass);
 				_delay_ms(500);
 				contador++;
 			}
-			if(contador == 4 || contador == 6){
-				pass[contador] = '\0';
-				if(verificar_Contrasena(pass)){
+			if(contador == 4 || contador == 4){
+				if(verificar_Contrasena(password)){
 					PORTB |= (1 << LED_Verde);
 					PORTB &= ~(1 << LED_Rojo);
 					Enviar_Mensaje("Contraseña", "Correcta");
 					abrir_Cerradura();
 					state = 0;
-					} else {
-					PORTB |= (1 << LED_Rojo);
+					_delay_ms(3000);
+				} else {
 					Enviar_Mensaje("Contraseña", "Incorrecta");
 					intentos++;
-					_delay_ms(1000);
-					PORTB &= ~(1 << LED_Rojo);
 					if (intentos >= 3) {
+						PORTB |= (1 << LED_Rojo);
 						activar_Alarma();
+						PORTB &= ~(1 << LED_Rojo);
 						intentos = 0; 
+					} else {
+						PORTB |= (1 << LED_Rojo);
+						_delay_ms(3000);
+						PORTB &= ~(1 << LED_Rojo);
 					}
+
 					state = 0; 
 				}
 				contador = 0;
+				for(int i=0; i<4 ; i++){
+					pass[i] = "";
+				}
+				LCD_cmd(0x01);
 			}
-			} else if (state == 3){				 // Solicitar Contraseña para cambiar
+		} else if (state == 3){				 // Solicitar Contraseña para cambiar
 			if(contador == 0){
-				Enviar_Mensaje("Ingrese actual", "Contraseña");
+				Enviar_Mensaje("Ingrese PASS", " ");
 				_delay_ms(500);
 			}
 			comprobar_Teclado(&state, &caracter);
-			if(caracter != '\0' && contador < 6){
-				pass[contador] = caracter; 
-				Enviar_Mensaje(Cadena1, pass);
+			if(caracter != '\0' && contador < 4){
+				pass[contador] = '*';
+				password[contador] = caracter; 
+				Enviar_Mensaje("Ingrese PASS", pass);
 				_delay_ms(500);
 				contador++;
 			}
-			if(contador == 4 || contador == 6){ 
+			if(contador == 4 || contador == 4){ 
 				pass[contador] = '\0'; 
-				if(verificar_Contrasena(pass)){
+				if(verificar_Contrasena(password)){
 					Enviar_Mensaje("Ingrese nueva", "Contraseña");
 					_delay_ms(500);
 					contador = 0; 
 					state = 4; 
-					} else {
+				} else {
 					Enviar_Mensaje("Contraseña", "Incorrecta");
-					_delay_ms(1000);
+					intentos++;
+					if (intentos >= 3) {
+						PORTB |= (1 << LED_Rojo);
+						activar_Alarma();
+						PORTB &= ~(1 << LED_Rojo);
+						intentos = 0;
+						} else {
+						PORTB |= (1 << LED_Rojo);
+						_delay_ms(3000);
+						PORTB &= ~(1 << LED_Rojo);
+					}
 					state = 0; 
 					contador = 0; 
+				}
+				for(int i=0; i<4 ; i++){
+					pass[i] = "";
 				}
 			}
 			} else if (state == 4) { // Ingreso de nueva contraseña
@@ -134,17 +156,19 @@ int main(void) {
 				_delay_ms(500);
 			}
 			comprobar_Teclado(&state, &caracter);
-			if(caracter != '\0' && contador < 6){
+			if(caracter != '\0' && contador < 4){
 				new_password[contador] = caracter; 
-				Enviar_Mensaje(Cadena1, new_password);
+				Enviar_Mensaje("Nueva PASS", new_password);
 				_delay_ms(500);
 				contador++;
 			}
-			if(contador == 4 || contador == 6){ 
-				new_password[contador] = '\0'; 
+			if(contador == 4 || contador == 4){ 
 				cambiar_Contrasena(new_password);
 				state = 0; 
-				contador = 0; 
+				contador = 0;
+				for(int i=0; i<4 ; i++){
+					new_password[i] = "";
+				} 
 			}
 		}
 	}
@@ -240,12 +264,14 @@ void comprobar_Teclado(int* state, char* caracter) {
 		}
 		
 		if (*state == 1) {
-			if (*caracter == '#') {
+			if (*caracter == '*') {
 				*state = 2;
-			} else if (*caracter == '*') {
+			} else if (*caracter == '#') {
 				*state = 3;
 			}
 		}
+	} else {
+		*caracter = '\0';
 	}
 }
 
@@ -269,13 +295,14 @@ void almacenar_Contrasena(char* password) {
 }
 
 int verificar_Contrasena(char* password) {
-	char stored_password[6];
-	eeprom_read_block(stored_password, &password_ref, sizeof(password_ref));
-	
+	char stored_password[4];
+	eeprom_read_block(stored_password, &password_ref, sizeof(stored_password));
+
 	if (strcmp(password, stored_password) == 0) {
-		return 1;
+		return 1; 
 	}
-	return 0;
+	
+	return 0; 
 }
 
 void abrir_Cerradura() {
@@ -297,7 +324,7 @@ void cambiar_Contrasena(char* new_password) {
 }
 
 void activar_Alarma() {
-	PORTB |= (1 << Buzzer); // Activar el buzzer
+	PORTC |= (1 << Buzzer); // Activar el buzzer
 	_delay_ms(5000); // Sonar por 5 segundos
-	PORTB &= ~(1 << Buzzer); // Desactivar el buzzer
+	PORTC &= ~(1 << Buzzer); // Desactivar el buzzer
 }
