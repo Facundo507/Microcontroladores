@@ -39,17 +39,19 @@ int verificar_Contrasena(char* password);
 void abrir_Cerradura();
 void cambiar_Contrasena(char* new_password);
 void activar_Alarma();
+void inicializar_EEPROM();
 
 int state = 0;   // Estado inicial
 char pass[4];    
 char new_password[4];
 char password[6]; 
-char password_ref[4] EEMEM = "1234";  // Contraseña por defecto en la EEPROM
+char password_ref[4];
 int intentos = 0; 
 
 int main(void) {
 	init_Pins();
 	init_LCD();
+	inicializar_EEPROM();
 	
 	char caracter = '\0';
 	int contador = 0;
@@ -57,6 +59,7 @@ int main(void) {
 	Bienvenida();
 	
 	while (1) {
+		LCD_cmd(0x01);
 		if (state == 0) {                    // Bienvenida
 			Bienvenida();
 			comprobar_Teclado(&state, &caracter);
@@ -150,7 +153,7 @@ int main(void) {
 					pass[i] = "";
 				}
 			}
-			} else if (state == 4) { // Ingreso de nueva contraseña
+		} else if (state == 4) { // Ingreso de nueva contraseña
 			if(contador == 0){
 				Enviar_Mensaje("Ingrese nueva", "Contraseña");
 				_delay_ms(500);
@@ -295,14 +298,14 @@ void almacenar_Contrasena(char* password) {
 }
 
 int verificar_Contrasena(char* password) {
-	char stored_password[4];
-	eeprom_read_block(stored_password, &password_ref, sizeof(stored_password));
+	char stored_password[5];
+	eeprom_read_block((void*)stored_password, (const void*)&password_ref, sizeof(stored_password) - 1);
+	stored_password[4] = '\0';
 
 	if (strcmp(password, stored_password) == 0) {
-		return 1; 
+		return 1;
 	}
-	
-	return 0; 
+	return 0;
 }
 
 void abrir_Cerradura() {
@@ -327,4 +330,15 @@ void activar_Alarma() {
 	PORTC |= (1 << Buzzer); // Activar el buzzer
 	_delay_ms(5000); // Sonar por 5 segundos
 	PORTC &= ~(1 << Buzzer); // Desactivar el buzzer
+}
+
+void inicializar_EEPROM() {
+	char default_password[5] = "1234";
+	char stored_password[5];
+	eeprom_read_block(stored_password, &password_ref, sizeof(stored_password) - 1);
+	stored_password[4] = '\0';
+
+	if (strcmp(stored_password, default_password) != 0) {
+		eeprom_write_block((const void*)default_password, (void*)&password_ref, sizeof(default_password) - 1);
+	}
 }
