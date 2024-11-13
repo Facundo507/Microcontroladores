@@ -15,23 +15,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   5 .debug_aranges 000000e8  00000000  00000000  00000d90  2**3
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00001c4c  00000000  00000000  00000e78  2**0
+  6 .debug_info   00001c84  00000000  00000000  00000e78  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000942  00000000  00000000  00002ac4  2**0
+  7 .debug_abbrev 00000942  00000000  00000000  00002afc  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000b58  00000000  00000000  00003406  2**0
+  8 .debug_line   00000bc8  00000000  00000000  0000343e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000001c0  00000000  00000000  00003f60  2**2
+  9 .debug_frame  000001c0  00000000  00000000  00004008  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000282  00000000  00000000  00004120  2**0
+ 10 .debug_str    00000282  00000000  00000000  000041c8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000df6  00000000  00000000  000043a2  2**0
+ 11 .debug_loc    00000df6  00000000  00000000  0000444a  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000090  00000000  00000000  00005198  2**0
+ 12 .debug_ranges 00000090  00000000  00000000  00005240  2**0
                   CONTENTS, READONLY, DEBUGGING
  13 .text         00000004  00000c06  00000c06  00000cda  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
- 14 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00005228  2**2
+ 14 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000052d0  2**2
                   CONTENTS, READONLY, DEBUGGING
  15 .text.LCD_cmd 0000004a  000009d0  000009d0  00000aa4  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
@@ -188,7 +188,7 @@ Disassembly of section .text:
 Disassembly of section .text:
 
 00000c06 <__bad_interrupt>:
- c06:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+ c06:	0c 94 00 00 	jmp	0	; 0x0 <__TEXT_REGION_ORIGIN__>
 
 Disassembly of section .text.LCD_cmd:
 
