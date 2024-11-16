@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="ModuloBluethoot.elf">                 
+  <executable name="Control_Maestro.elf">                 
     <memory name="program">              
       <units>bytes</units>                 
       <length>32768</length>                 

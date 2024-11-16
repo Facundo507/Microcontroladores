@@ -72,20 +72,70 @@ uint8_t receiveByteGPIO() {
 
 	return data;
 }
+#define Apagar13 PORTB &= ~(1<< PB5);
+#define Encender13 PORTB |= (1<< PB5);
+//"P" de pistón
+#define ExtenderPCaja PORTD |= (1 << PD2);
+#define ContraerPCaja PORTD &= ~(1 << PD2);
+#define VacioON PORTD |= (1 << PD3);
+#define VacioOFF PORTD &= ~(1 << PD3);
+#define ExtenderPEtiqueta PORTD |= (1 << PD4);
+#define ContraerPEtiqueta PORTD &= ~(1 << PD4);
 
 int main() {
 	initSerial();
 	USART_Init();
 	USART_Transmit('H');
+	DDRB |= (1 << PB5);
+	DDRD |= (1 << PD2) | (1 << PD3) | (1 << PD4);
+	
 	while (1) {
 		if (!(PINB & (1 << RX_PIN))) {
 			uint8_t receivedGPIO = receiveByteGPIO();
 			USART_Transmit(receivedGPIO); // Enviar el dato recibido por GPIO
+			if (receivedGPIO == 'a'){
+				for (int i =0; i <2; i++){
+					Encender13
+					_delay_ms(500);
+					Apagar13
+					_delay_ms(500); //Enciendo unos leds para indicar que se entró en el modo de etiquetar.
+				}
+				ExtenderPCaja
+				_delay_ms(5000);
+				ExtenderPEtiqueta
+				_delay_ms(1500);
+				VacioON //Es para que el pistón de la etiqueta agarre una etiqueta, la suelta con OFF
+				_delay_ms(100);
+				ContraerPEtiqueta
+				_delay_ms(1000);
+				ContraerPCaja
+				_delay_ms(2000);
+				ExtenderPEtiqueta
+				_delay_ms(2000);
+				VacioOFF
+				ContraerPEtiqueta
+			}
+			else if (receivedGPIO == 'b'){
+				for (int i =0; i <10; i++){
+					Encender13
+					_delay_ms(200); // Leds de referencia del pin 13 de la arduino nomás.
+					Apagar13
+					_delay_ms(200);
+				}
+			}
+			else{
+				Encender13
+				_delay_ms(200);
+				Apagar13
+				_delay_ms(200);
+			}
+			
 		}
 
 		if (UCSR0A & (1 << RXC0)) {
 			uint8_t receivedUSART = USART_Receive();
 			sendByteGPIO(receivedUSART); // Enviar el dato recibido por USART
+			
 		}
 	}
 

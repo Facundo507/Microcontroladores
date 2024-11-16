@@ -1,0 +1,40 @@
+Mandar el siguiente codigo a la arduino que se quiera hacer los comandos AT:
+
+ 
+#include <SoftwareSerial.h> // Incluimos la librería SoftwareSerial
+SoftwareSerial BT(9,8); // Definimos los pines RX(9) y TX(8) del Arduino conectados al Bluetooth
+void setup()
+{
+BT.begin(38400); // Inicializamos el puerto serie BT (Para Modo AT 2)
+Serial.begin(9600); // Inicializamos el puerto serie
+}
+void loop()
+{
+if(BT.available()) // Si llega un dato por el puerto BT se envía al monitor serial
+Serial.write(BT.read());
+if(Serial.available()) // Si llega un dato por el monitor serial se envía al puerto BT
+BT.write(Serial.read());
+}
+
+_________________________________
+
+
+Luego de presionar el botón en el bluethoot para configurarlo en modo comandos AT:
+
+**En el bluethoot eslavo **
+AT+ROLE=0       // Configura como esclavo
+AT+ADDR?        // Obtén la dirección MAC del módulo (guárdala)
+AT+UART=9600,0,0 // Configura velocidad de comunicación estándar
+
+** En el maestro **
+
+AT+ROLE=1        // Configura como maestro
+AT+CMODE=0       // Conexión a una MAC específica
+AT+BIND=MAC      // Reemplaza "MAC" con la dirección del esclavo 
+// (ej en el caso del pistón fue de  21:13:A20B pero hay que agregarle ceros y ponerle una coma asi: 0021,13,00AD4E)
+AT+UART=9600,0,0 // Configura velocidad de comunicación estándar
+
+** Iniciar la conexión desde el maestro **
+
+AT+PAIR=MAC,20 // Conecta al esclavo con dirección "MAC" (20 segundos como timeout)
+AT+LINK=MAC    // Establece el enlace con el esclavo, el parpadeo de los modulos se sincronizarán

@@ -345,10 +345,10 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000      0xbed
+.debug_info     0x0000000000000000      0xc01
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x0000000000000000      0x5f4 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/xc8/avr/lib/avr5/memx-const/crtatmega328p.o
- .debug_info    0x00000000000005f4      0x5f9 main.o
+ .debug_info    0x00000000000005f4      0x60d main.o
 
 .debug_abbrev   0x0000000000000000      0x743
  *(.debug_abbrev)
@@ -397,7 +397,7 @@ END GROUP
 
 .debug_macro
  *(.debug_macro)
-OUTPUT(ModuloBluethoot.elf elf32-avr)
+OUTPUT(Control_Maestro.elf elf32-avr)
 LOAD linker stubs
 LOAD data_init
 
