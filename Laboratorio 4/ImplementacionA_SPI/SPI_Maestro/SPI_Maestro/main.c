@@ -3,11 +3,20 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
+
+#define LuzMinima 600
+#define BitLuz 0
+
+
+
 #define SS 2		 // Pin conectado a SS habilitador de Esclavo 1
 #define SS2 6		 // Pin conectado a SS2 habilitador de Esclavo 2
 #define MOSI 3  	 // Pin conectado a MOSI Master output Slave input
 #define MISO 4 		 // Pin conectado a MISO Master input Slave output
 #define SCLK 5  	 // Pin conectado a SCLK Serial Clock
+
+#define PCF8574	0x27
+#include "twi_lcd.h"
 
 uint8_t dato1 = 0x00;
 uint8_t dato2 = 0x00;
@@ -16,32 +25,65 @@ void SPI_MasterInit();
 void SPI_MasterTransmit(char data, char slave);
 uint8_t SPI_MasterReceive();
 
+void SetupADC(void){
+	ADMUX |= (1 << REFS0); // Seleccionado Vcc
+	ADMUX &= ~(1 << ADLAR); // Lectura derecha a 10 bits
+	ADCSRA |= (1<< ADPS2) | (1 << ADPS1); //Prescaler 64
+	
+	ADCSRA |= (1 << ADEN); //Habilita ADC
+}
+
+uint16_t LeerADC(uint8_t canal){
+	ADMUX = (ADMUX & 0xF0) | (canal & 0x0F);
+	//Inicia la conversion en el canal "canal"
+	ADCSRA |= (1 << ADSC);
+	//Espera a que termine la conversion
+	while (ADCSRA & (1 << ADSC));
+	//Retorna el resultado
+	return ADC;
+	
+	
+}
+
 
 int main() {
+	
+	twi_init(); //Cosas del LCD
+	twi_lcd_init();
+	twi_lcd_cmd(0x80);
+	twi_lcd_clear();
+	
+	SetupADC();
 	
 	SPI_MasterInit();		      // Inicializa la comunicación SPI como maestro
 	_delay_ms(10);
 	
-	char data_to_send = 0x00;
+	char DatoEnviarSPI = 0x00;
 	
 	while (1) {
-		data_to_send = 'R';     // Datos a enviar a un Esclavo
 		
-		SPI_MasterTransmit(data_to_send, SS);
+		
+		uint16_t ValorADC = LeerADC(3);
+		//--- Select 2nd Row
+		twi_lcd_cmd(0xC0);
+		//--- Send a String to LCD
+		twi_lcd_msg("Linea Miau!!");
+		
+		
+		if (ValorADC <= LuzMinima){
+			DatoEnviarSPI |= (1<<BitLuz);
+			
+		}
+		else
+		{
+			DatoEnviarSPI &= (1<<BitLuz);
+		}
+		SPI_MasterTransmit(DatoEnviarSPI, SS);
 		_delay_ms(10);
+		/*dato1 = SPI_MasterReceive(); // Leer datos
+		_delay_ms(50); */
 		
-		dato1 = SPI_MasterReceive(); // Leer datos
-		_delay_ms(500);
-		/*
-		
-		data_to_send = 0xEE;        // Datos a enviar al segundo Esclavo
-		
-		SPI_MasterTransmit(data_to_send, SS2);
-		_delay_ms(10);
-		
-		dato2 = SPI_MasterReceive();  // Leer datos
-		_delay_ms(500);
-		*/
+
 	}
 	
 	return 0;

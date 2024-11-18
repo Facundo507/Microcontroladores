@@ -6,6 +6,8 @@
 #define MOSI   3   // Pin conectado a MOSI Master output Slave input
 #define MISO 4   // Pin conectado a MISO Master input Slave output
 #define SCLK  5   // Pin conectado a SCLK Serial Clock
+#define PINLuz 7
+
 
 void SPI_SlaveInit() {
 	// Configura el ATMega328P como maestro en el bus SPI
@@ -21,7 +23,7 @@ uint8_t SPI_SlaveReceive(){
 }
 
 int main() {
-	DDRD |= (1 << 7);
+	DDRD |= (1 << PINLuz);
 	SPI_SlaveInit();      // Inicializa la comunicaci?n SPI como maestro
 	_delay_ms(10);
 	UART_init(103);
@@ -30,16 +32,20 @@ int main() {
 		received = SPI_SlaveReceive();
 		UART_sendChar(received);
 		UART_sendString("\r\n");
-		if (received == 'R') {
-			UART_sendString("Entro if");
-			PORTD |= (1 << 7);
-			_delay_ms(200);
-			PORTD &= ~(1 << 7);
+		if (received == 1) {
+			UART_sendString("EncenderLuz");
+			PORTD |= (1 << PINLuz);
+			
 		}
-		else if (received == 'W') {
-			// Calcular parametros
+		else if (received == 0) {
+			PORTD &= ~(1 << PINLuz);
+			UART_sendString("ApagarLuz");
 		}
-		else{}
+		else{
+			PORTD &= ~(1 << PINLuz);
+			UART_sendString("Indeterminado");
+		}
+		
 
 	}
 	
