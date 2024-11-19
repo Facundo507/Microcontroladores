@@ -5,6 +5,7 @@
 #include <util/twi.h>
 #define PCF8574	0x27 // 0x3F para en otra lcd con i2c
 #include "twi_lcd.h"
+#define DHT_PIN PD2
 
 #define LuzMinima 600
 #define BitLuz 0
@@ -45,6 +46,29 @@ uint16_t LeerADC(uint8_t canal){
 	
 }
 
+void DHT_start(){
+	DDRD |= (1 << DHT_PIN);
+	PORTD &= ~(1 << DHT_PIN);
+	_delay_ms(18);
+	PORTD |= (1<<DHT_PIN);
+	_delay_us(40);
+}
+uint8_t DHT_Respuesta(){
+	DDRD &= ~(1 << DHT_PIN);
+	_delay_us(40);
+	if (!(PIND & (1 << DHT_PIN))){
+		_delay_us(80);
+		if ((PIND & (1 << DHT_PIN))){
+			_delay_us(80);
+			return 1;
+			
+			
+		}
+		
+	}
+	return 0;
+}
+
 
 int main() {
 	
@@ -63,7 +87,7 @@ int main() {
 	_delay_ms(10);
 	
 	char DatoEnviarSPI = 0x00;
-	uint8_t valor = 13;  // Valor a convertir
+	
 	while (1) {
 		//Comandos: 0x80 Primera linea
 		// 0xC0
@@ -73,18 +97,11 @@ int main() {
 		twi_lcd_cmd(0x80);
 		//--- Send a String to LCD
 		twi_lcd_msg("Linea Miau!!");
-		
-		
-		
-		char buffer[4];       // Buffer para almacenar la cadena (máximo 3 dígitos + nulo)
-		
+		char buffer[6];       // Buffer para almacenar la cadena (máximo 3 dígitos + nulo)
 		// Convertir el valor a cadena
-		sprintf(buffer, "%u", valor);
-		
+		sprintf(buffer, "%u", ValorADC);
 		twi_lcd_cmd(0xC0);
 		twi_lcd_msg(buffer);
-		_delay_ms(1000);
-		valor++;
 		
 		
 		if (ValorADC <= LuzMinima){
@@ -93,7 +110,7 @@ int main() {
 		}
 		else
 		{
-			DatoEnviarSPI &= (1<<BitLuz);
+			DatoEnviarSPI &= ~(1<<BitLuz);
 		}
 		SPI_MasterTransmit(DatoEnviarSPI, SS);
 		_delay_ms(10);
