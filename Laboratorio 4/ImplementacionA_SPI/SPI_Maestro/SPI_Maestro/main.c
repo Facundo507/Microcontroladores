@@ -6,7 +6,7 @@
 #define PCF8574	0x27 // 0x3F para en otra lcd con i2c
 #include "twi_lcd.h"
 #define DHT_PIN PD2
-
+#include <stdio.h>
 #define LuzMinima 600
 #define BitLuz 0
 
@@ -68,6 +68,106 @@ uint8_t DHT_Respuesta(){
 	}
 	return 0;
 }
+/*
+uint8_t DHT_read(){
+	uint8_t result = 0;
+	for (int i=0; i<8; i++){
+		while (!(PIND & (1<<DHT_PIN)));
+		_delay_us(30);
+		if (PIND & (1<<DHT_PIN));
+		result |= (1<<(7-i));
+		while (PIND & (1<<DHT_PIN));
+	}
+	return result;
+}
+
+*/
+
+void DHT_read(uint8_t* ListaResultado) {
+	for (int j = 0; j < 5; j++) {
+		uint8_t result = 0;
+		for (int i = 0; i < 8; i++) {
+			while (!(PIND & (1 << DHT_PIN)));
+			_delay_us(30);
+			if (PIND & (1 << DHT_PIN)) {
+				result |= (1 << (7 - i));
+			}
+			while (PIND & (1 << DHT_PIN));
+		}
+		ListaResultado[j] = result;
+	}
+}
+
+void Procesar_DatosDHT(){
+	uint8_t ListaDHT[5];
+	char buffer[5][8];
+	
+	DHT_start();
+	DHT_Respuesta();
+	DHT_read(ListaDHT);
+	for (int i = 0; i<5; i++){
+		if (i <= 2){
+			twi_lcd_cmd(0xC0);
+			twi_lcd_msg("Enviando Temp   ");
+			_delay_ms(300);
+		}
+		else if (i >2){
+			twi_lcd_cmd(0xC0);
+			twi_lcd_msg("Enviando Humedad");
+			_delay_ms(300);
+		}
+		SPI_MasterTransmit(ListaDHT[i], SS);
+		_delay_ms(10);
+		sprintf(buffer[i], "%u", ListaDHT[i]);
+		twi_lcd_cmd(0xC0);
+		twi_lcd_msg("Enviado!     ");
+	}
+	
+	twi_lcd_cmd(0x80);
+	twi_lcd_msg("T: ");
+	twi_lcd_msg(buffer[2]);
+	twi_lcd_msg("H: ");
+	twi_lcd_msg(buffer[0]);
+	
+	
+	
+}
+
+void EnviarByteSPI (uint8_t Byte){
+	twi_lcd_cmd(0xC0);
+	twi_lcd_msg("Env Byte LDRBuzz ");
+	
+	_delay_ms(300);
+	SPI_MasterTransmit(Byte, SS);
+	_delay_ms(10);
+	twi_lcd_cmd(0xC0);
+	twi_lcd_msg("Datos Enviados!  ");
+	
+	
+}
+
+uint8_t Procesar_DatosLDR(uint8_t DatoEnviarSPI){		
+		uint16_t ValorADC = LeerADC(3);
+		
+		twi_lcd_cmd(0x8B);
+
+		char buffer[6];       // Buffer para almacenar la cadena (máximo 3 dígitos + nulo)
+		// Convertir el valor a cadena
+		sprintf(buffer, "%u", ValorADC);
+		//twi_lcd_cmd(0xC0);
+		twi_lcd_msg("L ");
+		twi_lcd_msg(buffer);
+		_delay_ms(100);
+		if (ValorADC <= LuzMinima){
+			DatoEnviarSPI |= (1<<BitLuz);
+		}
+		else
+		{
+			DatoEnviarSPI &= ~(1<<BitLuz);
+		}
+		return DatoEnviarSPI;
+		
+}
 
 
 int main() {
@@ -77,47 +177,30 @@ int main() {
 	twi_lcd_init();
 	
 	twi_lcd_cmd(0x80);
-	
 	twi_lcd_clear();
-	
-	
 	SetupADC();
-	
 	SPI_MasterInit();		      // Inicializa la comunicación SPI como maestro
 	_delay_ms(10);
 	
 	char DatoEnviarSPI = 0x00;
 	
+	//char Datos_DHT[8][5];
+	
 	while (1) {
 		//Comandos: 0x80 Primera linea
-		// 0xC0
+		// 0xC0 Segunda linea
 		
-		uint16_t ValorADC = LeerADC(3);
-		//--- Select 1nd Row
-		twi_lcd_cmd(0x80);
-		//--- Send a String to LCD
-		twi_lcd_msg("Linea Miau!!");
-		char buffer[6];       // Buffer para almacenar la cadena (máximo 3 dígitos + nulo)
-		// Convertir el valor a cadena
-		sprintf(buffer, "%u", ValorADC);
-		twi_lcd_cmd(0xC0);
-		twi_lcd_msg(buffer);
+		Procesar_DatosDHT();
+		DatoEnviarSPI = Procesar_DatosLDR(DatoEnviarSPI);
+		EnviarByteSPI(DatoEnviarSPI);
+		_delay_ms(500);
 		
 		
-		if (ValorADC <= LuzMinima){
-			DatoEnviarSPI |= (1<<BitLuz);
-			
-		}
-		else
-		{
-			DatoEnviarSPI &= ~(1<<BitLuz);
-		}
-		SPI_MasterTransmit(DatoEnviarSPI, SS);
-		_delay_ms(10);
-		/*dato1 = SPI_MasterReceive(); // Leer datos
-		_delay_ms(50); */
 		
-
+		
+		
+		
+	
 	}
 	
 	return 0;

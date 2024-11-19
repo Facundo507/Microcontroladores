@@ -8,6 +8,7 @@
 #define SCLK  5   // Pin conectado a SCLK Serial Clock
 #define PINLuz 7
 #define BitLuz 0
+#define Ventilador 6
 
 void SPI_SlaveInit() {
 	// Configura el ATMega328P como maestro en el bus SPI
@@ -22,31 +23,63 @@ uint8_t SPI_SlaveReceive(){
 	return SPDR;                    //Devuelve informaci?n recibida
 }
 
+void ProcesarDatos_DHT(){
+	uint8_t DHT_Datosint[5];
+	char DHT_DatosChar[5][5];
+	for (int i = 0; i<5; i++){
+		DHT_Datosint[i] = SPI_SlaveReceive();
+		sprintf(DHT_DatosChar[i], "%u", DHT_Datosint[i]);
+	}
+	UART_sendString("T: ");
+	UART_sendString(DHT_DatosChar[2]);
+	UART_sendString(",");
+	UART_sendString(DHT_DatosChar[3]);
+	UART_sendString("H: ");
+	UART_sendString(DHT_DatosChar[0]);
+	UART_sendString(",");
+	UART_sendString(DHT_DatosChar[1]);
+	
+	if (DHT_Datosint[2]>24){
+		PORTD |= (1 << Ventilador);
+	}
+	else{
+		PORTD &= ~(1 << Ventilador);
+	}
+	
+}
+void ProcesarByte(void){
+	
+	unsigned char received = 0;
+	received = SPI_SlaveReceive();
+	UART_sendChar(received);
+	
+	if (received & (1 << BitLuz)) {
+		UART_sendString(" EncenderLuz");
+		PORTD |= (1 << PINLuz);
+		
+	}
+	else if (~(received & (1 << BitLuz)) ) {
+		PORTD &= ~(1 << PINLuz);
+		UART_sendString(" ApagarLuz");
+	}
+	else{
+		PORTD &= ~(1 << PINLuz);
+		UART_sendString("Indeterminado");
+	}
+	UART_sendString("\r\n");
+}
+
 int main() {
-	DDRD |= (1 << PINLuz);
+	DDRD |= (1 << PINLuz) | (1 << Ventilador);
 	SPI_SlaveInit();      // Inicializa la comunicaci?n SPI como maestro
 	_delay_ms(10);
 	UART_init(103);
 	while (1) {
-		unsigned char received = 0;
-		received = SPI_SlaveReceive();
-		UART_sendChar(received);
-		UART_sendString("\r\n");
-		if (received & (1 << BitLuz)) {
-			UART_sendString("EncenderLuz");
-			PORTD |= (1 << PINLuz);
-			
-		}
-		else if (~(received & (1 << BitLuz)) ) {
-			PORTD &= ~(1 << PINLuz);
-			UART_sendString("ApagarLuz");
-		}
-		else{
-			PORTD &= ~(1 << PINLuz);
-			UART_sendString("Indeterminado");
-		}
+		ProcesarDatos_DHT();
+		ProcesarByte();
 		
-
+		
+	
 	}
 	
 	return 0;

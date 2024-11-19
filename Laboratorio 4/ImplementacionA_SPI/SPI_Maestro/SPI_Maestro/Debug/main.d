@@ -17,7 +17,8 @@ main.d main.o: .././main.c \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\math.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\interrupt.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\util\twi.h \
- .././twi_lcd.h .././twi.h .././twi.c
+ .././twi_lcd.h .././twi.h .././twi.c \
+ c:\program\ files\microchip\xc8\v2.36\avr\avr\include\stdio.h
 
 c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\io.h:
 
@@ -60,3 +61,5 @@ c:\program\ files\microchip\xc8\v2.36\avr\avr\include\util\twi.h:
 .././twi.h:
 
 .././twi.c:
+
+c:\program\ files\microchip\xc8\v2.36\avr\avr\include\stdio.h:
