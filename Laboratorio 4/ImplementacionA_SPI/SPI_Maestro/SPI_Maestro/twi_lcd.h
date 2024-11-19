@@ -64,6 +64,7 @@ void twi_lcd_cmd(const unsigned char x)
 	lcd &= ~(0x01);								//--- Select Command Register By RS = 0
 	PCF8574_write(lcd);							//--- Send Data From PCF8574 to LCD PORT
 	twi_lcd_4bit_send(x);						//--- Function to Write 4-bit data to LCD 	
+	_delay_ms(1);
 }
 
 /* Function to Write to LCD Command Register */
