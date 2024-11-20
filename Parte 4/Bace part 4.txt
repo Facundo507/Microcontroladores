@@ -1,0 +1,109 @@
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include <stdio.h>
+#include <string.h>
+
+#define SERVO_PIN PB1 // Servo conectado a PB1 (OC1A)
+#define PHOTOCELL_PIN 0 // Fotocelda conectada a ADC0 (A0)
+
+void uart_init(unsigned int ubrr) {
+    UBRR0H = (unsigned char)(ubrr >> 8);
+    UBRR0L = (unsigned char)ubrr;
+    UCSR0B = (1 << TXEN0); // Habilitar transmisor
+    UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); // 8 bits de datos
+}
+
+void uart_transmit(unsigned char data) {
+    while (!(UCSR0A & (1 << UDRE0)));
+    UDR0 = data;
+}
+
+void uart_send_string(const char* str) {
+    while (*str) {
+        uart_transmit(*str++);
+    }
+}
+
+void adc_init() {
+    ADMUX = (1 << REFS0) | (PHOTOCELL_PIN & 0x0F); // AREF interno, canal ADC0 (A0)
+    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // Habilitar ADC, prescaler 128
+}
+
+uint16_t adc_read() {
+    ADCSRA |= (1 << ADSC); // Iniciar conversión
+    while (ADCSRA & (1 << ADSC)); // Esperar hasta que termine la conversión
+    return ADC;
+}
+
+void servo_init() {
+    DDRB |= (1 << SERVO_PIN); // Configurar PB1 como salida
+    TCCR1A |= (1 << COM1A1) | (1 << WGM11); // Fast PWM, Clear OC1A on Compare Match
+    TCCR1B |= (1 << WGM13) | (1 << WGM12) | (1 << CS11); // Prescaler 8, Fast PWM modo 14
+    ICR1 = 39999; // Frecuencia PWM de 50 Hz
+}
+
+void set_servo_angle(uint8_t angle) {
+    uint16_t ocr_value = (uint16_t)(1000 + ((angle * 1000) / 180));
+    OCR1A = ocr_value;
+}
+
+char* detectar_color(uint16_t valor_adc) {
+    if (valor_adc < 150) {
+        return "Rojo";
+    } else if (valor_adc < 300) {
+        return "Amarillo";
+    } else if (valor_adc < 450) {
+        return "Verde";
+    } else if (valor_adc < 600) {
+        return "Cian";
+    } else if (valor_adc < 750) {
+        return "Azul";
+    } else if (valor_adc < 900) {
+        return "Magenta";
+    } else {
+        return "Desconocido";
+    }
+}
+
+uint8_t obtener_angulo_para_color(char* color) {
+    if (strcmp(color, "Rojo") == 0) {
+        return 30;
+    } else if (strcmp(color, "Amarillo") == 0) {
+        return 60;
+    } else if (strcmp(color, "Verde") == 0) {
+        return 90;
+    } else if (strcmp(color, "Cian") == 0) {
+        return 120;
+    } else if (strcmp(color, "Azul") == 0) {
+        return 150;
+    } else if (strcmp(color, "Magenta") == 0) {
+        return 180;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    uart_init(103); // Inicializar UART a 9600 baudios
+    adc_init(); // Inicializar ADC
+    servo_init(); // Inicializar Servo
+
+    while (1) {
+        uint16_t valor_fotocelda = adc_read();
+        char* color_detectado = detectar_color(valor_fotocelda);
+        uint8_t angulo_servo = obtener_angulo_para_color(color_detectado);
+
+        set_servo_angle(angulo_servo);
+
+        char buffer[50];
+        sprintf(buffer, "Valor Fotocelda: %u\n", valor_fotocelda);
+        uart_send_string(buffer);
+        sprintf(buffer, "Color Detectado: %s\n", color_detectado);
+        uart_send_string(buffer);
+        sprintf(buffer, "Ángulo Servo: %u\n", angulo_servo);
+        uart_send_string(buffer);
+
+        _delay_ms(1000);
+    }
+}
