@@ -6,14 +6,17 @@
 #define PCF8574	0x27 // 0x3F para en otra lcd con i2c
 #include "twi_lcd.h"
 #define DHT_PIN PD2
+#define IR_PIN PD3
 #include <stdio.h>
 #define LuzMinima 600
 #define BitLuz 0
+#define BitIR 1
+
 
 
 
 #define SS 2		 // Pin conectado a SS habilitador de Esclavo 1
-#define SS2 6		 // Pin conectado a SS2 habilitador de Esclavo 2
+#define SS2 6
 #define MOSI 3  	 // Pin conectado a MOSI Master output Slave input
 #define MISO 4 		 // Pin conectado a MISO Master input Slave output
 #define SCLK 5  	 // Pin conectado a SCLK Serial Clock
@@ -60,28 +63,18 @@ uint8_t DHT_Respuesta(){
 		_delay_us(80);
 		if ((PIND & (1 << DHT_PIN))){
 			_delay_us(80);
+			
 			return 1;
 			
 			
 		}
 		
+		
 	}
+	
 	return 0;
 }
-/*
-uint8_t DHT_read(){
-	uint8_t result = 0;
-	for (int i=0; i<8; i++){
-		while (!(PIND & (1<<DHT_PIN)));
-		_delay_us(30);
-		if (PIND & (1<<DHT_PIN));
-		result |= (1<<(7-i));
-		while (PIND & (1<<DHT_PIN));
-	}
-	return result;
-}
 
-*/
 
 void DHT_read(uint8_t* ListaResultado) {
 	for (int j = 0; j < 5; j++) {
@@ -105,7 +98,8 @@ void Procesar_DatosDHT(){
 	DHT_start();
 	DHT_Respuesta();
 	DHT_read(ListaDHT);
-	for (int i = 0; i<5; i++){
+	
+	for (int i = 0; i<4; i++){
 		if (i <= 2){
 			twi_lcd_cmd(0xC0);
 			twi_lcd_msg("Enviando Temp   ");
@@ -121,6 +115,7 @@ void Procesar_DatosDHT(){
 		sprintf(buffer[i], "%u", ListaDHT[i]);
 		twi_lcd_cmd(0xC0);
 		twi_lcd_msg("Enviado!     ");
+		
 	}
 	
 	twi_lcd_cmd(0x80);
@@ -146,7 +141,7 @@ void EnviarByteSPI (uint8_t Byte){
 	
 }
 
-uint8_t Procesar_DatosLDR(uint8_t DatoEnviarSPI){		
+uint8_t Procesar_DatosLDRIR(uint8_t DatoEnviarSPI){		
 		uint16_t ValorADC = LeerADC(3);
 		
 		twi_lcd_cmd(0x8B);
@@ -155,15 +150,28 @@ uint8_t Procesar_DatosLDR(uint8_t DatoEnviarSPI){
 		// Convertir el valor a cadena
 		sprintf(buffer, "%u", ValorADC);
 		//twi_lcd_cmd(0xC0);
-		twi_lcd_msg("L ");
-		twi_lcd_msg(buffer);
-		_delay_ms(100);
-		if (ValorADC <= LuzMinima){
+		
+		if (ValorADC > LuzMinima){
 			DatoEnviarSPI |= (1<<BitLuz);
+			
 		}
 		else
 		{
 			DatoEnviarSPI &= ~(1<<BitLuz);
+		}
+		if (PIND & (1<< IR_PIN)){
+			twi_lcd_msg("OFF");
+			
+			_delay_ms(100);
+			DatoEnviarSPI &= ~(1<<BitIR); //Detectapresencia con un cero lógico
+		}
+		else
+		{
+			twi_lcd_msg("ON ");
+			
+			_delay_ms(100);
+			DatoEnviarSPI |= (1<<BitIR);
+			
 		}
 		return DatoEnviarSPI;
 		
@@ -178,7 +186,11 @@ int main() {
 	
 	twi_lcd_cmd(0x80);
 	twi_lcd_clear();
+	
+	_delay_ms(2000);
 	SetupADC();
+	
+
 	SPI_MasterInit();		      // Inicializa la comunicación SPI como maestro
 	_delay_ms(10);
 	
@@ -186,12 +198,12 @@ int main() {
 	
 	//char Datos_DHT[8][5];
 	
+	
 	while (1) {
 		//Comandos: 0x80 Primera linea
 		// 0xC0 Segunda linea
-		
+		DatoEnviarSPI = Procesar_DatosLDRIR(DatoEnviarSPI);
 		Procesar_DatosDHT();
-		DatoEnviarSPI = Procesar_DatosLDR(DatoEnviarSPI);
 		EnviarByteSPI(DatoEnviarSPI);
 		_delay_ms(500);
 		

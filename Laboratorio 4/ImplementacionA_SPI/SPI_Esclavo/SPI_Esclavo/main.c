@@ -9,7 +9,8 @@
 #define PINLuz 7
 #define BitLuz 0
 #define Ventilador 6
-
+#define PINAlarma 5
+#define BitALARMA 1
 void SPI_SlaveInit() {
 	// Configura el ATMega328P como maestro en el bus SPI
 	DDRB |= (1 << MISO);  // Configura pin de salida
@@ -26,10 +27,11 @@ uint8_t SPI_SlaveReceive(){
 void ProcesarDatos_DHT(){
 	uint8_t DHT_Datosint[5];
 	char DHT_DatosChar[5][5];
-	for (int i = 0; i<5; i++){
+	for (int i = 0; i<4; i++){
 		DHT_Datosint[i] = SPI_SlaveReceive();
 		sprintf(DHT_DatosChar[i], "%u", DHT_Datosint[i]);
 	}
+	
 	UART_sendString("T: ");
 	UART_sendString(DHT_DatosChar[2]);
 	UART_sendString(",");
@@ -62,15 +64,20 @@ void ProcesarByte(void){
 		PORTD &= ~(1 << PINLuz);
 		UART_sendString(" ApagarLuz");
 	}
-	else{
-		PORTD &= ~(1 << PINLuz);
-		UART_sendString("Indeterminado");
+	if (received & (1 << 1)){
+		UART_sendString(" ALARMA ON");
+		PORTD |= (1<<PINAlarma);
+	}else
+	{
+		UART_sendString(" ALARMA OFF");
+		PORTD &= ~(1<<PINAlarma);
 	}
+	
 	UART_sendString("\r\n");
 }
 
 int main() {
-	DDRD |= (1 << PINLuz) | (1 << Ventilador);
+	DDRD |= (1 << PINLuz) | (1 << Ventilador) | (1<<PINAlarma);
 	SPI_SlaveInit();      // Inicializa la comunicaci?n SPI como maestro
 	_delay_ms(10);
 	UART_init(103);
